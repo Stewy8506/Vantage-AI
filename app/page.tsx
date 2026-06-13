@@ -1,66 +1,44 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import { useState } from "react";
+import PostGeneratorForm from "@/components/PostGeneratorForm";
+import ResultsDisplay from "@/components/ResultsDisplay";
+import { Sparkles } from "lucide-react";
+
+interface Variant {
+  id: number;
+  style: string;
+  content: string;
+  score: number;
+  critique: string;
+}
 
 export default function Home() {
+  const [variants, setVariants] = useState<Variant[]>([]);
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="container flex-col items-center justify-center min-h-screen">
+      {/* Background visual effects */}
+      <div className="bg-blob"></div>
+      <div className="bg-blob-2"></div>
+
+      <div className="text-center animate-fade-in" style={{ marginBottom: "40px" }}>
+        <div className="flex justify-center items-center gap-2 mb-4">
+          <div className="glass p-2" style={{ borderRadius: "12px", display: "inline-flex", background: "rgba(109, 40, 217, 0.2)", border: "1px solid rgba(109, 40, 217, 0.3)" }}>
+            <Sparkles style={{ color: "var(--primary)" }} size={24} />
+          </div>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        <h1 style={{ fontSize: "3rem", fontWeight: 800, marginBottom: "16px", lineHeight: 1.2 }}>
+          Virality <span className="text-gradient">Mapper</span>
+        </h1>
+        <p style={{ fontSize: "1.2rem", color: "#a1a1aa", maxWidth: "600px", margin: "0 auto" }}>
+          Analyze top LinkedIn trends in real-time and generate highly optimized, viral posts for your next big launch.
+        </p>
+      </div>
+
+      <PostGeneratorForm onGenerate={(data) => setVariants(data)} />
+      
+      {variants.length > 0 && <ResultsDisplay variants={variants} />}
+    </main>
   );
 }

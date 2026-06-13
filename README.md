@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Virality Mapper - Viral LinkedIn Post Generator 🚀
 
-## Getting Started
+An AI-powered web application that analyzes real-time trending LinkedIn posts and generates highly-optimized, viral content variants tailored to your app or project.
 
-First, run the development server:
+## Features ✨
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Real-time Trend Analysis**: Integrates with Web Search APIs (like Tavily) to pull the top trending LinkedIn posts within your specific niche.
+- **AI-Powered Generation**: Uses Google's Gemini 2.5 Flash model to craft 3 distinct post variants based on current viral frameworks.
+- **Scoring & Critiques**: Every generated post comes with a "Virality Score" and an AI critique explaining *why* the post works and how it leverages the target audience's psychology.
+- **Premium UI/UX**: Built with a stunning dark theme featuring glassmorphism, fluid micro-animations, and vibrant gradients.
+- **One-Click Copy**: Easily copy your favorite variant straight to your clipboard to post.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack 🛠️
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend**: Next.js (App Router), React, Vanilla CSS (Custom Design System), Lucide React (Icons)
+- **Backend**: Next.js API Routes
+- **AI Model**: Google Gemini API (`@google/genai`)
+- **Search API**: Tavily Search API (optional, defaults to mocked trends for demo)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Getting Started 💻
 
-## Learn More
+### Prerequisites
+- Node.js (v18 or higher)
+- npm
+- Google Gemini API Key
+- Tavily API Key (Optional)
 
-To learn more about Next.js, take a look at the following resources:
+### Installation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Navigate to the project directory**:
+   ```bash
+   cd "Virality Mapper"
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-## Deploy on Vercel
+3. **Environment Setup**:
+   Create a `.env.local` file in the root of the project and add your API keys:
+   ```env
+   # Required: Get this from Google AI Studio
+   GEMINI_API_KEY=your_gemini_api_key_here
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   # Optional: Get this from Tavily for live search trends. 
+   # If left out, the app will use mocked trend data for demonstrations.
+   TAVILY_API_KEY=your_tavily_api_key_here
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+
+5. **Open the app**:
+   Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
+
+## How It Works 🧠
+
+1. **Input Details**: Enter your app name, description, target audience, and desired tone (e.g., "Storytelling", "Provocative", "Data-driven").
+2. **Analysis**: The backend searches for top trending LinkedIn posts related to your niche to extract working frameworks.
+3. **Generation**: The context and trends are fed into the Gemini LLM with a specialized prompt to generate 3 unique variants.
+4. **Publish**: Review the virality scores, read the critiques, copy the best one, and post it to LinkedIn!
