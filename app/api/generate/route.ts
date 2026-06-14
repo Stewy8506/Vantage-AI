@@ -5,6 +5,9 @@ import Anthropic from "@anthropic-ai/sdk";
 import { findRelevantViralPosts } from "./viralityDb";
 import { convertUnicodeStyles, optimizeMobileSpacing, estimateReadability } from "./formatter";
 
+export const dynamic = "force-dynamic";
+export const maxDuration = 60; // Max execution timeout for Vercel serverless function
+
 // Helper to sanitize and robustly parse JSON from LLM responses
 function robustJsonParse(text: string): any {
   let cleanText = text.trim();
