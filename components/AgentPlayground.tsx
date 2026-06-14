@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Sliders, RefreshCw, X, Plus, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -50,6 +51,14 @@ export default function AgentPlayground({
   const [models, setModels] = useState<string[]>([]);
   const [loadingModels, setLoadingModels] = useState(false);
   const [hoveredAgentId, setHoveredAgentId] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   const loadModels = async (provider: string) => {
     setLoadingModels(true);
@@ -235,139 +244,178 @@ export default function AgentPlayground({
       </div>
 
       {/* Overlay Configuration Drawer Panel */}
-      <AnimatePresence>
-        {editingAgent && (
-          <div className="settings-modal-backdrop" onClick={() => setEditingAgent(null)}>
-            <motion.div
-              initial={{ opacity: 0, x: "100%" }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: "100%" }}
-              transition={{ type: "spring", stiffness: 350, damping: 30 }}
-              className="settings-modal-container flex-col"
-              style={{ maxWidth: "520px" }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Drawer Header */}
-              <div className="flex justify-between items-center px-6 py-5 border-b border-zinc-800/60" style={{ background: "rgba(0,0,0,0.1)" }}>
-                <h3 style={{ fontSize: "1.05rem", fontWeight: 600, display: "flex", alignItems: "center", gap: "8px" }} className="text-white font-heading">
-                  <Sliders size={15} className="text-zinc-400" />
-                  Configure Specialist
-                </h3>
-                <button
-                  style={{ background: "none", border: "none", color: "var(--zinc-500)", cursor: "pointer" }}
-                  className="hover:text-white transition-colors"
-                  onClick={() => setEditingAgent(null)}
-                >
-                  <X size={16} />
-                </button>
-              </div>
-
-              {/* Drawer Content */}
-              <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-5" data-lenis-prevent>
-                <div className="form-group mb-0">
-                  <label className="form-label">Agent Name</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={editingAgent.name}
-                    onChange={(e) => setEditingAgent({ ...editingAgent, name: e.target.value })}
-                  />
-                </div>
-
-                <div className="form-group mb-0">
-                  <label className="form-label">Provider</label>
-                  <select
-                    className="form-input"
-                    style={{ background: "var(--background)" }}
-                    value={editingAgent.provider}
-                    onChange={(e) => {
-                      setEditingAgent({ ...editingAgent, provider: e.target.value });
-                      loadModels(e.target.value);
-                    }}
+      {mounted && createPortal(
+        <AnimatePresence>
+          {editingAgent && (
+            <div className="settings-modal-backdrop" onClick={() => setEditingAgent(null)}>
+              <motion.div
+                initial={{ opacity: 0, x: "100%" }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: "100%" }}
+                transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                className="agent-config-drawer"
+                style={{ maxWidth: "560px" }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Drawer Header */}
+                <div className="flex justify-between items-center pb-6 border-b border-zinc-800/40 flex-shrink-0">
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <Sliders size={16} className="text-accent" />
+                    <span style={{ fontSize: "0.8rem", fontFamily: "var(--font-mono)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--foreground)" }}>
+                      Configure Specialist
+                    </span>
+                  </div>
+                  <button
+                    style={{ background: "none", border: "none", color: "var(--zinc-500)", cursor: "pointer", display: "flex", alignItems: "center" }}
+                    className="hover:text-white transition-colors"
+                    onClick={() => setEditingAgent(null)}
                   >
-                    {PROVIDERS.map((p) => (
-                      <option key={p.id} value={p.id} style={{ background: "var(--background)" }}>
-                        {p.name}
-                      </option>
-                    ))}
-                  </select>
+                    <X size={18} />
+                  </button>
                 </div>
 
-                <div className="form-group mb-0">
-                  <label className="form-label flex justify-between items-center">
-                    <span>Model Name</span>
-                    {loadingModels && <RefreshCw size={12} className="animate-spin text-zinc-500" />}
-                  </label>
-                  
-                  {loadingModels ? (
-                    <div className="shimmer form-input h-10 w-full rounded-lg" style={{ opacity: 0.8 }} />
-                  ) : models.length > 0 ? (
-                    <select
-                      className="form-input"
-                      style={{ background: "var(--background)" }}
-                      value={editingAgent.model}
-                      onChange={(e) => setEditingAgent({ ...editingAgent, model: e.target.value })}
-                    >
-                      {models.map((m) => (
-                        <option key={m} value={m} style={{ background: "var(--background)" }}>
-                          {m}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input
-                      type="text"
-                      className="form-input"
-                      placeholder="e.g. gpt-4o-mini"
-                      value={editingAgent.model}
-                      onChange={(e) => setEditingAgent({ ...editingAgent, model: e.target.value })}
-                    />
-                  )}
+                {/* Scrollable Content (Safe centering via margin auto) */}
+                <div className="flex-1 overflow-y-auto pr-1" style={{ minHeight: 0 }} data-lenis-prevent>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "40px", marginTop: "auto", marginBottom: "auto", paddingTop: "40px", paddingBottom: "40px" }}>
+                    
+                    {/* Row 1: Agent Name */}
+                    <div style={{ display: "flex", gap: "20px", alignItems: "start" }}>
+                      <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem", color: "var(--zinc-500)", fontWeight: 700, paddingTop: "8px" }}>01 /</div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+                        <label style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--zinc-500)", fontWeight: 700 }}>Agent Name</label>
+                        <input
+                          type="text"
+                          className="minimal-input"
+                          value={editingAgent.name}
+                          onChange={(e) => setEditingAgent({ ...editingAgent, name: e.target.value })}
+                          placeholder="e.g. Agent Alpha"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Row 2: Provider */}
+                    <div style={{ display: "flex", gap: "20px", alignItems: "start" }}>
+                      <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem", color: "var(--zinc-500)", fontWeight: 700, paddingTop: "8px" }}>02 /</div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+                        <label style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--zinc-500)", fontWeight: 700 }}>Provider</label>
+                        <select
+                          className="minimal-select"
+                          value={editingAgent.provider}
+                          onChange={(e) => {
+                            setEditingAgent({ ...editingAgent, provider: e.target.value });
+                            loadModels(e.target.value);
+                          }}
+                        >
+                          {PROVIDERS.map((p) => (
+                            <option key={p.id} value={p.id} style={{ background: "var(--background)", color: "var(--foreground)" }}>
+                              {p.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Row 3: Model Name */}
+                    <div style={{ display: "flex", gap: "20px", alignItems: "start" }}>
+                      <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem", color: "var(--zinc-500)", fontWeight: 700, paddingTop: "8px" }}>03 /</div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+                        <label style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--zinc-500)", fontWeight: 700 }} className="flex justify-between items-center">
+                          <span>Model Name</span>
+                          {loadingModels && <RefreshCw size={10} className="animate-spin text-zinc-500" />}
+                        </label>
+                        {loadingModels ? (
+                          <div className="shimmer form-input h-10 w-full rounded-lg" style={{ opacity: 0.8 }} />
+                        ) : models.length > 0 ? (
+                          <select
+                            className="minimal-select"
+                            value={editingAgent.model}
+                            onChange={(e) => setEditingAgent({ ...editingAgent, model: e.target.value })}
+                          >
+                            {models.map((m) => (
+                              <option key={m} value={m} style={{ background: "var(--background)", color: "var(--foreground)" }}>
+                                {m}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input
+                            type="text"
+                            className="minimal-input"
+                            placeholder="e.g. gpt-4o-mini"
+                            value={editingAgent.model}
+                            onChange={(e) => setEditingAgent({ ...editingAgent, model: e.target.value })}
+                          />
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Row 4: System Persona Prompt */}
+                    <div style={{ display: "flex", gap: "20px", alignItems: "start" }}>
+                      <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem", color: "var(--zinc-500)", fontWeight: 700, paddingTop: "8px" }}>04 /</div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+                        <label style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--zinc-500)", fontWeight: 700 }}>System Persona Prompt</label>
+                        <textarea
+                          className="minimal-input font-mono text-xs"
+                          style={{ minHeight: "120px", fontSize: "0.8rem", fontWeight: 400 }}
+                          value={editingAgent.systemPrompt}
+                          onChange={(e) => setEditingAgent({ ...editingAgent, systemPrompt: e.target.value })}
+                          placeholder="Define agent's core guidelines, personality, and formatting requirements..."
+                        />
+                      </div>
+                    </div>
+
+                    {/* Row 5: Creativity Temperature */}
+                    <div style={{ display: "flex", gap: "20px", alignItems: "start" }}>
+                      <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem", color: "var(--zinc-500)", fontWeight: 700, paddingTop: "4px" }}>05 /</div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1 }}>
+                        <div className="flex justify-between items-center">
+                          <label style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--zinc-500)", fontWeight: 700 }}>Creativity Temperature</label>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", fontWeight: 700, color: "var(--accent)" }}>{editingAgent.temperature}</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="0"
+                          max="1"
+                          step="0.05"
+                          value={editingAgent.temperature}
+                          onChange={(e) => setEditingAgent({ ...editingAgent, temperature: parseFloat(e.target.value) })}
+                          style={{
+                            background: "linear-gradient(to right, var(--accent-glow), var(--accent))",
+                            height: "4px",
+                            borderRadius: "2px",
+                            outline: "none"
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                  </div>
                 </div>
 
-                <div className="form-group mb-0">
-                  <label className="form-label">System Persona Prompt</label>
-                  <textarea
-                    className="form-input font-mono text-xs"
-                    style={{ background: "var(--background)" }}
-                    rows={8}
-                    value={editingAgent.systemPrompt}
-                    onChange={(e) => setEditingAgent({ ...editingAgent, systemPrompt: e.target.value })}
-                  />
+                {/* Drawer Actions (Floating towards the bottom, not pinned) */}
+                <div className="agent-config-footer flex-shrink-0">
+                  <button 
+                    className="minimal-submit-btn" 
+                    style={{ flex: 1, padding: "16px 24px", marginTop: 0, borderRadius: "10px", textTransform: "uppercase" }} 
+                    onClick={handleSaveAgent}
+                  >
+                    <span>Save Persona</span>
+                    <Sliders size={16} />
+                  </button>
+                  <button 
+                    className="custom-btn custom-btn-secondary" 
+                    style={{ padding: "16px 24px", borderRadius: "10px", fontFamily: "var(--font-mono)", fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }} 
+                    onClick={() => setEditingAgent(null)}
+                  >
+                    Cancel
+                  </button>
                 </div>
-
-                <div className="form-group mb-0">
-                  <label className="form-label flex justify-between font-mono text-xs text-zinc-500 mb-1">
-                    <span>Creativity Temperature</span>
-                    <span className="text-white font-bold">{editingAgent.temperature}</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.05"
-                    value={editingAgent.temperature}
-                    onChange={(e) => setEditingAgent({ ...editingAgent, temperature: parseFloat(e.target.value) })}
-                    style={{
-                      background: "linear-gradient(to right, #60a5fa, #f59e0b)"
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Drawer Actions */}
-              <div className="px-6 py-4 border-t border-zinc-800/60 flex gap-3" style={{ background: "rgba(0,0,0,0.05)" }}>
-                <button className="custom-btn custom-btn-accent flex-1 py-2.5" onClick={handleSaveAgent}>
-                  Save Changes
-                </button>
-                <button className="custom-btn custom-btn-secondary flex-1 py-2.5" onClick={() => setEditingAgent(null)}>
-                  Cancel
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 }

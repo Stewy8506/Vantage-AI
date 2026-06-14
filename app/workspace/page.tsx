@@ -382,7 +382,7 @@ export default function WorkspacePage() {
           <div className="flex items-center justify-between w-full sidebar-header-container">
             <div className="brand-text">
               <div className="flex items-center gap-2">
-                <Sparkles size={20} className="text-zinc-300 animate-pulse" />
+                <Activity size={20} className="text-zinc-300" />
                 <span className="font-semibold tracking-tight">Virality Mapper</span>
               </div>
             </div>
@@ -465,8 +465,8 @@ export default function WorkspacePage() {
                 {archive.length === 0 ? "No publications saved yet." : "No matching records found."}
               </div>
             ) : (
-              <div className="flex flex-col gap-1.5 overflow-y-auto pr-1 flex-1">
-                {filteredArchive.map((item) => (
+              <div className="flex flex-col overflow-y-auto pr-1 flex-1">
+                {filteredArchive.map((item, idx) => (
                   <div
                     key={item.id}
                     onClick={() => {
@@ -474,21 +474,11 @@ export default function WorkspacePage() {
                       setResult(item.result);
                       setActiveTab("workspace");
                     }}
-                    className="p-2.5 rounded text-left cursor-pointer transition-all hover:bg-zinc-800/20"
-                    style={{
-                      borderLeft: selectedArchiveId === item.id ? "3px solid var(--accent)" : "3px solid transparent",
-                      paddingLeft: "10px",
-                      background: selectedArchiveId === item.id ? "var(--accent-glow)" : "transparent",
-                      fontSize: "0.78rem"
-                    }}
+                    className={`sidebar-archive-item ${selectedArchiveId === item.id ? "active" : ""}`}
                   >
-                    <div className="flex justify-between items-center gap-2">
-                      <span className="font-semibold text-white truncate max-w-[130px]">{item.appName}</span>
-                      <span className="text-[9px] text-zinc-500 font-mono flex-shrink-0">{item.timestamp.split(",")[0]}</span>
-                    </div>
-                    <p className="text-[11px] text-zinc-400 truncate mt-0.5" style={{ margin: 0 }}>
-                      {item.description}
-                    </p>
+                    <span className="archive-item-num">{String(idx + 1).padStart(2, "0")} /</span>
+                    <span className="archive-item-name">{item.appName}</span>
+                    <span className="archive-item-date">{item.timestamp.split(",")[0]}</span>
                   </div>
                 ))}
               </div>
@@ -776,26 +766,38 @@ export default function WorkspacePage() {
                         </div>
 
                         {/* KPI Cards Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                          <div className="kpi-card glass-panel">
-                            <span className="kpi-label">Total Publications</span>
-                            <span className="kpi-value">{totalPubs}</span>
-                            <span className="kpi-meta text-[10px]">Saved in archive</span>
+                        <div className="minimal-kpi-row">
+                          <div className="minimal-kpi-col">
+                            <span className="kpi-index">01 /</span>
+                            <div className="kpi-content">
+                              <span className="kpi-label">Total Publications</span>
+                              <span className="kpi-value">{totalPubs}</span>
+                              <span className="kpi-meta">Saved in archive</span>
+                            </div>
                           </div>
-                          <div className="kpi-card glass-panel">
-                            <span className="kpi-label">Impressions</span>
-                            <span className="kpi-value">{totalImpressions.toLocaleString()}</span>
-                            <span className="kpi-meta text-[10px]">Recorded reach</span>
+                          <div className="minimal-kpi-col">
+                            <span className="kpi-index">02 /</span>
+                            <div className="kpi-content">
+                              <span className="kpi-label">Impressions</span>
+                              <span className="kpi-value">{totalImpressions.toLocaleString()}</span>
+                              <span className="kpi-meta">Recorded reach</span>
+                            </div>
                           </div>
-                          <div className="kpi-card glass-panel">
-                            <span className="kpi-label">Engagement</span>
-                            <span className="kpi-value">{totalEngagement.toLocaleString()}</span>
-                            <span className="kpi-meta text-[10px]">Likes & comments</span>
+                          <div className="minimal-kpi-col">
+                            <span className="kpi-index">03 /</span>
+                            <div className="kpi-content">
+                              <span className="kpi-label">Engagement</span>
+                              <span className="kpi-value">{totalEngagement.toLocaleString()}</span>
+                              <span className="kpi-meta">Likes & comments</span>
+                            </div>
                           </div>
-                          <div className="kpi-card glass-panel">
-                            <span className="kpi-label">Avg Quality Score</span>
-                            <span className="kpi-value">{avgQualityScore}</span>
-                            <span className="kpi-meta text-[10px]">Strategist rating</span>
+                          <div className="minimal-kpi-col">
+                            <span className="kpi-index">04 /</span>
+                            <div className="kpi-content">
+                              <span className="kpi-label">Avg Quality Score</span>
+                              <span className="kpi-value">{avgQualityScore}</span>
+                              <span className="kpi-meta">Strategist rating</span>
+                            </div>
                           </div>
                         </div>
 
@@ -819,8 +821,8 @@ export default function WorkspacePage() {
                                 </button>
                               </div>
                             ) : (
-                              <div className="pub-grid">
-                                {archive.map((item) => {
+                              <div className="minimal-catalog-list">
+                                {archive.map((item, idx) => {
                                   const hasPerformance = !!item.performance;
                                   return (
                                     <div
@@ -830,27 +832,30 @@ export default function WorkspacePage() {
                                         setResult(item.result);
                                         setActiveTab("workspace");
                                       }}
-                                      className="pub-grid-card glass-panel"
+                                      className="minimal-catalog-item"
                                     >
-                                      <div className="pub-card-header">
-                                        <span className="pub-card-title">{item.appName}</span>
-                                        <span className="pub-card-date">{item.timestamp.split(",")[0]}</span>
-                                      </div>
-                                      <p className="pub-card-desc text-zinc-400">
-                                        {item.result?.best?.content || item.description}
-                                      </p>
-                                      <div className="pub-card-footer">
-                                        <span className="custom-badge custom-badge-accent font-mono text-[9px] uppercase">
-                                          {item.result?.best?.style || "Organic"}
-                                        </span>
-                                        {hasPerformance ? (
-                                          <div className="pub-card-metrics">
-                                            <span>👁️ {item.performance!.impressions.toLocaleString()}</span>
-                                            <span>👍 {item.performance!.likes.toLocaleString()}</span>
-                                          </div>
-                                        ) : (
-                                          <span className="pub-card-no-metrics">No recorded stats</span>
-                                        )}
+                                      <div className="row-num">{String(idx + 1).padStart(2, "0")} /</div>
+                                      <div className="catalog-item-main">
+                                        <div className="catalog-item-header">
+                                          <span className="catalog-item-title">{item.appName}</span>
+                                          <span className="catalog-item-date">{item.timestamp.split(",")[0]}</span>
+                                        </div>
+                                        <p className="catalog-item-desc">
+                                          {item.result?.best?.content || item.description}
+                                        </p>
+                                        <div className="catalog-item-footer">
+                                          <span className="catalog-item-tag">
+                                            {item.result?.best?.style || "Organic"}
+                                          </span>
+                                          {hasPerformance ? (
+                                            <div className="catalog-item-metrics">
+                                              <span>👁️ {item.performance!.impressions.toLocaleString()}</span>
+                                              <span>👍 {item.performance!.likes.toLocaleString()}</span>
+                                            </div>
+                                          ) : (
+                                            <span className="text-[10px] text-zinc-500 font-mono">No stats recorded</span>
+                                          )}
+                                        </div>
                                       </div>
                                     </div>
                                   );

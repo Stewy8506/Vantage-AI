@@ -205,42 +205,44 @@ export default function SettingsModal({
           >
             {/* Modal Sidebar Tab List */}
             <div className="settings-modal-sidebar">
-              <div className="flex items-center gap-2 mb-4 px-2">
-                <Sliders size={18} className="text-zinc-400" />
-                <span className="text-sm font-semibold text-white">System Config</span>
+              <div className="flex items-center gap-2 mb-6 px-2 border-b border-zinc-800 pb-3">
+                <Sliders size={15} className="text-zinc-400" />
+                <span className="text-xs font-bold font-mono tracking-wider text-white uppercase">System Config</span>
               </div>
 
-              <button
-                className={`settings-tab-button ${activeTab === "credentials" ? "active" : ""}`}
-                onClick={() => setActiveTab("credentials")}
-              >
-                <Key size={14} />
-                <span>API Credentials</span>
-              </button>
+              <div className="flex flex-col gap-1.5">
+                <button
+                  className={`settings-tab-button ${activeTab === "credentials" ? "active" : ""}`}
+                  onClick={() => setActiveTab("credentials")}
+                >
+                  <span className="archive-item-num">01 /</span>
+                  <span className="archive-item-name font-mono uppercase tracking-wider text-[11px]">API Credentials</span>
+                </button>
 
-              <button
-                className={`settings-tab-button ${activeTab === "linkedin" ? "active" : ""}`}
-                onClick={() => setActiveTab("linkedin")}
-              >
-                <User size={14} />
-                <span>LinkedIn Preview</span>
-              </button>
+                <button
+                  className={`settings-tab-button ${activeTab === "linkedin" ? "active" : ""}`}
+                  onClick={() => setActiveTab("linkedin")}
+                >
+                  <span className="archive-item-num">02 /</span>
+                  <span className="archive-item-name font-mono uppercase tracking-wider text-[11px]">LinkedIn Preview</span>
+                </button>
 
-              <button
-                className={`settings-tab-button ${activeTab === "workspace" ? "active" : ""}`}
-                onClick={() => setActiveTab("workspace")}
-              >
-                <Cpu size={14} />
-                <span>Preferences</span>
-              </button>
+                <button
+                  className={`settings-tab-button ${activeTab === "workspace" ? "active" : ""}`}
+                  onClick={() => setActiveTab("workspace")}
+                >
+                  <span className="archive-item-num">03 /</span>
+                  <span className="archive-item-name font-mono uppercase tracking-wider text-[11px]">Preferences</span>
+                </button>
 
-              <button
-                className={`settings-tab-button ${activeTab === "styling" ? "active" : ""}`}
-                onClick={() => setActiveTab("styling")}
-              >
-                <Palette size={14} />
-                <span>Themes & Styling</span>
-              </button>
+                <button
+                  className={`settings-tab-button ${activeTab === "styling" ? "active" : ""}`}
+                  onClick={() => setActiveTab("styling")}
+                >
+                  <span className="archive-item-num">04 /</span>
+                  <span className="archive-item-name font-mono uppercase tracking-wider text-[11px]">Themes & Styling</span>
+                </button>
+              </div>
 
               {/* Close & Save Actions at the bottom of Modal Sidebar */}
               <div className="mt-auto flex flex-col gap-2 w-full pt-4 border-t border-zinc-800">
@@ -283,150 +285,177 @@ export default function SettingsModal({
                     </p>
                   </div>
 
-                  <div className="flex flex-col gap-4">
-                    <div className="p-4 rounded-xl border border-zinc-800/50 bg-zinc-900/10 flex flex-col gap-3">
-                      <label className="form-label mb-0">Google Gemini API Key</label>
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                          <input
-                            type={showKeys["gemini"] ? "text" : "password"}
-                            name="gemini"
-                            className="form-input pr-10"
-                            placeholder="AIzaSy..."
-                            value={keys.gemini}
-                            onChange={handleKeyChange}
-                          />
-                          <button
-                            type="button"
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white bg-transparent border-0 cursor-pointer flex items-center justify-center"
-                            onClick={() => toggleShowKey("gemini")}
-                          >
-                            {showKeys["gemini"] ? <EyeOff size={14} /> : <Eye size={14} />}
+                  <div className="typographic-form">
+                    <div className="settings-form-row">
+                      <span className="row-num">01 /</span>
+                      <div className="row-content">
+                        <label className="row-label">Google Gemini API Key</label>
+                        <div className="flex gap-4">
+                          <div className="relative flex-1">
+                            <input
+                              type={showKeys["gemini"] ? "text" : "password"}
+                              name="gemini"
+                              className="minimal-input"
+                              placeholder="AIzaSy..."
+                              value={keys.gemini}
+                              onChange={handleKeyChange}
+                              style={{ fontSize: "1.05rem", padding: "6px 0" }}
+                            />
+                            <button
+                              type="button"
+                              className="absolute right-0 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white bg-transparent border-0 cursor-pointer flex items-center justify-center"
+                              onClick={() => toggleShowKey("gemini")}
+                            >
+                              {showKeys["gemini"] ? <EyeOff size={14} /> : <Eye size={14} />}
+                            </button>
+                          </div>
+                          <button className="custom-btn custom-btn-secondary h-9 px-4 flex-shrink-0" onClick={() => testConnection("gemini")}>
+                            Test
                           </button>
                         </div>
-                        <button className="custom-btn custom-btn-secondary h-10 px-4 flex-shrink-0" onClick={() => testConnection("gemini")}>
-                          Test
-                        </button>
+                        {renderTestStatus("gemini")}
                       </div>
-                      {renderTestStatus("gemini")}
                     </div>
 
-                    <div className="p-4 rounded-xl border border-zinc-800/50 bg-zinc-900/10 flex flex-col gap-3">
-                      <label className="form-label mb-0">OpenAI API Key</label>
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                          <input
-                            type={showKeys["openai"] ? "text" : "password"}
-                            name="openai"
-                            className="form-input pr-10"
-                            placeholder="sk-proj-..."
-                            value={keys.openai}
-                            onChange={handleKeyChange}
-                          />
-                          <button
-                            type="button"
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white bg-transparent border-0 cursor-pointer flex items-center justify-center"
-                            onClick={() => toggleShowKey("openai")}
-                          >
-                            {showKeys["openai"] ? <EyeOff size={14} /> : <Eye size={14} />}
+                    <div className="settings-form-row">
+                      <span className="row-num">02 /</span>
+                      <div className="row-content">
+                        <label className="row-label">OpenAI API Key</label>
+                        <div className="flex gap-4">
+                          <div className="relative flex-1">
+                            <input
+                              type={showKeys["openai"] ? "text" : "password"}
+                              name="openai"
+                              className="minimal-input"
+                              placeholder="sk-proj-..."
+                              value={keys.openai}
+                              onChange={handleKeyChange}
+                              style={{ fontSize: "1.05rem", padding: "6px 0" }}
+                            />
+                            <button
+                              type="button"
+                              className="absolute right-0 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white bg-transparent border-0 cursor-pointer flex items-center justify-center"
+                              onClick={() => toggleShowKey("openai")}
+                            >
+                              {showKeys["openai"] ? <EyeOff size={14} /> : <Eye size={14} />}
+                            </button>
+                          </div>
+                          <button className="custom-btn custom-btn-secondary h-9 px-4 flex-shrink-0" onClick={() => testConnection("openai")}>
+                            Test
                           </button>
                         </div>
-                        <button className="custom-btn custom-btn-secondary h-10 px-4 flex-shrink-0" onClick={() => testConnection("openai")}>
-                          Test
-                        </button>
+                        {renderTestStatus("openai")}
                       </div>
-                      {renderTestStatus("openai")}
                     </div>
 
-                    <div className="p-4 rounded-xl border border-zinc-800/50 bg-zinc-900/10 flex flex-col gap-3">
-                      <label className="form-label mb-0">Anthropic API Key</label>
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                          <input
-                            type={showKeys["anthropic"] ? "text" : "password"}
-                            name="anthropic"
-                            className="form-input pr-10"
-                            placeholder="sk-ant-..."
-                            value={keys.anthropic}
-                            onChange={handleKeyChange}
-                          />
-                          <button
-                            type="button"
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white bg-transparent border-0 cursor-pointer flex items-center justify-center"
-                            onClick={() => toggleShowKey("anthropic")}
-                          >
-                            {showKeys["anthropic"] ? <EyeOff size={14} /> : <Eye size={14} />}
+                    <div className="settings-form-row">
+                      <span className="row-num">03 /</span>
+                      <div className="row-content">
+                        <label className="row-label">Anthropic API Key</label>
+                        <div className="flex gap-4">
+                          <div className="relative flex-1">
+                            <input
+                              type={showKeys["anthropic"] ? "text" : "password"}
+                              name="anthropic"
+                              className="minimal-input"
+                              placeholder="sk-ant-..."
+                              value={keys.anthropic}
+                              onChange={handleKeyChange}
+                              style={{ fontSize: "1.05rem", padding: "6px 0" }}
+                            />
+                            <button
+                              type="button"
+                              className="absolute right-0 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white bg-transparent border-0 cursor-pointer flex items-center justify-center"
+                              onClick={() => toggleShowKey("anthropic")}
+                            >
+                              {showKeys["anthropic"] ? <EyeOff size={14} /> : <Eye size={14} />}
+                            </button>
+                          </div>
+                          <button className="custom-btn custom-btn-secondary h-9 px-4 flex-shrink-0" onClick={() => testConnection("anthropic")}>
+                            Test
                           </button>
                         </div>
-                        <button className="custom-btn custom-btn-secondary h-10 px-4 flex-shrink-0" onClick={() => testConnection("anthropic")}>
-                          Test
-                        </button>
+                        {renderTestStatus("anthropic")}
                       </div>
-                      {renderTestStatus("anthropic")}
                     </div>
 
-                    <div className="p-4 rounded-xl border border-zinc-800/50 bg-zinc-900/10 flex flex-col gap-3">
-                      <label className="form-label mb-0">OpenRouter API Key</label>
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                          <input
-                            type={showKeys["openrouter"] ? "text" : "password"}
-                            name="openrouter"
-                            className="form-input pr-10"
-                            placeholder="sk-or-v1-..."
-                            value={keys.openrouter}
-                            onChange={handleKeyChange}
-                          />
-                          <button
-                            type="button"
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white bg-transparent border-0 cursor-pointer flex items-center justify-center"
-                            onClick={() => toggleShowKey("openrouter")}
-                          >
-                            {showKeys["openrouter"] ? <EyeOff size={14} /> : <Eye size={14} />}
+                    <div className="settings-form-row">
+                      <span className="row-num">04 /</span>
+                      <div className="row-content">
+                        <label className="row-label">OpenRouter API Key</label>
+                        <div className="flex gap-4">
+                          <div className="relative flex-1">
+                            <input
+                              type={showKeys["openrouter"] ? "text" : "password"}
+                              name="openrouter"
+                              className="minimal-input"
+                              placeholder="sk-or-v1-..."
+                              value={keys.openrouter}
+                              onChange={handleKeyChange}
+                              style={{ fontSize: "1.05rem", padding: "6px 0" }}
+                            />
+                            <button
+                              type="button"
+                              className="absolute right-0 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white bg-transparent border-0 cursor-pointer flex items-center justify-center"
+                              onClick={() => toggleShowKey("openrouter")}
+                            >
+                              {showKeys["openrouter"] ? <EyeOff size={14} /> : <Eye size={14} />}
+                            </button>
+                          </div>
+                          <button className="custom-btn custom-btn-secondary h-9 px-4 flex-shrink-0" onClick={() => testConnection("openrouter")}>
+                            Test
                           </button>
                         </div>
-                        <button className="custom-btn custom-btn-secondary h-10 px-4 flex-shrink-0" onClick={() => testConnection("openrouter")}>
-                          Test
-                        </button>
+                        {renderTestStatus("openrouter")}
                       </div>
-                      {renderTestStatus("openrouter")}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 rounded-xl border border-zinc-800/50 bg-zinc-900/10 flex flex-col gap-2">
-                        <label className="form-label">Ollama Host</label>
+                    <div className="settings-form-row">
+                      <span className="row-num">05 /</span>
+                      <div className="row-content">
+                        <label className="row-label">Ollama Host</label>
                         <input
                           type="text"
                           name="ollamaUrl"
-                          className="form-input"
+                          className="minimal-input"
                           placeholder="http://localhost:11434"
                           value={keys.ollamaUrl}
                           onChange={handleKeyChange}
-                        />
-                      </div>
-                      <div className="p-4 rounded-xl border border-zinc-800/50 bg-zinc-900/10 flex flex-col gap-2">
-                        <label className="form-label">LM Studio Host</label>
-                        <input
-                          type="text"
-                          name="lmStudioUrl"
-                          className="form-input"
-                          placeholder="http://localhost:1234"
-                          value={keys.lmStudioUrl}
-                          onChange={handleKeyChange}
+                          style={{ fontSize: "1.05rem", padding: "6px 0" }}
                         />
                       </div>
                     </div>
 
-                    <div className="p-4 rounded-xl border border-zinc-800/50 bg-zinc-900/10 flex flex-col gap-2">
-                      <label className="form-label">SerpApi Key (LinkedIn ground-truth search)</label>
-                      <input
-                        type="password"
-                        name="serpapi"
-                        className="form-input"
-                        placeholder="Enter SerpApi key..."
-                        value={keys.serpapi || ""}
-                        onChange={handleKeyChange}
-                      />
+                    <div className="settings-form-row">
+                      <span className="row-num">06 /</span>
+                      <div className="row-content">
+                        <label className="row-label">LM Studio Host</label>
+                        <input
+                          type="text"
+                          name="lmStudioUrl"
+                          className="minimal-input"
+                          placeholder="http://localhost:1234"
+                          value={keys.lmStudioUrl}
+                          onChange={handleKeyChange}
+                          style={{ fontSize: "1.05rem", padding: "6px 0" }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="settings-form-row">
+                      <span className="row-num">07 /</span>
+                      <div className="row-content">
+                        <label className="row-label">SerpApi Key (LinkedIn ground-truth search)</label>
+                        <input
+                          type="password"
+                          name="serpapi"
+                          className="minimal-input"
+                          placeholder="Enter SerpApi key..."
+                          value={keys.serpapi || ""}
+                          onChange={handleKeyChange}
+                          style={{ fontSize: "1.05rem", padding: "6px 0" }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -442,50 +471,68 @@ export default function SettingsModal({
                     </p>
                   </div>
 
-                  <div className="flex flex-col gap-4">
-                    <div className="form-group">
-                      <label className="form-label">Profile Name</label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        placeholder="e.g. Jane Doe"
-                        value={prefs.linkedinName}
-                        onChange={(e) => handlePrefChange("linkedinName", e.target.value)}
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Professional Headline / Subtitle</label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        placeholder="e.g. CEO @ TechSaaS | Ex-Google | Ghostwriter"
-                        value={prefs.linkedinHeadline}
-                        onChange={(e) => handlePrefChange("linkedinHeadline", e.target.value)}
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Avatar Character / Emoji</label>
-                      <input
-                        type="text"
-                        maxLength={2}
-                        className="form-input w-24 text-center text-lg font-bold"
-                        placeholder="💡"
-                        value={prefs.linkedinAvatar}
-                        onChange={(e) => handlePrefChange("linkedinAvatar", e.target.value)}
-                      />
-                      <span className="text-[10px] text-zinc-500">Enter a single emoji or double character initials (e.g. JD).</span>
-                    </div>
-
-                    {/* Visual Mock Example Card */}
-                    <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/30 flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-lg font-bold text-zinc-400">
-                        {prefs.linkedinAvatar || "💡"}
+                  <div className="typographic-form">
+                    <div className="settings-form-row">
+                      <span className="row-num">01 /</span>
+                      <div className="row-content">
+                        <label className="row-label">Profile Name</label>
+                        <input
+                          type="text"
+                          className="minimal-input"
+                          placeholder="e.g. Jane Doe"
+                          value={prefs.linkedinName}
+                          onChange={(e) => handlePrefChange("linkedinName", e.target.value)}
+                          style={{ fontSize: "1.05rem", padding: "6px 0" }}
+                        />
                       </div>
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-white">{prefs.linkedinName || "AI Copywriter Agent"}</span>
-                        <span className="text-[10px] text-zinc-400 truncate max-w-sm">{prefs.linkedinHeadline || "Creative writer"}</span>
+                    </div>
+
+                    <div className="settings-form-row">
+                      <span className="row-num">02 /</span>
+                      <div className="row-content">
+                        <label className="row-label">Professional Headline / Subtitle</label>
+                        <input
+                          type="text"
+                          className="minimal-input"
+                          placeholder="e.g. CEO @ TechSaaS | Ex-Google | Ghostwriter"
+                          value={prefs.linkedinHeadline}
+                          onChange={(e) => handlePrefChange("linkedinHeadline", e.target.value)}
+                          style={{ fontSize: "1.05rem", padding: "6px 0" }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="settings-form-row">
+                      <span className="row-num">03 /</span>
+                      <div className="row-content">
+                        <label className="row-label">Avatar Character / Emoji</label>
+                        <input
+                          type="text"
+                          maxLength={2}
+                          className="minimal-input w-24 text-center font-bold"
+                          placeholder="💡"
+                          value={prefs.linkedinAvatar}
+                          onChange={(e) => handlePrefChange("linkedinAvatar", e.target.value)}
+                          style={{ fontSize: "1.05rem", padding: "6px 0" }}
+                        />
+                        <span className="text-[10px] text-zinc-500 font-mono">Enter a single emoji or double character initials (e.g. JD).</span>
+                      </div>
+                    </div>
+
+                    {/* Visual Mock Example Card (Clean inline typography, no rounded border bg) */}
+                    <div className="settings-form-row">
+                      <span className="row-num">04 /</span>
+                      <div className="row-content">
+                        <label className="row-label">Identity Preview</label>
+                        <div className="flex items-center gap-4 py-2">
+                          <div className="w-9 h-9 flex items-center justify-center border border-zinc-800 text-lg font-bold text-zinc-400">
+                            {prefs.linkedinAvatar || "💡"}
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-xs font-bold text-white">{prefs.linkedinName || "AI Copywriter Agent"}</span>
+                            <span className="text-[10px] text-zinc-400 truncate max-w-sm">{prefs.linkedinHeadline || "Creative writer"}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -502,103 +549,123 @@ export default function SettingsModal({
                     </p>
                   </div>
 
-                  <div className="flex flex-col gap-5">
+                  <div className="typographic-form">
                     {/* Layout Density */}
-                    <div className="form-group">
-                      <label className="form-label">Layout Density</label>
-                      <div className="grid grid-cols-3 gap-3">
-                        {[
-                          { id: "compact", name: "Compact", desc: "Dense text & spacing" },
-                          { id: "cozy", name: "Cozy", desc: "Standard standard padding" },
-                          { id: "spacious", name: "Spacious", desc: "Open margins & spacing" },
-                        ].map((d) => (
-                          <button
-                            key={d.id}
-                            type="button"
-                            onClick={() => handlePrefChange("layoutDensity", d.id)}
-                            className={`p-3 rounded-xl border text-left cursor-pointer transition-all ${prefs.layoutDensity === d.id ? "bg-zinc-800/40 border-zinc-500" : "bg-transparent border-zinc-800 hover:border-zinc-700"
+                    <div className="settings-form-row">
+                      <span className="row-num">01 /</span>
+                      <div className="row-content">
+                        <label className="row-label">Layout Density</label>
+                        <div className="grid grid-cols-3 gap-4 mt-2">
+                          {[
+                            { id: "compact", name: "Compact", desc: "Dense layout" },
+                            { id: "cozy", name: "Cozy", desc: "Standard standard" },
+                            { id: "spacious", name: "Spacious", desc: "Open margins" },
+                          ].map((d) => (
+                            <button
+                              key={d.id}
+                              type="button"
+                              onClick={() => handlePrefChange("layoutDensity", d.id)}
+                              className={`p-3 border text-left cursor-pointer transition-all ${
+                                prefs.layoutDensity === d.id ? "bg-zinc-800/20 border-zinc-500" : "bg-transparent border-zinc-800 hover:border-zinc-700"
                               }`}
-                          >
-                            <span className="text-xs font-semibold text-white block">{d.name}</span>
-                            <span className="text-[10px] text-zinc-500 leading-tight mt-1 block">{d.desc}</span>
-                          </button>
-                        ))}
+                              style={{ borderRadius: 0 }}
+                            >
+                              <span className="text-xs font-semibold text-white block">{d.name}</span>
+                              <span className="text-[9px] text-zinc-500 leading-tight mt-1 block font-mono">{d.desc}</span>
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
 
                     {/* Sidebar Position */}
-                    <div className="form-group">
-                      <label className="form-label">Sidebar Alignment</label>
-                      <div className="flex gap-4">
-                        <label className="flex items-center gap-2 text-xs font-medium text-zinc-300 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="sidebarPosition"
-                            checked={prefs.sidebarPosition === "left"}
-                            onChange={() => handlePrefChange("sidebarPosition", "left")}
-                            className="accent-zinc-400"
-                          />
-                          <span>Left Docked (Default)</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-xs font-medium text-zinc-300 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="sidebarPosition"
-                            checked={prefs.sidebarPosition === "right"}
-                            onChange={() => handlePrefChange("sidebarPosition", "right")}
-                            className="accent-zinc-400"
-                          />
-                          <span>Right Docked</span>
-                        </label>
+                    <div className="settings-form-row">
+                      <span className="row-num">02 /</span>
+                      <div className="row-content">
+                        <label className="row-label">Sidebar Alignment</label>
+                        <div className="flex gap-6 py-2">
+                          <label className="flex items-center gap-2 text-xs font-medium text-zinc-300 cursor-pointer font-mono">
+                            <input
+                              type="radio"
+                              name="sidebarPosition"
+                              checked={prefs.sidebarPosition === "left"}
+                              onChange={() => handlePrefChange("sidebarPosition", "left")}
+                              className="accent-zinc-400"
+                            />
+                            <span>Left Docked</span>
+                          </label>
+                          <label className="flex items-center gap-2 text-xs font-medium text-zinc-300 cursor-pointer font-mono">
+                            <input
+                              type="radio"
+                              name="sidebarPosition"
+                              checked={prefs.sidebarPosition === "right"}
+                              onChange={() => handlePrefChange("sidebarPosition", "right")}
+                              className="accent-zinc-400"
+                            />
+                            <span>Right Docked</span>
+                          </label>
+                        </div>
                       </div>
                     </div>
 
                     {/* Slider for UI Font Scale */}
-                    <div className="form-group">
-                      <label className="form-label flex justify-between">
-                        <span>Font Size Scaling</span>
-                        <span className="text-xs text-white font-semibold font-mono">{prefs.fontSize}px</span>
-                      </label>
-                      <input
-                        type="range"
-                        min="12"
-                        max="18"
-                        step="1"
-                        value={prefs.fontSize}
-                        onChange={(e) => handlePrefChange("fontSize", parseInt(e.target.value))}
-                      />
+                    <div className="settings-form-row">
+                      <span className="row-num">03 /</span>
+                      <div className="row-content">
+                        <label className="row-label flex justify-between">
+                          <span>Font Size Scaling</span>
+                          <span className="text-xs text-white font-semibold font-mono">{prefs.fontSize}px</span>
+                        </label>
+                        <input
+                          type="range"
+                          min="12"
+                          max="18"
+                          step="1"
+                          value={prefs.fontSize}
+                          onChange={(e) => handlePrefChange("fontSize", parseInt(e.target.value))}
+                          className="w-full mt-2"
+                        />
+                      </div>
                     </div>
 
                     {/* Toggles */}
-                    <div className="flex flex-col gap-4 pt-2.5 border-t border-zinc-800/60">
-                      <div className="flex items-center justify-between">
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-xs font-semibold text-white">Self-Improving RAG Database</span>
-                          <span className="text-[10px] text-zinc-500">Inject high-engagement local historic posts as training context for the debate.</span>
+                    <div className="settings-form-row">
+                      <span className="row-num">04 /</span>
+                      <div className="row-content">
+                        <div className="flex items-center justify-between py-2">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-xs font-semibold text-white">Self-Improving RAG Database</span>
+                            <span className="text-[10px] text-zinc-500 font-mono">Inject historic posts as context.</span>
+                          </div>
+                          <label className="switch">
+                            <input
+                              type="checkbox"
+                              checked={prefs.enableRAG}
+                              onChange={(e) => handlePrefChange("enableRAG", e.target.checked)}
+                            />
+                            <span className="slider"></span>
+                          </label>
                         </div>
-                        <label className="switch">
-                          <input
-                            type="checkbox"
-                            checked={prefs.enableRAG}
-                            onChange={(e) => handlePrefChange("enableRAG", e.target.checked)}
-                          />
-                          <span className="slider"></span>
-                        </label>
                       </div>
+                    </div>
 
-                      <div className="flex items-center justify-between">
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-xs font-semibold text-white">Auto-copy Post to Clipboard</span>
-                          <span className="text-[10px] text-zinc-500">Automatically copy the synthesized debate post to your clipboard on completion.</span>
+                    <div className="settings-form-row">
+                      <span className="row-num">05 /</span>
+                      <div className="row-content">
+                        <div className="flex items-center justify-between py-2">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-xs font-semibold text-white">Auto-copy Post to Clipboard</span>
+                            <span className="text-[10px] text-zinc-500 font-mono">Copy synthesized post to clipboard.</span>
+                          </div>
+                          <label className="switch">
+                            <input
+                              type="checkbox"
+                              checked={prefs.autoCopyToClipboard}
+                              onChange={(e) => handlePrefChange("autoCopyToClipboard", e.target.checked)}
+                            />
+                            <span className="slider"></span>
+                          </label>
                         </div>
-                        <label className="switch">
-                          <input
-                            type="checkbox"
-                            checked={prefs.autoCopyToClipboard}
-                            onChange={(e) => handlePrefChange("autoCopyToClipboard", e.target.checked)}
-                          />
-                          <span className="slider"></span>
-                        </label>
                       </div>
                     </div>
                   </div>
@@ -615,72 +682,82 @@ export default function SettingsModal({
                     </p>
                   </div>
 
-                  <div className="flex flex-col gap-5">
+                  <div className="typographic-form">
                     {/* Theme Presets */}
-                    <div className="flex flex-col gap-2">
-                      <label className="form-label">Theme Preset Swatches</label>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        {[
-                          { id: "obsidian", name: "Obsidian Black", bg: "#09090b", panel: "#111113", accent: "#f4f4f5" },
-                          { id: "nordic", name: "Nordic Slate", bg: "#0b0f19", panel: "#131c2e", accent: "#38bdf8" },
-                          { id: "oled", name: "OLED Pitch", bg: "#000000", panel: "#090909", accent: "#ffffff" },
-                          { id: "alabaster", name: "Alabaster Stone", bg: "#fbfbfa", panel: "#ffffff", accent: "#1c1917" },
-                          { id: "emerald", name: "Emerald Mint", bg: "#022c22", panel: "#033f30", accent: "#34d399" },
-                        ].map((t) => {
-                          const isActive = theme === t.id;
-                          return (
-                            <button
-                              key={t.id}
-                              type="button"
-                              onClick={() => handleSelectTheme(t.id)}
-                              className={`p-3 rounded-xl border text-left cursor-pointer transition-all flex flex-col justify-between ${isActive ? "border-zinc-300 bg-zinc-800/20" : "border-zinc-800 hover:border-zinc-700 bg-zinc-950/20"
+                    <div className="settings-form-row">
+                      <span className="row-num">01 /</span>
+                      <div className="row-content">
+                        <label className="row-label">Theme Preset Swatches</label>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-2">
+                          {[
+                            { id: "obsidian", name: "Obsidian Black", bg: "#09090b", panel: "#111113", accent: "#f4f4f5" },
+                            { id: "nordic", name: "Nordic Slate", bg: "#0b0f19", panel: "#131c2e", accent: "#38bdf8" },
+                            { id: "oled", name: "OLED Pitch", bg: "#000000", panel: "#090909", accent: "#ffffff" },
+                            { id: "alabaster", name: "Alabaster Stone", bg: "#fbfbfa", panel: "#ffffff", accent: "#1c1917" },
+                            { id: "emerald", name: "Emerald Mint", bg: "#022c22", panel: "#033f30", accent: "#34d399" },
+                          ].map((t) => {
+                            const isActive = theme === t.id;
+                            return (
+                              <button
+                                key={t.id}
+                                type="button"
+                                onClick={() => handleSelectTheme(t.id)}
+                                className={`p-3 border text-left cursor-pointer transition-all flex flex-col justify-between ${
+                                  isActive ? "border-zinc-300 bg-zinc-800/20" : "border-zinc-800 hover:border-zinc-700 bg-zinc-950/20"
                                 }`}
-                              style={{ minHeight: "80px" }}
-                            >
-                              <div className="flex items-center justify-between w-full mb-1">
-                                <span className="text-[12px] font-semibold text-white">{t.name}</span>
-                                {isActive && <CheckCircle2 size={13} className="text-zinc-300" />}
-                              </div>
-                              <div className="flex gap-1.5 mt-2">
-                                <span className="w-4 h-4 rounded-full border border-zinc-800/40 block" style={{ backgroundColor: t.bg }} title="Background" />
-                                <span className="w-4 h-4 rounded-full border border-zinc-800/40 block" style={{ backgroundColor: t.panel }} title="Panel" />
-                                <span className="w-4 h-4 rounded-full border border-zinc-800/40 block" style={{ backgroundColor: t.accent }} title="Accent" />
-                              </div>
-                            </button>
-                          );
-                        })}
+                                style={{ minHeight: "80px", borderRadius: 0 }}
+                              >
+                                <div className="flex items-center justify-between w-full mb-1">
+                                  <span className="text-[11px] font-semibold text-white">{t.name}</span>
+                                  {isActive && <CheckCircle2 size={12} className="text-zinc-300" />}
+                                </div>
+                                <div className="flex gap-1.5 mt-2">
+                                  <span className="w-3.5 h-3.5 rounded-full border border-zinc-800/40 block" style={{ backgroundColor: t.bg }} title="Background" />
+                                  <span className="w-3.5 h-3.5 rounded-full border border-zinc-800/40 block" style={{ backgroundColor: t.panel }} title="Panel" />
+                                  <span className="w-3.5 h-3.5 rounded-full border border-zinc-800/40 block" style={{ backgroundColor: t.accent }} title="Accent" />
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
 
                     {/* Typography picker */}
-                    <div className="form-group">
-                      <label className="form-label">Typography Family</label>
-                      <select
-                        value={font}
-                        onChange={(e) => handleSelectFont(e.target.value)}
-                        className="form-input cursor-pointer"
-                        style={{ background: "var(--background)", color: "var(--foreground)" }}
-                      >
-                        <option value="geist">Geist (Minimal Sans-Serif)</option>
-                        <option value="outfit">Outfit (Geometric Modern)</option>
-                        <option value="jakarta">Plus Jakarta Sans (Elegant Accent)</option>
-                        <option value="inter">Inter (Classic Balanced)</option>
-                      </select>
+                    <div className="settings-form-row">
+                      <span className="row-num">02 /</span>
+                      <div className="row-content">
+                        <label className="row-label">Typography Family</label>
+                        <select
+                          value={font}
+                          onChange={(e) => handleSelectFont(e.target.value)}
+                          className="minimal-select"
+                          style={{ background: "var(--background)", color: "var(--foreground)", fontSize: "1.05rem", padding: "6px 0" }}
+                        >
+                          <option value="geist">Geist (Minimal Sans-Serif)</option>
+                          <option value="outfit">Outfit (Geometric Modern)</option>
+                          <option value="jakarta">Plus Jakarta Sans (Elegant Accent)</option>
+                          <option value="inter">Inter (Classic Balanced)</option>
+                        </select>
+                      </div>
                     </div>
 
                     {/* Advanced CSS Override */}
-                    <div className="form-group">
-                      <label className="form-label flex items-center gap-1.5">
-                        <Code size={13} />
-                        <span>Advanced Custom CSS Overrides</span>
-                      </label>
-                      <textarea
-                        value={cssOverride}
-                        onChange={handleCssChange}
-                        className="form-input font-mono text-xs"
-                        placeholder="/* Inject style rules here, e.g. */&#10;.sidebar { border-right-color: var(--accent); }"
-                        style={{ minHeight: "100px", lineHeight: "1.4" }}
-                      />
+                    <div className="settings-form-row">
+                      <span className="row-num">03 /</span>
+                      <div className="row-content">
+                        <label className="row-label flex items-center gap-1.5">
+                          <Code size={13} />
+                          <span>Advanced Custom CSS Overrides</span>
+                        </label>
+                        <textarea
+                          value={cssOverride}
+                          onChange={handleCssChange}
+                          className="minimal-input font-mono text-xs"
+                          placeholder="/* Inject style rules here, e.g. */&#10;.sidebar { border-right-color: var(--accent); }"
+                          style={{ minHeight: "100px", lineHeight: "1.4", fontSize: "0.85rem" }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

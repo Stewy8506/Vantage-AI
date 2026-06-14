@@ -61,36 +61,17 @@ interface UserPreferences {
   enableRAG: boolean;
 }
 
-// Reusable Circular Progress Ring Indicator
-function CircularProgress({ score, size = 42 }: { score: number; size?: number }) {
-  const radius = (size - 6) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const strokeDashoffset = circumference - (score / 100) * circumference;
+// Reusable Typographic Progress Bar Indicator
+function ScoreProgressBar({ label, score }: { label: string; score: number }) {
   return (
-    <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
-      <svg className="transform -rotate-90" width={size} height={size}>
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="var(--border-muted)"
-          strokeWidth="3"
-          fill="transparent"
-        />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="var(--accent)"
-          strokeWidth="3"
-          fill="transparent"
-          strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
-          strokeLinecap="round"
-          style={{ transition: "stroke-dashoffset 0.35s" }}
-        />
-      </svg>
-      <span className="absolute text-[10px] font-mono font-bold text-zinc-300">{score}</span>
+    <div className="minimal-score-bar-group">
+      <div className="score-bar-label">
+        <span>{label}</span>
+        <span>{score}/100</span>
+      </div>
+      <div className="score-bar-track">
+        <div className="score-bar-fill" style={{ width: `${score}%` }} />
+      </div>
     </div>
   );
 }
@@ -328,19 +309,10 @@ export default function ResultsDisplay({
               </p>
               
               {result.best.scores && (
-                <div className="flex flex-wrap gap-6 mt-3 pt-3 border-t border-zinc-800">
-                  <div className="flex items-center gap-3">
-                    <CircularProgress score={result.best.scores.hookStrength} size={36} />
-                    <span className="text-[10px] font-mono font-semibold text-zinc-500 uppercase">Hook Strength</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CircularProgress score={result.best.scores.readability} size={36} />
-                    <span className="text-[10px] font-mono font-semibold text-zinc-500 uppercase">Readability</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CircularProgress score={result.best.scores.credibility} size={36} />
-                    <span className="text-[10px] font-mono font-semibold text-zinc-500 uppercase">Credibility</span>
-                  </div>
+                <div className="flex flex-col gap-4 mt-3 pt-3 border-t border-zinc-800">
+                  <ScoreProgressBar label="Hook Strength" score={result.best.scores.hookStrength} />
+                  <ScoreProgressBar label="Readability" score={result.best.scores.readability} />
+                  <ScoreProgressBar label="Credibility" score={result.best.scores.credibility} />
                 </div>
               )}
             </div>
@@ -350,62 +322,37 @@ export default function ResultsDisplay({
 
       {/* AI Persona A/B Focus Group Simulator */}
       {result.best.personas && result.best.personas.length > 0 && (
-        <div className="glass-panel p-6 flex flex-col gap-6">
+        <div className="flex flex-col gap-6" style={{ marginTop: "24px" }}>
           <div className="flex items-center gap-2 mb-2" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "14px" }}>
             <Cpu size={18} className="text-zinc-400" />
             <h3 style={{ fontSize: "1.05rem", fontWeight: 600 }} className="text-white">AI Target Audience Focus Group (A/B Test Simulation)</h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {result.best.personas.map((persona, idx: number) => {
+          <div className="focus-group-list">
+            {result.best.personas.map((persona, idx) => {
               const avgScore = Math.round((persona.scrollStopping + persona.engagement + persona.virality) / 3);
               return (
-                <div key={idx} className="glass-panel p-5 flex flex-col gap-3 hover:border-zinc-700 transition-colors" style={{ background: "var(--background)" }}>
-                  <div className="flex items-center gap-3 justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 text-lg" style={{ background: "var(--panel-bg)", borderColor: "var(--border-muted)" }}>
-                        {persona.avatar || "👤"}
+                <div key={idx} className="focus-group-row">
+                  <div className="row-num">{String(idx + 1).padStart(2, "0")} /</div>
+                  <div className="focus-group-main">
+                    <div className="focus-group-header">
+                      <div className="persona-info-group">
+                        <div className="persona-avatar">
+                          {persona.avatar || "👤"}
+                        </div>
+                        <span className="persona-name">{persona.name}</span>
                       </div>
-                      <div className="flex flex-col">
-                        <span style={{ fontSize: "0.85rem", fontWeight: 600 }} className="text-white">{persona.name}</span>
-                        <span style={{ fontSize: "0.7rem", color: "var(--zinc-500)" }}>Focus Persona</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-mono text-xs" style={{ background: "var(--panel-bg)", border: "1px solid var(--border-muted)" }}>
-                      <span className="text-zinc-500">SCORE:</span>
-                      <span style={{ color: avgScore >= 70 ? "var(--foreground)" : "var(--zinc-500)", fontWeight: 600 }}>
-                        {avgScore}/100
-                      </span>
-                    </div>
-                  </div>
-
-                  <p className="italic" style={{ fontSize: "0.8rem", color: "var(--zinc-400)", lineHeight: 1.45, margin: 0 }}>
-                    &ldquo;{persona.feedback}&rdquo;
-                  </p>
-
-                  <div className="flex flex-col gap-2.5 mt-2 pt-2.5 border-t" style={{ borderColor: "var(--border-muted)" }}>
-                    <div className="flex items-center justify-between text-[10px] font-mono">
-                      <span className="text-zinc-500">Scroll Stopping:</span>
-                      <span className="text-zinc-300">{persona.scrollStopping}%</span>
-                    </div>
-                    <div style={{ height: "4px", width: "100%", background: "var(--border-muted)", borderRadius: "2px", overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${persona.scrollStopping}%`, background: "var(--accent)", borderRadius: "2px" }} />
+                      <span className="persona-overall-score">OVERALL SCORE: {avgScore}/100</span>
                     </div>
 
-                    <div className="flex items-center justify-between text-[10px] font-mono">
-                      <span className="text-zinc-500">Likelihood to Comment:</span>
-                      <span className="text-zinc-300">{persona.engagement}%</span>
-                    </div>
-                    <div style={{ height: "4px", width: "100%", background: "var(--border-muted)", borderRadius: "2px", overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${persona.engagement}%`, background: "var(--accent)", opacity: 0.7, borderRadius: "2px" }} />
-                    </div>
+                    <p className="persona-feedback">
+                      &ldquo;{persona.feedback}&rdquo;
+                    </p>
 
-                    <div className="flex items-center justify-between text-[10px] font-mono">
-                      <span className="text-zinc-500">Virality (Share Rate):</span>
-                      <span className="text-zinc-300">{persona.virality}%</span>
-                    </div>
-                    <div style={{ height: "4px", width: "100%", background: "var(--border-muted)", borderRadius: "2px", overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${persona.virality}%`, background: "var(--accent)", opacity: 0.4, borderRadius: "2px" }} />
+                    <div className="persona-metric-bars">
+                      <ScoreProgressBar label="Scroll Stopping" score={persona.scrollStopping} />
+                      <ScoreProgressBar label="Likelihood to Comment" score={persona.engagement} />
+                      <ScoreProgressBar label="Virality (Share Rate)" score={persona.virality} />
                     </div>
                   </div>
                 </div>
@@ -425,72 +372,35 @@ export default function ResultsDisplay({
         <div style={{ flex: 1, height: "1px", background: "var(--border-muted)" }}></div>
       </div>
 
-      {/* Sub-tab Navigation (Pill Segmented Control Switcher) */}
-      <div className="flex justify-center mb-8">
-        <div className="flex bg-zinc-900/60 p-1 rounded-full border border-zinc-800/40 relative z-10">
-          <button
-            onClick={() => setArenaTab("drafts")}
-            className={`px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 flex items-center gap-2 relative ${
-              arenaTab === "drafts" ? "text-background" : "text-zinc-400 hover:text-zinc-200"
-            }`}
-          >
-            <span className="relative z-10">Phase 1: Initial Drafts</span>
-            <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold relative z-10 ${
-              arenaTab === "drafts" ? "bg-background text-foreground" : "bg-zinc-800 text-zinc-400"
-            }`}>
-              {result.initialDrafts.length}
-            </span>
-            {arenaTab === "drafts" && (
-              <motion.div
-                layoutId="activeArenaTab"
-                className="absolute inset-0 rounded-full bg-accent z-0"
-                transition={{ type: "spring", stiffness: 380, damping: 30 }}
-              />
-            )}
-          </button>
+      {/* Sub-tab Navigation (Typographic Menu list) */}
+      <div className="minimal-tabs-header">
+        <button
+          onClick={() => setArenaTab("drafts")}
+          className={`minimal-tab ${arenaTab === "drafts" ? "active" : ""}`}
+        >
+          <span>01 / INITIAL DRAFTS</span>
+          <span className="tab-badge">({result.initialDrafts.length})</span>
+        </button>
 
-          <button
-            onClick={() => setArenaTab("critiques")}
-            className={`px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 flex items-center gap-2 relative ${
-              arenaTab === "critiques" ? "text-background" : "text-zinc-400 hover:text-zinc-200"
-            }`}
-          >
-            <span className="relative z-10">Phase 2: Critiques</span>
-            <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold relative z-10 ${
-              arenaTab === "critiques" ? "bg-background text-foreground" : "bg-zinc-800 text-zinc-400"
-            }`}>
-              {result.critiques.length}
-            </span>
-            {arenaTab === "critiques" && (
-              <motion.div
-                layoutId="activeArenaTab"
-                className="absolute inset-0 rounded-full bg-accent z-0"
-                transition={{ type: "spring", stiffness: 380, damping: 30 }}
-              />
-            )}
-          </button>
+        <span className="tab-divider">/</span>
 
-          <button
-            onClick={() => setArenaTab("refinements")}
-            className={`px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 flex items-center gap-2 relative ${
-              arenaTab === "refinements" ? "text-background" : "text-zinc-400 hover:text-zinc-200"
-            }`}
-          >
-            <span className="relative z-10">Phase 3: Refined Drafts</span>
-            <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold relative z-10 ${
-              arenaTab === "refinements" ? "bg-background text-foreground" : "bg-zinc-800 text-zinc-400"
-            }`}>
-              {result.refinedDrafts.length}
-            </span>
-            {arenaTab === "refinements" && (
-              <motion.div
-                layoutId="activeArenaTab"
-                className="absolute inset-0 rounded-full bg-accent z-0"
-                transition={{ type: "spring", stiffness: 380, damping: 30 }}
-              />
-            )}
-          </button>
-        </div>
+        <button
+          onClick={() => setArenaTab("critiques")}
+          className={`minimal-tab ${arenaTab === "critiques" ? "active" : ""}`}
+        >
+          <span>02 / CRITIQUES</span>
+          <span className="tab-badge">({result.critiques.length})</span>
+        </button>
+
+        <span className="tab-divider">/</span>
+
+        <button
+          onClick={() => setArenaTab("refinements")}
+          className={`minimal-tab ${arenaTab === "refinements" ? "active" : ""}`}
+        >
+          <span>03 / REFINED DRAFTS</span>
+          <span className="tab-badge">({result.refinedDrafts.length})</span>
+        </button>
       </div>
 
       {/* Tab Panels */}
