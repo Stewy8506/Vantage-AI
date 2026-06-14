@@ -46,16 +46,13 @@ interface GenerationResult {
 
 export default function PostGeneratorForm({
   agents,
-  judgeConfig,
   apiKeys,
   onGenerate,
-  onToggleAgent,
 }: {
   agents: Agent[];
-  judgeConfig: JudgeConfig;
   apiKeys: ApiKeys;
-  onGenerate: (data: GenerationResult) => void;
-  onToggleAgent: (id: string) => void;
+  onGenerate: (data: any) => void;
+  onToggleAgent?: (id: string) => void;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -70,17 +67,17 @@ export default function PostGeneratorForm({
   const [loadingStep, setLoadingStep] = useState(0);
   const [flowSteps, setFlowSteps] = useState<string[]>([]);
 
-  const activeAgents = agents.filter((a) => a.enabled);
-
   useEffect(() => {
     if (loading) {
-      // Build dynamic steps based on enabled agents
       const steps = [
-        "Connecting to api endpoints & loading agents...",
-        "Scoping trending LinkedIn formatting indexes...",
-        ...activeAgents.map((a) => `[${a.name}] is drafting post (${a.provider}/${a.model})...`),
-        `[Judge consensus] weighing drafts with ${judgeConfig.provider}/${judgeConfig.model}...`,
-        "Settle on absolute best post outcome & finalizing formats.",
+        "Analyzing real-time LinkedIn trends related to this topic...",
+        "[Phase 1] Agents Alpha, Beta, & Gamma drafting initial posts...",
+        "[Phase 2] Debate Arena: bidirectional peer review critique round...",
+        "  - Alpha & Beta critiquing hooks and metrics...",
+        "  - Beta & Gamma critiquing lists and storytelling flow...",
+        "  - Alpha & Gamma critiquing branding and typography layout...",
+        "[Phase 3] Refinement: Agents rewriting posts based on critiques...",
+        "[Phase 4] Settle Consensus: Synthesizing the absolute best LinkedIn post.",
       ];
       setFlowSteps(steps);
 
@@ -96,7 +93,7 @@ export default function PostGeneratorForm({
       setLoadingStep(0);
       setFlowSteps([]);
     }
-  }, [loading, agents, judgeConfig]);
+  }, [loading]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -107,8 +104,8 @@ export default function PostGeneratorForm({
     setLoading(true);
     setError("");
 
-    if (activeAgents.length < 2) {
-      setError("Please enable at least 2 agents in the Agent Playground to run consensus.");
+    if (agents.length < 3) {
+      setError("This debate flow requires exactly 3 configured agents in your playground.");
       setLoading(false);
       return;
     }
@@ -121,7 +118,6 @@ export default function PostGeneratorForm({
           ...formData,
           apiKeys,
           agents,
-          judgeConfig,
         }),
       });
 
@@ -221,7 +217,7 @@ export default function PostGeneratorForm({
             )}
 
             <button type="submit" className="custom-btn custom-btn-accent w-full" style={{ marginTop: "12px" }}>
-              <Sparkles size={16} /> Run Multi-Agent Consensus
+              <Sparkles size={16} /> Run 3-Agent Debate Arena
             </button>
           </form>
         )}
@@ -236,7 +232,7 @@ export default function PostGeneratorForm({
               </div>
               <h3 style={{ fontSize: "1.25rem", fontWeight: 800 }}>Deliberating Consensus...</h3>
               <p style={{ fontSize: "0.85rem", color: "var(--zinc-400)" }}>
-                Evaluating angles across multiple AI sources to build the optimal outcome.
+                Evaluating and critiquing angles across multiple AI sources to build the optimal outcome.
               </p>
             </div>
 
@@ -263,28 +259,25 @@ export default function PostGeneratorForm({
           <div className="glass-panel p-6 flex flex-col gap-4 anim-fade-up">
             <div className="flex items-center gap-2 mb-2" style={{ borderBottom: "1px solid var(--zinc-800)", paddingBottom: "12px" }}>
               <Cpu style={{ color: "var(--accent)" }} size={16} />
-              <h2 style={{ fontSize: "1.05rem", fontWeight: 700 }}>Active Agents Dashboard</h2>
+              <h2 style={{ fontSize: "1.05rem", fontWeight: 700 }}>Debate Panel Status</h2>
             </div>
             
             <p style={{ fontSize: "0.85rem", color: "var(--zinc-400)", marginBottom: "8px" }}>
-              The context will be sent to the following active agents. Toggle them to test different consensus combinations.
+              All 3 specialist copywriter agents participate in the debate, arguing and critiquing each other to reach consensus.
             </p>
 
             <div className="flex flex-col border border-zinc-800 rounded-lg divide-y divide-zinc-800 bg-[#0a0a0a]">
               {agents.map((agent) => (
-                <div key={agent.id} className="flex items-center justify-between p-4 transition-all duration-150" style={{ opacity: agent.enabled ? 1 : 0.65 }}>
+                <div key={agent.id} className="flex items-center justify-between p-4">
                   <div className="flex flex-col gap-1">
-                    <span style={{ fontSize: "0.85rem", fontWeight: 600, color: agent.enabled ? "white" : "var(--zinc-400)" }}>
+                    <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "white" }}>
                       {agent.name}
                     </span>
                     <span style={{ fontSize: "0.7rem", color: "var(--zinc-500)", fontFamily: "var(--font-mono)" }}>
                       {agent.provider.toUpperCase()} • {agent.model}
                     </span>
                   </div>
-                  <label className="switch">
-                    <input type="checkbox" checked={agent.enabled} onChange={() => onToggleAgent(agent.id)} />
-                    <span className="slider"></span>
-                  </label>
+                  <span className="custom-badge custom-badge-accent" style={{ fontSize: "0.65rem", padding: "3px 6px" }}>ACTIVE WRITER</span>
                 </div>
               ))}
             </div>
