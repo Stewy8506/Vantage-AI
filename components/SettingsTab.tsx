@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Key, Globe, ShieldCheck, CheckCircle2, XCircle, Loader2, Info } from "lucide-react";
+import { Key, Globe, ShieldCheck, CheckCircle2, XCircle, Loader2, Info, Eye, EyeOff, Save } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ApiKeys {
   gemini: string;
@@ -24,6 +25,8 @@ export default function SettingsTab({
   const [keys, setKeys] = useState<ApiKeys>(apiKeys);
   const [testingProvider, setTestingProvider] = useState<string | null>(null);
   const [testResult, setTestResult] = useState<{ [key: string]: { success: boolean; msg: string } }>({});
+  const [showKeys, setShowKeys] = useState<{ [key: string]: boolean }>({});
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
     setKeys(apiKeys);
@@ -31,9 +34,17 @@ export default function SettingsTab({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const updated = { ...keys, [name]: value };
-    setKeys(updated);
-    onSave(updated);
+    setKeys(prev => ({ ...prev, [name]: value }));
+  };
+
+  const toggleShowKey = (field: string) => {
+    setShowKeys(prev => ({ ...prev, [field]: !prev[field] }));
+  };
+
+  const handleSave = () => {
+    onSave(keys);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 3000);
   };
 
   const testConnection = async (provider: string) => {
@@ -87,27 +98,39 @@ export default function SettingsTab({
     const result = testResult[provider];
     if (testingProvider === provider) {
       return (
-        <span className="flex items-center gap-1.5 text-xs text-rose-400 mt-2 font-medium">
+        <motion.span
+          initial={{ opacity: 0, y: 3 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-1.5 text-xs text-rose-400 mt-2 font-medium"
+        >
           <Loader2 className="animate-spin" size={12} /> Testing Connection...
-        </span>
+        </motion.span>
       );
     }
     if (!result) return null;
     return result.success ? (
-      <span className="flex items-center gap-1.5 text-xs text-emerald-400 mt-2 font-medium">
+      <motion.span
+        initial={{ opacity: 0, y: 3 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center gap-1.5 text-xs text-emerald-400 mt-2 font-medium"
+      >
         <CheckCircle2 size={12} /> {result.msg}
-      </span>
+      </motion.span>
     ) : (
-      <span className="flex items-center gap-1.5 text-xs text-red-400 mt-2 font-medium">
+      <motion.span
+        initial={{ opacity: 0, y: 3 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center gap-1.5 text-xs text-red-400 mt-2 font-medium"
+      >
         <XCircle size={12} /> {result.msg}
-      </span>
+      </motion.span>
     );
   };
 
   return (
-    <div className="anim-fade-up flex flex-col gap-6 max-w-4xl mx-auto" style={{ paddingBottom: "40px" }}>
+    <div className="anim-fade-up flex flex-col gap-6 max-w-4xl mx-auto" style={{ paddingBottom: "60px" }}>
       <div className="flex flex-col gap-2">
-        <h2 style={{ fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.02em" }}>Credentials Manager</h2>
+        <h2 style={{ fontSize: "1.45rem", fontWeight: 600, letterSpacing: "-0.02em" }} className="text-white">Credentials Manager</h2>
         <p style={{ fontSize: "0.85rem", color: "var(--zinc-400)" }}>
           Store your API keys and endpoints securely. All credentials remain inside your browser and are never saved on a backend.
         </p>
@@ -116,23 +139,33 @@ export default function SettingsTab({
       <div className="grid-2">
         {/* Cloud Providers Card */}
         <div className="glass-panel p-6 flex flex-col gap-4">
-          <div className="flex items-center gap-2 mb-2" style={{ borderBottom: "1px solid var(--zinc-800)", paddingBottom: "10px" }}>
-            <Globe size={18} style={{ color: "var(--accent)" }} />
-            <h3 style={{ fontSize: "1.05rem", fontWeight: 700 }}>Cloud LLM Providers</h3>
+          <div className="flex items-center gap-2 mb-2" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "14px" }}>
+            <Globe size={18} className="text-rose-500" />
+            <h3 style={{ fontSize: "1.05rem", fontWeight: 600 }} className="text-white">Cloud LLM Providers</h3>
           </div>
 
           <div className="form-group">
             <label className="form-label">Google Gemini API Key</label>
-            <div className="flex gap-2">
-              <input
-                type="password"
-                name="gemini"
-                className="form-input"
-                placeholder="AIzaSy..."
-                value={keys.gemini}
-                onChange={handleChange}
-              />
-              <button className="custom-btn custom-btn-secondary" onClick={() => testConnection("gemini")}>
+            <div className="flex gap-2 w-full">
+              <div className="relative flex-1">
+                <input
+                  type={showKeys["gemini"] ? "text" : "password"}
+                  name="gemini"
+                  autoComplete="new-password"
+                  className="form-input pr-10"
+                  placeholder="AIzaSy..."
+                  value={keys.gemini}
+                  onChange={handleChange}
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors bg-transparent border-0 cursor-pointer flex items-center justify-center"
+                  onClick={() => toggleShowKey("gemini")}
+                >
+                  {showKeys["gemini"] ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              <button className="custom-btn custom-btn-secondary flex-shrink-0" style={{ width: "80px" }} onClick={() => testConnection("gemini")}>
                 Test
               </button>
             </div>
@@ -141,16 +174,26 @@ export default function SettingsTab({
 
           <div className="form-group">
             <label className="form-label">OpenAI API Key</label>
-            <div className="flex gap-2">
-              <input
-                type="password"
-                name="openai"
-                className="form-input"
-                placeholder="sk-proj-..."
-                value={keys.openai}
-                onChange={handleChange}
-              />
-              <button className="custom-btn custom-btn-secondary" onClick={() => testConnection("openai")}>
+            <div className="flex gap-2 w-full">
+              <div className="relative flex-1">
+                <input
+                  type={showKeys["openai"] ? "text" : "password"}
+                  name="openai"
+                  autoComplete="new-password"
+                  className="form-input pr-10"
+                  placeholder="sk-proj-..."
+                  value={keys.openai}
+                  onChange={handleChange}
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors bg-transparent border-0 cursor-pointer flex items-center justify-center"
+                  onClick={() => toggleShowKey("openai")}
+                >
+                  {showKeys["openai"] ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              <button className="custom-btn custom-btn-secondary flex-shrink-0" style={{ width: "80px" }} onClick={() => testConnection("openai")}>
                 Test
               </button>
             </div>
@@ -159,16 +202,26 @@ export default function SettingsTab({
 
           <div className="form-group">
             <label className="form-label">Anthropic API Key</label>
-            <div className="flex gap-2">
-              <input
-                type="password"
-                name="anthropic"
-                className="form-input"
-                placeholder="sk-ant-..."
-                value={keys.anthropic}
-                onChange={handleChange}
-              />
-              <button className="custom-btn custom-btn-secondary" onClick={() => testConnection("anthropic")}>
+            <div className="flex gap-2 w-full">
+              <div className="relative flex-1">
+                <input
+                  type={showKeys["anthropic"] ? "text" : "password"}
+                  name="anthropic"
+                  autoComplete="new-password"
+                  className="form-input pr-10"
+                  placeholder="sk-ant-..."
+                  value={keys.anthropic}
+                  onChange={handleChange}
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors bg-transparent border-0 cursor-pointer flex items-center justify-center"
+                  onClick={() => toggleShowKey("anthropic")}
+                >
+                  {showKeys["anthropic"] ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              <button className="custom-btn custom-btn-secondary flex-shrink-0" style={{ width: "80px" }} onClick={() => testConnection("anthropic")}>
                 Test
               </button>
             </div>
@@ -178,23 +231,33 @@ export default function SettingsTab({
 
         {/* Local & Router Providers Card */}
         <div className="glass-panel p-6 flex flex-col gap-4">
-          <div className="flex items-center gap-2 mb-2" style={{ borderBottom: "1px solid var(--zinc-800)", paddingBottom: "10px" }}>
-            <Key size={18} style={{ color: "var(--accent)" }} />
-            <h3 style={{ fontSize: "1.05rem", fontWeight: 700 }}>Local & Router Connections</h3>
+          <div className="flex items-center gap-2 mb-2" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "14px" }}>
+            <Key size={18} className="text-rose-500" />
+            <h3 style={{ fontSize: "1.05rem", fontWeight: 600 }} className="text-white">Local & Router Connections</h3>
           </div>
 
           <div className="form-group">
-            <label className="form-label">OpenRouter API Key (Groq, DeepSeek, etc.)</label>
-            <div className="flex gap-2">
-              <input
-                type="password"
-                name="openrouter"
-                className="form-input"
-                placeholder="sk-or-v1-..."
-                value={keys.openrouter}
-                onChange={handleChange}
-              />
-              <button className="custom-btn custom-btn-secondary" onClick={() => testConnection("openrouter")}>
+            <label className="form-label">OpenRouter API Key</label>
+            <div className="flex gap-2 w-full">
+              <div className="relative flex-1">
+                <input
+                  type={showKeys["openrouter"] ? "text" : "password"}
+                  name="openrouter"
+                  autoComplete="new-password"
+                  className="form-input pr-10"
+                  placeholder="sk-or-v1-..."
+                  value={keys.openrouter}
+                  onChange={handleChange}
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors bg-transparent border-0 cursor-pointer flex items-center justify-center"
+                  onClick={() => toggleShowKey("openrouter")}
+                >
+                  {showKeys["openrouter"] ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              <button className="custom-btn custom-btn-secondary flex-shrink-0" style={{ width: "80px" }} onClick={() => testConnection("openrouter")}>
                 Test
               </button>
             </div>
@@ -212,7 +275,7 @@ export default function SettingsTab({
                 value={keys.ollamaUrl}
                 onChange={handleChange}
               />
-              <button className="custom-btn custom-btn-secondary" onClick={() => testConnection("ollama")}>
+              <button className="custom-btn custom-btn-secondary flex-shrink-0" style={{ width: "80px" }} onClick={() => testConnection("ollama")}>
                 Test
               </button>
             </div>
@@ -230,7 +293,7 @@ export default function SettingsTab({
                 value={keys.lmStudioUrl}
                 onChange={handleChange}
               />
-              <button className="custom-btn custom-btn-secondary" onClick={() => testConnection("lmstudio")}>
+              <button className="custom-btn custom-btn-secondary flex-shrink-0" style={{ width: "80px" }} onClick={() => testConnection("lmstudio")}>
                 Test
               </button>
             </div>
@@ -241,9 +304,9 @@ export default function SettingsTab({
 
       {/* Custom OpenAI Endpoint Panel */}
       <div className="glass-panel p-6 flex flex-col gap-4">
-        <div className="flex items-center gap-2 mb-2" style={{ borderBottom: "1px solid var(--zinc-800)", paddingBottom: "10px" }}>
-          <ShieldCheck size={18} style={{ color: "var(--accent)" }} />
-          <h3 style={{ fontSize: "1.05rem", fontWeight: 700 }}>Custom OpenAI-Compatible Endpoint</h3>
+        <div className="flex items-center gap-2 mb-2" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "14px" }}>
+          <ShieldCheck size={18} className="text-rose-500" />
+          <h3 style={{ fontSize: "1.05rem", fontWeight: 600 }} className="text-white">Custom OpenAI-Compatible Endpoint</h3>
         </div>
 
         <div className="grid-2" style={{ gap: "20px" }}>
@@ -261,16 +324,26 @@ export default function SettingsTab({
 
           <div className="form-group">
             <label className="form-label">API Key</label>
-            <div className="flex gap-2">
-              <input
-                type="password"
-                name="customApiKey"
-                className="form-input"
-                placeholder="Bearer Token..."
-                value={keys.customApiKey}
-                onChange={handleChange}
-              />
-              <button className="custom-btn custom-btn-secondary" onClick={() => testConnection("custom")}>
+            <div className="flex gap-2 w-full">
+              <div className="relative flex-1">
+                <input
+                  type={showKeys["custom"] ? "text" : "password"}
+                  name="customApiKey"
+                  autoComplete="new-password"
+                  className="form-input pr-10"
+                  placeholder="Bearer Token..."
+                  value={keys.customApiKey}
+                  onChange={handleChange}
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors bg-transparent border-0 cursor-pointer flex items-center justify-center"
+                  onClick={() => toggleShowKey("custom")}
+                >
+                  {showKeys["custom"] ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              <button className="custom-btn custom-btn-secondary flex-shrink-0" style={{ width: "80px" }} onClick={() => testConnection("custom")}>
                 Test
               </button>
             </div>
@@ -279,11 +352,36 @@ export default function SettingsTab({
         </div>
       </div>
 
-      <div className="glass-panel p-4 flex items-start gap-3" style={{ background: "rgba(244, 63, 94, 0.03)", borderColor: "rgba(244, 63, 94, 0.1)" }}>
-        <Info size={16} style={{ color: "var(--accent)", marginTop: "2px" }} />
-        <p style={{ fontSize: "0.8rem", color: "var(--zinc-400)", lineHeight: 1.4 }}>
-          <strong>Ollama & LM Studio Tip</strong>: Ensure you run the application in your local environment. If they are hosted on a different device or container, configure the dynamic host IP instead of localhost (e.g. <code>http://192.168.1.150:11434</code>).
-        </p>
+      {/* Info Tip & Save Button Panel */}
+      <div className="flex flex-col gap-4">
+        <div className="glass-panel p-4 flex items-start gap-3" style={{ background: "rgba(255, 46, 85, 0.02)", borderColor: "rgba(255, 46, 85, 0.1)" }}>
+          <Info size={16} className="text-rose-400" style={{ marginTop: "2px", flexShrink: 0 }} />
+          <p style={{ fontSize: "0.8rem", color: "var(--zinc-400)", lineHeight: 1.45 }}>
+            <strong>Ollama & LM Studio Tip</strong>: Ensure you run the application in your local environment. If they are hosted on a different device or container, configure the dynamic host IP instead of localhost (e.g. <code>http://192.168.1.150:11434</code>).
+          </p>
+        </div>
+
+        <div className="flex items-center gap-4 justify-end">
+          <AnimatePresence>
+            {saveSuccess && (
+              <motion.span
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                className="text-emerald-400 text-sm font-semibold flex items-center gap-1.5"
+              >
+                <CheckCircle2 size={16} /> Credentials saved successfully!
+              </motion.span>
+            )}
+          </AnimatePresence>
+          <button
+            onClick={handleSave}
+            className="custom-btn custom-btn-accent flex items-center gap-2"
+            style={{ width: "220px", height: "46px" }}
+          >
+            <Save size={16} /> Save Credentials
+          </button>
+        </div>
       </div>
     </div>
   );

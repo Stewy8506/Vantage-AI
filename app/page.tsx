@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Sparkles, Cpu, Key, Sliders, Globe, Activity, Archive } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import PostGeneratorForm from "@/components/PostGeneratorForm";
 import ResultsDisplay from "@/components/ResultsDisplay";
 import AgentPlayground from "@/components/AgentPlayground";
@@ -201,7 +202,7 @@ export default function Home() {
 
   if (!loaded) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-[#050508]">
+      <div className="flex h-screen w-screen items-center justify-center bg-[#030305]">
         <Activity className="animate-spin text-rose-500" size={32} />
       </div>
     );
@@ -213,59 +214,61 @@ export default function Home() {
     <div className="dashboard-layout">
       {/* 3-Panel: Panel 1 - Sidebar Navigation */}
       <aside className="sidebar">
-        <div className="brand-text">
-          <Sparkles size={16} style={{ color: "white" }} />
-          <span>
-            Virality <span className="serif-italic" style={{ color: "white" }}>Mapper</span>
-          </span>
+        <div className="flex flex-col gap-8">
+          <div className="brand-text">
+            <Sparkles size={20} className="text-rose-500 animate-pulse" />
+            <span>
+              Virality <span className="serif-italic font-normal">Mapper</span>
+            </span>
+          </div>
+
+          <nav>
+            <div
+              className={`nav-item ${activeTab === "workspace" ? "active" : ""}`}
+              onClick={() => setActiveTab("workspace")}
+            >
+              <Sparkles size={16} />
+              <span>Workspace</span>
+            </div>
+            <div
+              className={`nav-item ${activeTab === "archive" ? "active" : ""}`}
+              onClick={() => setActiveTab("archive")}
+            >
+              <Archive size={16} />
+              <span>Post Archive</span>
+            </div>
+            <div
+              className={`nav-item ${activeTab === "agents" ? "active" : ""}`}
+              onClick={() => setActiveTab("agents")}
+            >
+              <Sliders size={16} />
+              <span>Agent Playground</span>
+            </div>
+            <div
+              className={`nav-item ${activeTab === "settings" ? "active" : ""}`}
+              onClick={() => setActiveTab("settings")}
+            >
+              <Key size={16} />
+              <span>Settings</span>
+            </div>
+          </nav>
         </div>
 
-        <nav style={{ flex: 1, marginTop: "24px" }}>
-          <div
-            className={`nav-item ${activeTab === "workspace" ? "active" : ""}`}
-            onClick={() => setActiveTab("workspace")}
-          >
-            <Sparkles size={14} />
-            <span>Workspace</span>
-          </div>
-          <div
-            className={`nav-item ${activeTab === "archive" ? "active" : ""}`}
-            onClick={() => setActiveTab("archive")}
-          >
-            <Archive size={14} />
-            <span>Post Archive</span>
-          </div>
-          <div
-            className={`nav-item ${activeTab === "agents" ? "active" : ""}`}
-            onClick={() => setActiveTab("agents")}
-          >
-            <Sliders size={14} />
-            <span>Agent Playground</span>
-          </div>
-          <div
-            className={`nav-item ${activeTab === "settings" ? "active" : ""}`}
-            onClick={() => setActiveTab("settings")}
-          >
-            <Key size={14} />
-            <span>Settings</span>
-          </div>
-        </nav>
-
         {/* Sidebar Info/Stats Widget */}
-        <div className="p-4 border border-zinc-800 rounded-lg flex flex-col gap-2">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-400">
-            <Activity size={11} />
+        <div className="p-4 border border-zinc-800 rounded-lg flex flex-col gap-3 background-zinc-900/40 backdrop-blur-md">
+          <div className="flex items-center gap-2 text-xs font-semibold text-zinc-400">
+            <Activity size={12} className="text-rose-500" />
             <span>Active Status</span>
           </div>
-          <div className="flex justify-between text-xs text-zinc-500">
+          <div className="flex justify-between text-xs text-zinc-400">
             <span>Enabled Agents:</span>
-            <span style={{ color: activeAgentsCount >= 2 ? "white" : "var(--zinc-500)", fontWeight: 600 }}>
+            <span style={{ color: activeAgentsCount >= 2 ? "#ff2e55" : "#71717a", fontWeight: 700 }}>
               {activeAgentsCount} / 3
             </span>
           </div>
-          <div className="flex justify-between text-xs text-zinc-500">
+          <div className="flex justify-between text-xs text-zinc-400">
             <span>Debate Mode:</span>
-            <span style={{ color: "white", fontWeight: 600 }}>
+            <span className="text-white font-bold">
               Bidirectional
             </span>
           </div>
@@ -274,138 +277,172 @@ export default function Home() {
 
       {/* 3-Panel: Panel 2 - Content Dashboard */}
       <main className="main-content">
-        <header style={{ borderBottom: "1px solid var(--panel-border)", padding: "16px 32px", background: "rgba(5, 5, 8, 0.8)", position: "sticky", top: 0, zIndex: 10 }}>
+        <header style={{ borderBottom: "1px solid var(--border-muted)", padding: "20px 36px", background: "rgba(3, 3, 5, 0.75)", backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 30 }}>
           <div className="flex items-center justify-between max-w-6xl mx-auto">
-            <h1 style={{ fontSize: "1.25rem", fontWeight: 800 }}>
+            <h1 style={{ fontSize: "1.35rem", fontWeight: 800 }} className="tracking-tight text-white font-heading">
               {activeTab === "workspace" && "Writing Console"}
               {activeTab === "archive" && "Archived Publications"}
               {activeTab === "agents" && "Agent Customizer"}
               {activeTab === "settings" && "Credentials Manager"}
             </h1>
-            <div className="status-bar" style={{ margin: 0, padding: "4px 10px" }}>
+            <div className="status-bar">
               <span className="status-dot"></span>
               <span>Debate Engine V3</span>
             </div>
           </div>
         </header>
 
-        <div className="container" style={{ padding: "32px 32px 48px", overflowY: "auto" }}>
-          {/* Workspace Tab */}
-          <div style={{ display: activeTab === "workspace" ? "flex" : "none", flexDirection: "column", gap: "24px" }} className="w-full">
-            <PostGeneratorForm
-              agents={agents}
-              apiKeys={apiKeys}
-              onGenerate={handleGenerateComplete}
-              onStartGenerate={() => setResult(null)}
-              onToggleAgent={handleToggleAgent}
-            />
-            {result && <ResultsDisplay result={result} />}
-          </div>
-
-          {/* Agent Customizer Tab */}
-          <div style={{ display: activeTab === "agents" ? "block" : "none" }} className="w-full">
-            <AgentPlayground
-              agents={agents}
-              apiKeys={apiKeys}
-              onUpdateAgents={updateAgents}
-              onResetAgents={() => {
-                updateAgents(DEFAULT_AGENTS);
-              }}
-            />
-          </div>
-
-          {/* Credentials Manager Tab */}
-          <div style={{ display: activeTab === "settings" ? "block" : "none" }} className="w-full">
-            <SettingsTab
-              apiKeys={apiKeys}
-              onSave={updateApiKeys}
-            />
-          </div>
-
-          {/* Post Archive tab */}
-          <div style={{ display: activeTab === "archive" ? "block" : "none" }} className="anim-fade-up w-full">
-            {archive.length === 0 ? (
-              <div className="glass-panel p-12 text-center flex flex-col items-center justify-center gap-4" style={{ minHeight: "400px" }}>
-                <Archive size={48} className="text-zinc-600 animate-pulse" />
-                <h3 style={{ fontSize: "1.1rem", fontWeight: 700, margin: 0 }}>No archived publications</h3>
-                <p style={{ fontSize: "0.85rem", color: "var(--zinc-500)", maxWidth: "320px", margin: 0 }}>
-                  Start running 3-agent debates in the Workspace. Completed posts are automatically saved here!
-                </p>
-              </div>
-            ) : (
-              <div className="grid" style={{ gridTemplateColumns: "320px 1fr", gap: "24px", alignItems: "start" }}>
-                {/* Left pane: Archive List */}
-                <div className="flex flex-col gap-3 max-h-[750px] overflow-y-auto pr-2" style={{ borderRight: "1px solid var(--zinc-900)" }}>
-                  {archive.map((item) => (
-                    <div
-                      key={item.id}
-                      className="glass-panel p-4 flex flex-col gap-2 cursor-pointer transition-all"
-                      style={{
-                        borderColor: selectedArchiveId === item.id ? "var(--accent)" : "var(--zinc-800)",
-                        background: selectedArchiveId === item.id ? "rgba(244, 63, 94, 0.03)" : "rgba(10,10,12,0.3)"
-                      }}
-                      onClick={() => setSelectedArchiveId(item.id)}
-                    >
-                      <div className="flex justify-between items-start gap-2">
-                        <h4 style={{ fontSize: "0.85rem", fontWeight: 700, margin: 0 }} className="line-clamp-1">
-                          {item.appName}
-                        </h4>
-                        <span className="custom-badge custom-badge-accent" style={{ fontSize: "0.6rem", padding: "2px 5px", flexShrink: 0 }}>
-                          Score: {item.result?.best?.score || 95}
-                        </span>
-                      </div>
-                      <p style={{ fontSize: "0.75rem", color: "var(--zinc-500)", margin: 0 }} className="line-clamp-2">
-                        {item.description}
-                      </p>
-                      <div className="flex justify-between items-center mt-2" style={{ borderTop: "1px solid var(--zinc-900)", paddingTop: "8px", fontSize: "0.65rem", color: "var(--zinc-600)", fontFamily: "var(--font-mono)" }}>
-                        <span>{item.timestamp}</span>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteArchive(item.id);
-                          }}
-                          style={{ background: "none", border: "none", color: "var(--accent)", cursor: "pointer", fontSize: "0.65rem", fontFamily: "var(--font-mono)" }}
-                          className="hover:underline"
-                        >
-                          DELETE
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                {/* Right pane: Archive Details */}
-                <div className="flex flex-col gap-6">
-                  {archive.find(item => item.id === selectedArchiveId) ? (
-                    (() => {
-                      const selectedItem = archive.find(item => item.id === selectedArchiveId);
-                      return (
-                        <>
-                          <div className="glass-panel p-4 flex flex-col gap-3" style={{ background: "rgba(10,10,12,0.2)" }}>
-                            <div className="flex items-center gap-2" style={{ borderBottom: "1px solid var(--zinc-900)", paddingBottom: "8px" }}>
-                              <Sparkles size={13} className="text-zinc-500" />
-                              <span style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--zinc-400)" }}>Original Prompt Context</span>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4 text-xs">
-                              <div><strong className="text-zinc-500">AppName:</strong> <span className="text-zinc-300">{selectedItem.appName}</span></div>
-                              <div><strong className="text-zinc-500">Tone:</strong> <span className="text-zinc-300">{selectedItem.tone || "General"}</span></div>
-                              <div style={{ gridColumn: "span 2" }}><strong className="text-zinc-500">Description:</strong> <span className="text-zinc-400 line-clamp-3">{selectedItem.description}</span></div>
-                              <div style={{ gridColumn: "span 2" }}><strong className="text-zinc-500">Target Audience:</strong> <span className="text-zinc-300">{selectedItem.targetAudience || "General Professionals"}</span></div>
-                            </div>
-                          </div>
-                          <ResultsDisplay result={selectedItem.result} />
-                        </>
-                      );
-                    })()
-                  ) : (
-                    <div className="glass-panel p-8 text-center text-zinc-500 text-xs">
-                      Select an archived post from the list to view details
-                    </div>
-                  )}
-                </div>
-              </div>
+        <div className="container">
+          <AnimatePresence mode="wait">
+            {activeTab === "workspace" && (
+              <motion.div
+                key="workspace"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="w-full flex flex-col gap-6"
+              >
+                <PostGeneratorForm
+                  agents={agents}
+                  apiKeys={apiKeys}
+                  onGenerate={handleGenerateComplete}
+                  onStartGenerate={() => setResult(null)}
+                  onToggleAgent={handleToggleAgent}
+                />
+                {result && <ResultsDisplay result={result} />}
+              </motion.div>
             )}
-          </div>
+
+            {activeTab === "agents" && (
+              <motion.div
+                key="agents"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="w-full"
+              >
+                <AgentPlayground
+                  agents={agents}
+                  apiKeys={apiKeys}
+                  onUpdateAgents={updateAgents}
+                  onResetAgents={() => {
+                    updateAgents(DEFAULT_AGENTS);
+                  }}
+                />
+              </motion.div>
+            )}
+
+            {activeTab === "settings" && (
+              <motion.div
+                key="settings"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="w-full"
+              >
+                <SettingsTab
+                  apiKeys={apiKeys}
+                  onSave={updateApiKeys}
+                />
+              </motion.div>
+            )}
+
+            {activeTab === "archive" && (
+              <motion.div
+                key="archive"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="w-full"
+              >
+                {archive.length === 0 ? (
+                  <div className="glass-panel p-12 text-center flex flex-col items-center justify-center gap-4" style={{ minHeight: "400px" }}>
+                    <Archive size={48} className="text-zinc-600 animate-pulse" />
+                    <h3 style={{ fontSize: "1.1rem", fontWeight: 700, margin: 0 }}>No archived publications</h3>
+                    <p style={{ fontSize: "0.85rem", color: "var(--zinc-500)", maxWidth: "320px", margin: 0 }}>
+                      Start running 3-agent debates in the Workspace. Completed posts are automatically saved here!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid" style={{ gridTemplateColumns: "320px 1fr", gap: "24px", alignItems: "start" }}>
+                    {/* Left pane: Archive List */}
+                    <div className="flex flex-col gap-3 max-h-[750px] overflow-y-auto pr-2" style={{ borderRight: "1px solid var(--border-muted)" }}>
+                      {archive.map((item) => (
+                        <div
+                          key={item.id}
+                          className="glass-panel p-4 flex flex-col gap-2 cursor-pointer transition-all"
+                          style={{
+                            borderColor: selectedArchiveId === item.id ? "var(--accent)" : "var(--border-muted)",
+                            background: selectedArchiveId === item.id ? "rgba(255, 46, 85, 0.04)" : "rgba(10,10,12,0.3)"
+                          }}
+                          onClick={() => setSelectedArchiveId(item.id)}
+                        >
+                          <div className="flex justify-between items-start gap-2">
+                            <h4 style={{ fontSize: "0.85rem", fontWeight: 700, margin: 0 }} className="line-clamp-1">
+                              {item.appName}
+                            </h4>
+                            <span className="custom-badge custom-badge-accent" style={{ fontSize: "0.6rem", padding: "2px 5px", flexShrink: 0 }}>
+                              Score: {item.result?.best?.score || 95}
+                            </span>
+                          </div>
+                          <p style={{ fontSize: "0.75rem", color: "var(--zinc-500)", margin: 0 }} className="line-clamp-2">
+                            {item.description}
+                          </p>
+                          <div className="flex justify-between items-center mt-2" style={{ borderTop: "1px solid var(--border-muted)", paddingTop: "8px", fontSize: "0.65rem", color: "var(--zinc-600)", fontFamily: "var(--font-mono)" }}>
+                            <span>{item.timestamp}</span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteArchive(item.id);
+                              }}
+                              style={{ background: "none", border: "none", color: "var(--accent)", cursor: "pointer", fontSize: "0.65rem", fontFamily: "var(--font-mono)" }}
+                              className="hover:underline"
+                            >
+                              DELETE
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {/* Right pane: Archive Details */}
+                    <div className="flex flex-col gap-6">
+                      {archive.find(item => item.id === selectedArchiveId) ? (
+                        (() => {
+                          const selectedItem = archive.find(item => item.id === selectedArchiveId);
+                          return (
+                            <>
+                              <div className="glass-panel p-4 flex flex-col gap-3" style={{ background: "rgba(10,10,12,0.2)" }}>
+                                <div className="flex items-center gap-2" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "8px" }}>
+                                  <Sparkles size={13} className="text-zinc-500" />
+                                  <span style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--zinc-400)" }}>Original Prompt Context</span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4 text-xs">
+                                  <div><strong className="text-zinc-500">AppName:</strong> <span className="text-zinc-300">{selectedItem.appName}</span></div>
+                                  <div><strong className="text-zinc-500">Tone:</strong> <span className="text-zinc-300">{selectedItem.tone || "General"}</span></div>
+                                  <div style={{ gridColumn: "span 2" }}><strong className="text-zinc-500">Description:</strong> <span className="text-zinc-400 line-clamp-3">{selectedItem.description}</span></div>
+                                  <div style={{ gridColumn: "span 2" }}><strong className="text-zinc-500">Target Audience:</strong> <span className="text-zinc-300">{selectedItem.targetAudience || "General Professionals"}</span></div>
+                                </div>
+                              </div>
+                              <ResultsDisplay result={selectedItem.result} />
+                            </>
+                          );
+                        })()
+                      ) : (
+                        <div className="glass-panel p-8 text-center text-zinc-500 text-xs">
+                          Select an archived post from the list to view details
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </main>
     </div>

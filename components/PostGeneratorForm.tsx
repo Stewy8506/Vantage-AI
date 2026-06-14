@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Sparkles, Cpu, ShieldAlert, Flame, BookOpen, User, Info, Search, MessageSquare, PenTool, GitCompare, Award, TrendingUp, CheckCircle2 } from "lucide-react";
+import { Sparkles, Cpu, ShieldAlert, Flame, BookOpen, User, Info, Search, MessageSquare, PenTool, GitCompare, Award, TrendingUp, CheckCircle2, Clock } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Agent {
   id: string;
@@ -334,140 +335,206 @@ export default function PostGeneratorForm({
   };
 
   return (
-    <div className="max-w-4xl mx-auto flex flex-col gap-6">
-      <div className="grid" style={{ gridTemplateColumns: loading ? "1fr" : "1.2fr 1fr", gap: "24px" }}>
-        
-        {/* Left Panel: Input context */}
-        {!loading && (
-          <form onSubmit={handleSubmit} className="glass-panel p-6 flex flex-col gap-4 anim-fade-up">
-            <div className="flex items-center gap-2 mb-2" style={{ borderBottom: "1px solid var(--zinc-800)", paddingBottom: "12px" }}>
-              <Flame style={{ color: "var(--accent)" }} size={16} />
-              <h2 style={{ fontSize: "1.05rem", fontWeight: 700 }}>Post Context</h2>
-            </div>
+    <div className="max-w-6xl mx-auto flex flex-col gap-6">
+      <AnimatePresence mode="wait">
+        {!loading ? (
+          <motion.div
+            key="input-form"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+            className="grid"
+            style={{ gridTemplateColumns: "1.3fr 1fr", gap: "28px" }}
+          >
+            {/* Left Panel: Input context */}
+            <form onSubmit={handleSubmit} className="glass-panel p-6 flex flex-col gap-4">
+              <div className="flex items-center gap-2 mb-2" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "16px" }}>
+                <Flame className="text-rose-500 animate-pulse" size={18} />
+                <h2 style={{ fontSize: "1.1rem", fontWeight: 600 }} className="text-white">Post Context Parameters</h2>
+              </div>
 
-            <div className="form-group">
-              <label className="form-label">
-                <Info size={14} style={{ color: "var(--zinc-500)" }} /> App / Project Name
-              </label>
-              <input
-                required
-                type="text"
-                id="appName"
-                name="appName"
-                className="form-input"
-                placeholder="e.g. Virality Mapper"
-                value={formData.appName}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">
-                <BookOpen size={14} style={{ color: "var(--zinc-500)" }} /> What does it do?
-              </label>
-              <textarea
-                required
-                id="description"
-                name="description"
-                className="form-input"
-                placeholder="Explain what problem it solves and its main features..."
-                value={formData.description}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="grid-2">
               <div className="form-group">
                 <label className="form-label">
-                  <User size={14} style={{ color: "var(--zinc-500)" }} /> Target Audience
+                  <Info size={14} className="text-rose-400" /> App / Project Name
                 </label>
                 <input
+                  required
                   type="text"
-                  id="targetAudience"
-                  name="targetAudience"
+                  id="appName"
+                  name="appName"
                   className="form-input"
-                  placeholder="e.g. Indie Hackers"
-                  value={formData.targetAudience}
+                  placeholder="e.g. Virality Mapper"
+                  value={formData.appName}
                   onChange={handleChange}
                 />
               </div>
 
               <div className="form-group">
                 <label className="form-label">
-                  <Flame size={14} style={{ color: "var(--zinc-500)" }} /> Writing Tone
+                  <BookOpen size={14} className="text-rose-400" /> What does it do? (Features & Problems Solved)
                 </label>
-                <input
-                  type="text"
-                  id="tone"
-                  name="tone"
+                <textarea
+                  required
+                  id="description"
+                  name="description"
                   className="form-input"
-                  placeholder="e.g. Inspiring, data-driven"
-                  value={formData.tone}
+                  placeholder="Explain what problem it solves, its target core features, benchmarks, and technology used..."
+                  value={formData.description}
                   onChange={handleChange}
                 />
               </div>
-            </div>
 
-            {error && (
-              <div className="p-4 flex items-start gap-3" style={{ background: "rgba(239, 68, 68, 0.03)", border: "1px solid rgba(239, 68, 68, 0.15)", borderRadius: "8px" }}>
-                <ShieldAlert size={16} style={{ color: "var(--accent)", marginTop: "2px" }} />
-                <p style={{ fontSize: "0.85rem", color: "#fca5a5" }}>{error}</p>
+              <div className="grid-2">
+                <div className="form-group">
+                  <label className="form-label">
+                    <User size={14} className="text-rose-400" /> Target Audience
+                  </label>
+                  <input
+                    type="text"
+                    id="targetAudience"
+                    name="targetAudience"
+                    className="form-input"
+                    placeholder="e.g. Senior Developers, Tech Managers"
+                    value={formData.targetAudience}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">
+                    <Sparkles size={14} className="text-rose-400" /> Writing Tone
+                  </label>
+                  <input
+                    type="text"
+                    id="tone"
+                    name="tone"
+                    className="form-input"
+                    placeholder="e.g. Technical, punchy, narrative"
+                    value={formData.tone}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
-            )}
 
-            <button type="submit" className="custom-btn custom-btn-accent w-full" style={{ marginTop: "12px" }}>
-              <Sparkles size={16} /> Run 3-Agent Debate Arena
-            </button>
-          </form>
-        )}
+              {error && (
+                <div className="p-4 flex items-start gap-3 rounded bg-red-950/20 border border-red-500/20">
+                  <ShieldAlert size={16} className="text-rose-500" style={{ marginTop: "2px" }} />
+                  <p style={{ fontSize: "0.85rem", color: "#fca5a5" }}>{error}</p>
+                </div>
+              )}
 
-        {/* Right Panel: Live Visual Whiteboard Debate */}
-        {loading ? (
-          <div className="glass-panel p-6 w-full flex flex-col gap-6 anim-fade-up" style={{ minHeight: "600px", background: "rgba(5,5,8,0.3)" }}>
-            
+              <button type="submit" className="custom-btn custom-btn-accent w-full" style={{ marginTop: "16px" }}>
+                <Sparkles size={16} className="animate-spin" /> Initiate 3-Agent Copywriting Debate
+              </button>
+            </form>
+
+            {/* Right Panel: Active agents widget */}
+            <div className="glass-panel p-6 flex flex-col gap-4 justify-between">
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2 mb-2" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "16px" }}>
+                  <Cpu className="text-rose-500" size={18} />
+                  <h2 style={{ fontSize: "1.1rem", fontWeight: 600 }} className="text-white">Debate Arena Structure</h2>
+                </div>
+                
+                <p style={{ fontSize: "0.85rem", color: "var(--zinc-400)", lineHeight: 1.5 }}>
+                  This panel routes your project characteristics through a 3-agent critique network.
+                  The writers construct individual drafts, challenge each other's metrics/hooks, refine their content, and synthesize a single optimized post.
+                </p>
+
+                <div className="flex flex-col border border-zinc-800 rounded-lg divide-y divide-zinc-800 bg-[#060608]/40">
+                  {agents.map((agent) => (
+                    <div key={agent.id} className="flex items-center justify-between p-4 transition-all hover:bg-white/5">
+                      <div className="flex flex-col gap-1">
+                        <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "white" }}>
+                          {agent.name}
+                        </span>
+                        <span style={{ fontSize: "0.7rem", color: "var(--zinc-500)", fontFamily: "var(--font-mono)" }}>
+                          {agent.provider.toUpperCase()} • {agent.model}
+                        </span>
+                      </div>
+                      <span className="custom-badge custom-badge-accent text-[10px]">ACTIVE WRITER</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ) : (
+          /* Live Visual Whiteboard Debate Panel */
+          <motion.div
+            key="debate-panel"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+            className="glass-panel p-6 w-full flex flex-col gap-6"
+            style={{ minHeight: "480px" }}
+          >
             {/* Whiteboard Header */}
-            <div className="flex flex-col gap-4 text-center items-center" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "20px" }}>
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-4 text-center items-center" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "24px" }}>
+              <div className="flex items-center gap-4 justify-between w-full">
                 <div className="flex items-center gap-2">
                   <Cpu className="animate-spin text-rose-500" size={20} />
-                  <h3 style={{ fontSize: "1.25rem", fontWeight: 800, margin: 0 }}>Debate Settle Panel</h3>
+                  <h3 style={{ fontSize: "1.25rem", fontWeight: 600, margin: 0 }} className="text-white">Debate Settle Console</h3>
                 </div>
-                <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span>ELAPSED: {formatTime(elapsedTime)}</span>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded bg-zinc-900 border border-zinc-800 text-[11px] font-mono text-zinc-400">
+                  <Clock size={12} className="text-rose-500 animate-pulse" />
+                  <span>ELAPSED TIME: {formatTime(elapsedTime)}</span>
                 </div>
               </div>
-              <p style={{ fontSize: "0.85rem", color: "var(--zinc-300)", fontWeight: 600, margin: 0 }}>
+              <p style={{ fontSize: "0.9rem", color: "var(--zinc-300)", fontWeight: 500, margin: 0 }} className="serif-italic">
                 {statusMessage || "Grounding and preparing agents..."}
               </p>
 
-              {/* Progress Steps Indicators */}
-              <div className="flex items-center gap-2 justify-center w-full max-w-lg mt-2 flex-wrap" style={{ fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>
-                <span className={`px-2 py-1 rounded ${activeStep === 0 ? "bg-rose-500/10 text-rose-400 font-bold border border-rose-500/20" : activeStep > 0 ? "text-emerald-400 font-semibold" : "text-zinc-600"}`}>
-                  1. Trends
-                </span>
-                <span className="text-zinc-600">➔</span>
-                <span className={`px-2 py-1 rounded ${activeStep === 1 ? "bg-rose-500/10 text-rose-400 font-bold border border-rose-500/20" : activeStep > 1 ? "text-emerald-400 font-semibold" : "text-zinc-600"}`}>
-                  2. Drafting
-                </span>
-                <span className="text-zinc-600">➔</span>
-                <span className={`px-2 py-1 rounded ${activeStep === 2 ? "bg-rose-500/10 text-rose-400 font-bold border border-rose-500/20" : activeStep > 2 ? "text-emerald-400 font-semibold" : "text-zinc-600"}`}>
-                  3. Critique
-                </span>
-                <span className="text-zinc-600">➔</span>
-                <span className={`px-2 py-1 rounded ${activeStep === 3 ? "bg-rose-500/10 text-rose-400 font-bold border border-rose-500/20" : activeStep > 3 ? "text-emerald-400 font-semibold" : "text-zinc-600"}`}>
-                  4. Refine
-                </span>
-                <span className="text-zinc-600">➔</span>
-                <span className={`px-2 py-1 rounded ${activeStep === 4 ? "bg-rose-500/10 text-rose-400 font-bold border border-rose-500/20" : "text-zinc-600"}`}>
-                  5. Settle
-                </span>
+              {/* Debate Pipeline Flow Visual Map */}
+              <div className="w-full mt-4">
+                <div className="pipeline-container">
+                  <div className="pipeline-connector">
+                    <div className="pipeline-connector-flow" />
+                  </div>
+                  
+                  <div className={`pipeline-node ${activeStep === 0 ? "active" : activeStep > 0 ? "success" : ""}`}>
+                    <div className="pipeline-node-icon">
+                      <Search size={16} />
+                    </div>
+                    <span className="pipeline-node-label">Grounding</span>
+                  </div>
+
+                  <div className={`pipeline-node ${activeStep === 1 ? "active" : activeStep > 1 ? "success" : ""}`}>
+                    <div className="pipeline-node-icon">
+                      <PenTool size={16} />
+                    </div>
+                    <span className="pipeline-node-label">Drafting</span>
+                  </div>
+
+                  <div className={`pipeline-node ${activeStep === 2 ? "active" : activeStep > 2 ? "success" : ""}`}>
+                    <div className="pipeline-node-icon">
+                      <MessageSquare size={16} />
+                    </div>
+                    <span className="pipeline-node-label">Critiques</span>
+                  </div>
+
+                  <div className={`pipeline-node ${activeStep === 3 ? "active" : activeStep > 3 ? "success" : ""}`}>
+                    <div className="pipeline-node-icon">
+                      <GitCompare size={16} />
+                    </div>
+                    <span className="pipeline-node-label">Refinements</span>
+                  </div>
+
+                  <div className={`pipeline-node ${activeStep === 4 ? "active" : ""}`}>
+                    <div className="pipeline-node-icon">
+                      <Award size={16} />
+                    </div>
+                    <span className="pipeline-node-label">Synthesis</span>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Error Overlay */}
             {error && (
-              <div className="p-4 flex items-start gap-3 rounded" style={{ background: "rgba(239, 68, 68, 0.05)", border: "1px solid rgba(239, 68, 68, 0.2)" }}>
+              <div className="p-4 flex items-start gap-3 rounded bg-red-950/20 border border-red-500/20">
                 <ShieldAlert size={16} className="text-rose-500" style={{ marginTop: "2px" }} />
                 <p style={{ fontSize: "0.85rem", color: "#fca5a5", margin: 0 }}>{error}</p>
               </div>
@@ -475,18 +542,22 @@ export default function PostGeneratorForm({
 
             {/* Step 1: Trends Box */}
             {trends.length > 0 && activeStep === 0 && (
-              <div className="p-4 rounded bg-rose-500/5 border border-rose-500/10 anim-fade-up">
-                <div className="flex items-center gap-2 mb-2 text-rose-400 font-bold text-xs" style={{ fontFamily: "var(--font-mono)" }}>
-                  <Search size={12} /> SEARCH TRENDS RETRIEVED
+              <motion.div
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-5 rounded bg-rose-500/5 border border-rose-500/10"
+              >
+                <div className="flex items-center gap-2 mb-3 text-rose-400 font-bold text-xs" style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.05em" }}>
+                  <TrendingUp size={14} /> SEARCH TRENDS RETRIEVED
                 </div>
-                <ul className="flex flex-col gap-1.5 pl-4 m-0" style={{ fontSize: "0.75rem", color: "var(--zinc-400)" }}>
-                  {trends.map((t, i) => <li key={i} className="line-clamp-2">{t}</li>)}
+                <ul className="flex flex-col gap-2 pl-4 m-0" style={{ fontSize: "0.8rem", color: "var(--zinc-300)", lineHeight: 1.4 }}>
+                  {trends.map((t, i) => <li key={i}>{t}</li>)}
                 </ul>
-              </div>
+              </motion.div>
             )}
 
             {/* 3-Agent side-by-side cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: "16px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: "18px" }}>
               {agents.map((agent) => {
                 const draft = drafts[agent.name];
                 const refinement = refinements[agent.name];
@@ -495,42 +566,49 @@ export default function PostGeneratorForm({
 
                 // Determine active badge
                 let statusBadge = "🔍 Waiting...";
-                let badgeClass = "text-zinc-500";
+                let badgeClass = "text-zinc-500 border-zinc-800";
                 
                 if (activeStep === 0) {
                   statusBadge = "🔍 Grounding...";
-                  badgeClass = "text-rose-400 animate-pulse font-semibold";
+                  badgeClass = "text-rose-400 border-rose-500/20 bg-rose-500/5 animate-pulse font-bold";
                 } else if (activeStep === 1) {
                   statusBadge = draft ? "✍️ Draft Ready" : "✍️ Drafting...";
-                  badgeClass = draft ? "text-emerald-400 font-bold" : "text-rose-400 animate-pulse font-semibold";
+                  badgeClass = draft ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/5 font-bold" : "text-rose-400 border-rose-500/20 bg-rose-500/5 animate-pulse font-bold";
                 } else if (activeStep === 2) {
                   statusBadge = "💬 Critiquing...";
-                  badgeClass = "text-rose-400 animate-pulse font-semibold";
+                  badgeClass = "text-rose-400 border-rose-500/20 bg-rose-500/5 animate-pulse font-bold";
                 } else if (activeStep === 3) {
                   statusBadge = refinement ? "🔄 Refined" : "🔄 Refining...";
-                  badgeClass = refinement ? "text-emerald-400 font-bold" : "text-rose-400 animate-pulse font-semibold";
+                  badgeClass = refinement ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/5 font-bold" : "text-rose-400 border-rose-500/20 bg-rose-500/5 animate-pulse font-bold";
                 } else if (activeStep === 4) {
                   statusBadge = "🤝 Settled";
-                  badgeClass = "text-emerald-400 font-bold";
+                  badgeClass = "text-emerald-400 border-emerald-500/20 bg-emerald-500/5 font-bold";
                 }
 
                 return (
-                  <div key={agent.id} className="glass-panel p-4 flex flex-col gap-3 justify-between" style={{ minHeight: "380px", border: activeStep === 1 && !draft ? "1px dashed rgba(244, 63, 94, 0.3)" : "1px solid var(--border-muted)" }}>
-                    <div className="flex flex-col gap-2">
-                      <div className="flex justify-between items-center" style={{ borderBottom: "1px solid var(--zinc-900)", paddingBottom: "8px" }}>
-                        <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "white" }}>{agent.name}</span>
-                        <span className={`custom-badge ${badgeClass}`} style={{ fontSize: "0.65rem" }}>{statusBadge}</span>
+                  <div
+                    key={agent.id}
+                    className="glass-panel p-4 flex flex-col gap-4 justify-between"
+                    style={{
+                      minHeight: "320px",
+                      borderColor: activeStep === 1 && !draft ? "rgba(255, 46, 85, 0.35)" : "var(--border-muted)"
+                    }}
+                  >
+                    <div className="flex flex-col gap-3">
+                      <div className="flex justify-between items-center" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "10px" }}>
+                        <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "white" }}>{agent.name.split(" ")[0]}</span>
+                        <span className={`custom-badge ${badgeClass}`} style={{ fontSize: "0.62rem" }}>{statusBadge}</span>
                       </div>
 
                       <div
                         className="p-3 font-mono"
                         style={{
-                          background: "#000000",
-                          border: "1px solid var(--zinc-800)",
-                          borderRadius: "4px",
-                          fontSize: "0.7rem",
-                          lineHeight: 1.55,
-                          height: "220px",
+                          background: "#010102",
+                          border: "1px solid rgba(255,255,255,0.04)",
+                          borderRadius: "6px",
+                          fontSize: "0.75rem",
+                          lineHeight: 1.6,
+                          height: "240px",
                           overflowY: "auto",
                           color: "var(--zinc-300)",
                           whiteSpace: "pre-wrap",
@@ -540,14 +618,14 @@ export default function PostGeneratorForm({
                           ? typedRefine
                           : typedDraft
                             ? typedDraft
-                            : <span style={{ color: "var(--zinc-600)" }}>[Waiting for agent to brainstorm...]</span>
+                            : <span className="text-zinc-600 italic">[Waiting for agent pipeline flow...]</span>
                         }
                       </div>
                     </div>
 
                     {refinement && (
-                      <div className="p-2.5 rounded bg-emerald-500/5 border border-emerald-500/15" style={{ fontSize: "0.65rem", lineHeight: 1.35 }}>
-                        <span style={{ fontWeight: 700, color: "var(--zinc-300)", display: "block", marginBottom: "2px" }}>Change Logic:</span>
+                      <div className="p-3 rounded bg-emerald-500/5 border border-emerald-500/10" style={{ fontSize: "0.68rem", lineHeight: 1.4 }}>
+                        <span style={{ fontWeight: 600, color: "var(--zinc-300)", display: "block", marginBottom: "3px" }}>Change Logic:</span>
                         <span className="serif-italic" style={{ color: "var(--zinc-400)" }}>{refinement.argument}</span>
                       </div>
                     )}
@@ -558,88 +636,91 @@ export default function PostGeneratorForm({
 
             {/* Critique Feed Chat */}
             {critiques.length > 0 && (
-              <div className="flex flex-col gap-3 mt-4 anim-fade-up" style={{ borderTop: "1px solid var(--border-muted)", paddingTop: "20px" }}>
-                <div style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--zinc-500)", fontFamily: "var(--font-mono)" }}>
+              <div className="flex flex-col gap-3 mt-4" style={{ borderTop: "1px solid var(--border-muted)", paddingTop: "24px" }}>
+                <div style={{ fontSize: "0.8rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--zinc-400)", fontFamily: "var(--font-mono)" }}>
                   💬 Peer Critique Arena Feed
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "12px" }}>
-                  {critiques.map((crit, idx) => (
-                    <div key={idx} className="p-4 rounded flex flex-col gap-1.5 anim-fade-up" style={{ background: "rgba(10,10,12,0.6)", border: "1px solid var(--zinc-800)" }}>
-                      <div className="flex justify-between items-center" style={{ fontSize: "0.65rem" }}>
-                        <div className="flex items-center gap-1.5">
-                          <span className="custom-badge" style={{ fontSize: "0.6rem", background: "rgba(255,255,255,0.03)" }}>{crit.from}</span>
-                          <span style={{ color: "var(--zinc-600)" }}>➔</span>
-                          <span className="custom-badge" style={{ fontSize: "0.6rem" }}>{crit.to}</span>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
+                  <AnimatePresence>
+                    {critiques.map((crit, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, scale: 0.96, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="p-4 rounded flex flex-col gap-2 bg-[#020204] border border-zinc-800/60"
+                      >
+                        <div className="flex justify-between items-center" style={{ fontSize: "0.68rem" }}>
+                          <div className="flex items-center gap-1.5">
+                            <span className="custom-badge" style={{ fontSize: "0.62rem" }}>{crit.from.split(" ")[0]}</span>
+                            <span style={{ color: "var(--zinc-600)" }}>➔</span>
+                            <span className="custom-badge" style={{ fontSize: "0.62rem" }}>{crit.to.split(" ")[0]}</span>
+                          </div>
+                          <span className="font-bold text-rose-400">Score: {crit.score}</span>
                         </div>
-                        <span style={{ fontWeight: 700, color: "var(--accent)" }}>Score: {crit.score}</span>
-                      </div>
-                      <p style={{ fontSize: "0.75rem", color: "var(--zinc-400)", lineHeight: 1.4, margin: 0 }}>
-                        "{crit.content}"
-                      </p>
-                    </div>
-                  ))}
+                        <p style={{ fontSize: "0.78rem", color: "var(--zinc-300)", lineHeight: 1.45, margin: 0 }} className="serif-italic">
+                          "{crit.content}"
+                        </p>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                 </div>
               </div>
             )}
 
-            {/* Live System Monitor console */}
-            <div className="flex flex-col gap-2 mt-4 anim-fade-up" style={{ borderTop: "1px solid var(--border-muted)", paddingTop: "20px" }}>
+            {/* Live System Monitor HUD terminal */}
+            <div className="flex flex-col gap-2 mt-4" style={{ borderTop: "1px solid var(--border-muted)", paddingTop: "24px" }}>
               <div className="flex items-center justify-between">
-                <div style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--zinc-500)", fontFamily: "var(--font-mono)" }}>
-                  💻 Live System Monitor
+                <div style={{ fontSize: "0.8rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--zinc-400)", fontFamily: "var(--font-mono)" }}>
+                  💻 HUD Systems Console
                 </div>
                 {activityLogs.length > 0 && (
-                  <span className="text-[10px] font-mono text-zinc-500">
-                    Active stream feeds: {activityLogs.length} events
+                  <span className="text-[10px] font-mono text-rose-400 font-semibold uppercase animate-pulse">
+                    Streaming Active Logs
                   </span>
                 )}
               </div>
               
-              <div
-                ref={activityContainerRef}
-                className="p-3 font-mono"
-                style={{
-                  background: "#000000",
-                  border: "1px solid var(--zinc-800)",
-                  borderRadius: "6px",
-                  fontSize: "0.75rem",
-                  lineHeight: 1.5,
-                  height: "140px",
-                  overflowY: "auto",
-                  color: "var(--zinc-400)",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "6px",
-                }}
-              >
-                {activityLogs.length === 0 ? (
-                  <span style={{ color: "var(--zinc-600)" }}>[Waiting for backend execution logs...]</span>
-                ) : (
-                  activityLogs.map((log) => {
-                    let logColor = "var(--zinc-400)";
-                    if (log.type === "success") logColor = "#34d399";
-                    if (log.type === "warning") logColor = "#fca5a5";
-                    
-                    return (
-                      <div key={log.id} className="flex gap-2 items-start text-xs">
-                        <span style={{ color: "var(--zinc-600)", flexShrink: 0 }}>[{log.time}]</span>
-                        <span style={{ color: logColor }}>{log.text}</span>
-                      </div>
-                    );
-                  })
-                )}
+              <div className="hud-console">
+                <div className="hud-header">
+                  <span>LOG BUFFER SYSTEM</span>
+                  <span>ID: VM_DEBATE_STREAM</span>
+                </div>
+                <div ref={activityContainerRef} className="hud-body">
+                  {activityLogs.length === 0 ? (
+                    <span style={{ color: "var(--zinc-600)" }} className="italic">[Awaiting socket stream initialization...]</span>
+                  ) : (
+                    activityLogs.map((log) => {
+                      let logClass = "hud-log-info";
+                      if (log.type === "success") logClass = "hud-log-success";
+                      if (log.type === "warning") logClass = "hud-log-warning";
+                      
+                      return (
+                        <div key={log.id} className="hud-log-row">
+                          <span className="hud-log-time">[{log.time}]</span>
+                          <span className={`hud-log-text ${logClass}`}>{log.text}</span>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Settle consensus panel */}
             {settledPost && (
-              <div className="glass-panel p-6 mt-6 anim-fade-up" style={{ border: "1px solid rgba(244, 63, 94, 0.3)", background: "rgba(244, 63, 94, 0.03)" }}>
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="glass-panel p-6 mt-6"
+                style={{ border: "1px solid rgba(255, 46, 85, 0.35)", background: "rgba(255, 46, 85, 0.02)" }}
+              >
                 <div className="flex justify-between items-center mb-4">
                   <span className="custom-badge custom-badge-accent">
-                    <Award size={10} /> CONSOLIDATED MASTER POST
+                    <Award size={12} /> CONSOLIDATED MASTER POST
                   </span>
-                  <div className="flex items-center gap-1 text-xs font-semibold text-zinc-400" style={{ fontFamily: "var(--font-mono)" }}>
-                    <TrendingUp size={11} className="text-amber-400" /> Settling score: {settledPost.score}/100
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-300" style={{ fontFamily: "var(--font-mono)" }}>
+                    <TrendingUp size={12} className="text-amber-400 animate-bounce" /> Consensus Score: {settledPost.score}/100
                   </div>
                 </div>
 
@@ -648,9 +729,9 @@ export default function PostGeneratorForm({
                   style={{
                     background: "#000000",
                     border: "1px solid var(--border-active)",
-                    borderRadius: "6px",
+                    borderRadius: "8px",
                     whiteSpace: "pre-wrap",
-                    fontSize: "0.85rem",
+                    fontSize: "0.88rem",
                     lineHeight: 1.6,
                     color: "white",
                     minHeight: "150px",
@@ -660,44 +741,15 @@ export default function PostGeneratorForm({
                 >
                   {typedSettledContent}
                 </div>
-                <p style={{ fontSize: "0.75rem", color: "var(--zinc-400)", fontStyle: "italic", marginTop: "12px", margin: 0 }}>
-                  Consensus reached. Finalizing workspace formats...
+                <p style={{ fontSize: "0.75rem", color: "var(--zinc-500)", fontStyle: "italic", marginTop: "14px", margin: 0 }}>
+                  Consensus reached. Writing and synchronizing with workspace displays...
                 </p>
-              </div>
+              </motion.div>
             )}
 
-          </div>
-        ) : (
-          /* Active agents dashboard widget */
-          <div className="glass-panel p-6 flex flex-col gap-4 anim-fade-up">
-            <div className="flex items-center gap-2 mb-2" style={{ borderBottom: "1px solid var(--zinc-800)", paddingBottom: "12px" }}>
-              <Cpu style={{ color: "var(--accent)" }} size={16} />
-              <h2 style={{ fontSize: "1.05rem", fontWeight: 700 }}>Debate Panel Status</h2>
-            </div>
-            
-            <p style={{ fontSize: "0.85rem", color: "var(--zinc-400)", marginBottom: "8px" }}>
-              All 3 specialist copywriter agents participate in the debate, arguing and critiquing each other to reach consensus.
-            </p>
-
-            <div className="flex flex-col border border-zinc-800 rounded-lg divide-y divide-zinc-800 bg-[#0a0a0a]">
-              {agents.map((agent) => (
-                <div key={agent.id} className="flex items-center justify-between p-4">
-                  <div className="flex flex-col gap-1">
-                    <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "white" }}>
-                      {agent.name}
-                    </span>
-                    <span style={{ fontSize: "0.7rem", color: "var(--zinc-500)", fontFamily: "var(--font-mono)" }}>
-                      {agent.provider.toUpperCase()} • {agent.model}
-                    </span>
-                  </div>
-                  <span className="custom-badge custom-badge-accent" style={{ fontSize: "0.65rem", padding: "3px 6px" }}>ACTIVE WRITER</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          </motion.div>
         )}
-
-      </div>
+      </AnimatePresence>
     </div>
   );
 }
