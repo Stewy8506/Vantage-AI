@@ -29,7 +29,32 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable}`}>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable}`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const theme = localStorage.getItem("theme") || "obsidian";
+                  document.documentElement.setAttribute("data-theme", theme);
+                  
+                  const font = localStorage.getItem("font") || "geist";
+                  document.documentElement.setAttribute("data-font", font);
+
+                  const customCss = localStorage.getItem("custom_css");
+                  if (customCss) {
+                    const style = document.createElement("style");
+                    style.id = "custom-css-overrides";
+                    style.innerHTML = customCss;
+                    document.head.appendChild(style);
+                  }
+                } catch (e) {}
+              })()
+            `,
+          }}
+        />
+      </head>
       <body>
         <LenisProvider>
           {children}

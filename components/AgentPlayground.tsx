@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Cpu, RefreshCw, X, Sliders } from "lucide-react";
+import { Sliders, RefreshCw, X, Plus, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Agent {
@@ -50,7 +50,6 @@ export default function AgentPlayground({
   const [models, setModels] = useState<string[]>([]);
   const [loadingModels, setLoadingModels] = useState(false);
 
-  // Load models dynamically when provider is changed in the editor
   const loadModels = async (provider: string) => {
     setLoadingModels(true);
     setModels([]);
@@ -97,57 +96,134 @@ export default function AgentPlayground({
     setEditingAgent(null);
   };
 
+  const handleAddAgent = () => {
+    const newAgent: Agent = {
+      id: `agent-${Date.now()}`,
+      name: `Custom Copywriter ${agents.length + 1}`,
+      provider: "gemini",
+      model: "gemini-2.5-flash",
+      systemPrompt: "You are a copywriter persona specializing in direct, highly engaging social posts.",
+      temperature: 0.7,
+      enabled: false,
+    };
+    onUpdateAgents([...agents, newAgent]);
+    setEditingAgent(newAgent);
+    loadModels("gemini");
+  };
+
+  const handleDeleteAgent = (id: string) => {
+    if (agents.length <= 3) {
+      alert("You must maintain at least 3 copywriting agent personas in your workspace library.");
+      return;
+    }
+    if (!confirm("Are you sure you want to permanently delete this copywriter persona?")) return;
+    const updated = agents.filter((a) => a.id !== id);
+    onUpdateAgents(updated);
+    if (editingAgent?.id === id) {
+      setEditingAgent(null);
+    }
+  };
+
+  const activeAgentsCount = agents.filter((a) => a.enabled).length;
+
   return (
     <div className="anim-fade-up max-w-6xl mx-auto flex flex-col gap-6" style={{ paddingBottom: "40px" }}>
+      
+      {/* Title Header */}
       <div className="flex justify-between items-center flex-wrap gap-4">
         <div className="flex flex-col gap-1">
-          <h2 style={{ fontSize: "1.45rem", fontWeight: 800, letterSpacing: "-0.02em" }} className="text-white">Agent Playground</h2>
-          <p style={{ fontSize: "0.85rem", color: "var(--zinc-400)" }}>
-            Configure and refine the models, system instructions, and temperature metrics for each of the copywriter agents.
+          <h2 style={{ fontSize: "1.35rem", fontWeight: 500, letterSpacing: "-0.01em" }} className="text-white font-heading">
+            Specialist Agents Pool
+          </h2>
+          <p style={{ fontSize: "0.85rem", color: "var(--zinc-500)" }}>
+            Build, edit, and toggle agent personas. Select exactly 3 enabled agents to initiate the debate console.
           </p>
         </div>
-        <button
-          className="custom-btn custom-btn-secondary flex items-center gap-2"
-          onClick={() => {
-            if (confirm("Are you sure you want to reset all agent configurations to defaults? This will overwrite your current configurations.")) {
-              onResetAgents();
-            }
-          }}
-          style={{ padding: "8px 16px", fontSize: "0.8rem" }}
-        >
-          <RefreshCw size={12} className="text-rose-500 animate-spin-hover" />
-          <span>Reset to Defaults</span>
-        </button>
+
+        <div className="flex items-center gap-3">
+          <button
+            className="custom-btn custom-btn-accent flex items-center gap-2"
+            onClick={handleAddAgent}
+            style={{ padding: "8px 16px", fontSize: "0.8rem" }}
+          >
+            <Plus size={14} />
+            <span>Add Custom Agent</span>
+          </button>
+          <button
+            className="custom-btn custom-btn-secondary flex items-center gap-2"
+            onClick={() => {
+              if (confirm("Are you sure you want to reset all agent configurations to defaults? This will overwrite your current configs.")) {
+                onResetAgents();
+              }
+            }}
+            style={{ padding: "8px 16px", fontSize: "0.8rem" }}
+          >
+            <RefreshCw size={12} className="text-zinc-500 animate-spin-hover" />
+            <span>Reset Library</span>
+          </button>
+        </div>
       </div>
+
+      {/* Validation Warning Alert */}
+      {activeAgentsCount !== 3 && (
+        <div className="p-4 rounded border flex items-center gap-3 bg-rose-950/10 border-rose-500/20 text-rose-400 text-xs">
+          <span>⚠️ <strong>Debate Flow Warning</strong>: You have selected <strong>{activeAgentsCount}</strong> active agents. You must enable <strong>exactly 3</strong> agents from the list below to run the debate arena.</span>
+        </div>
+      )}
 
       <div className="grid" style={{ gridTemplateColumns: editingAgent ? "1.2fr 1fr" : "1fr", gap: "24px", alignItems: "start" }}>
         
         {/* Left Side: Agents List */}
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col border border-zinc-800 rounded-lg divide-y divide-zinc-800 bg-[#09090b]/40 backdrop-blur-md">
+          <div className="flex flex-col border border-zinc-800 rounded-lg divide-y divide-zinc-800" style={{ background: "var(--panel-bg)" }}>
             {agents.map((agent) => (
-              <div key={agent.id} className="flex items-center justify-between p-5 transition-all hover:bg-white/[0.02] flex-wrap md:flex-nowrap gap-4">
+              <div key={agent.id} className="flex items-center justify-between p-5 transition-all hover:opacity-95 flex-wrap md:flex-nowrap gap-4">
                 <div className="flex flex-col gap-1 pr-6" style={{ flex: 1 }}>
                   <div className="flex items-center gap-3 flex-wrap">
-                    <span style={{ fontWeight: 800, fontSize: "0.95rem", color: "white" }} className="font-heading">{agent.name}</span>
+                    <span style={{ fontWeight: 600, fontSize: "0.92rem" }} className="text-white">{agent.name}</span>
                     <span className="custom-badge custom-badge-accent">{agent.provider.toUpperCase()} • {agent.model}</span>
                   </div>
-                  <p style={{ fontSize: "0.82rem", color: "var(--zinc-400)", marginTop: "6px", lineHeight: 1.5 }} className="line-clamp-2 italic">
-                    "{agent.systemPrompt}"
+                  <p style={{ fontSize: "0.8rem", color: "var(--zinc-500)", marginTop: "6px", lineHeight: 1.5 }} className="line-clamp-2 italic">
+                    &ldquo;{agent.systemPrompt}&rdquo;
                   </p>
                 </div>
-                <div className="flex items-center gap-4 flex-shrink-0">
-                  <span className="custom-badge" style={{ fontSize: "0.65rem", padding: "4px 8px" }}>ALWAYS ACTIVE</span>
-                  <button className="custom-btn custom-btn-secondary" style={{ padding: "8px 14px", fontSize: "0.8rem" }} onClick={() => handleEditAgent(agent)}>
-                    Configure
-                  </button>
+                
+                {/* Switch & Action Controls */}
+                <div className="flex items-center gap-5 flex-shrink-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-zinc-500 font-mono">ACTIVE DEBATER:</span>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        checked={agent.enabled}
+                        onChange={() => {
+                          const updated = agents.map((a) => a.id === agent.id ? { ...a, enabled: !a.enabled } : a);
+                          onUpdateAgents(updated);
+                        }}
+                      />
+                      <span className="slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <button className="custom-btn custom-btn-secondary" style={{ padding: "8px 12px", fontSize: "0.78rem" }} onClick={() => handleEditAgent(agent)}>
+                      Configure
+                    </button>
+                    <button 
+                      className="p-2 hover:bg-zinc-800/40 border border-transparent hover:border-zinc-800 rounded text-zinc-500 hover:text-rose-400 cursor-pointer"
+                      onClick={() => handleDeleteAgent(agent.id)}
+                      title="Delete Agent"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Right Side: Edit Panel (Drawer Mode with Transitions) */}
+        {/* Right Side: Configuration Drawer */}
         <AnimatePresence>
           {editingAgent && (
             <motion.div
@@ -159,16 +235,16 @@ export default function AgentPlayground({
               style={{ top: "100px", zIndex: 10 }}
             >
               <div className="flex justify-between items-center" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "14px" }}>
-                <h3 style={{ fontSize: "1.1rem", fontWeight: 800, display: "flex", alignItems: "center", gap: "8px" }} className="text-white">
-                  <Sliders size={16} className="text-rose-500" />
-                  Configure Specialist Agent
+                <h3 style={{ fontSize: "1.05rem", fontWeight: 600, display: "flex", alignItems: "center", gap: "8px" }} className="text-white font-heading">
+                  <Sliders size={15} className="text-zinc-400" />
+                  Configure Specialist
                 </h3>
                 <button
                   style={{ background: "none", border: "none", color: "var(--zinc-500)", cursor: "pointer" }}
                   className="hover:text-white transition-colors"
                   onClick={() => setEditingAgent(null)}
                 >
-                  <X size={18} />
+                  <X size={16} />
                 </button>
               </div>
 
@@ -187,7 +263,7 @@ export default function AgentPlayground({
                   <label className="form-label">Provider</label>
                   <select
                     className="form-input"
-                    style={{ background: "#050508" }}
+                    style={{ background: "var(--background)" }}
                     value={editingAgent.provider}
                     onChange={(e) => {
                       setEditingAgent({ ...editingAgent, provider: e.target.value });
@@ -195,7 +271,7 @@ export default function AgentPlayground({
                     }}
                   >
                     {PROVIDERS.map((p) => (
-                      <option key={p.id} value={p.id} style={{ background: "#050508" }}>
+                      <option key={p.id} value={p.id} style={{ background: "var(--background)" }}>
                         {p.name}
                       </option>
                     ))}
@@ -205,7 +281,7 @@ export default function AgentPlayground({
                 <div className="form-group">
                   <label className="form-label flex justify-between items-center">
                     <span>Model Name</span>
-                    {loadingModels && <RefreshCw size={12} className="animate-spin text-rose-500" />}
+                    {loadingModels && <RefreshCw size={12} className="animate-spin text-zinc-500" />}
                   </label>
                   
                   {loadingModels ? (
@@ -213,12 +289,12 @@ export default function AgentPlayground({
                   ) : models.length > 0 ? (
                     <select
                       className="form-input"
-                      style={{ background: "#050508" }}
+                      style={{ background: "var(--background)" }}
                       value={editingAgent.model}
                       onChange={(e) => setEditingAgent({ ...editingAgent, model: e.target.value })}
                     >
                       {models.map((m) => (
-                        <option key={m} value={m} style={{ background: "#050508" }}>
+                        <option key={m} value={m} style={{ background: "var(--background)" }}>
                           {m}
                         </option>
                       ))}
@@ -238,7 +314,7 @@ export default function AgentPlayground({
                   <label className="form-label">System Persona Prompt</label>
                   <textarea
                     className="form-input font-mono text-xs"
-                    style={{ background: "rgba(5, 5, 8, 0.8)" }}
+                    style={{ background: "var(--background)" }}
                     rows={6}
                     value={editingAgent.systemPrompt}
                     onChange={(e) => setEditingAgent({ ...editingAgent, systemPrompt: e.target.value })}
@@ -246,9 +322,9 @@ export default function AgentPlayground({
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label flex justify-between font-mono text-xs text-zinc-400">
+                  <label className="form-label flex justify-between font-mono text-xs text-zinc-500">
                     <span>Creativity Temperature</span>
-                    <span className="text-rose-500 font-bold">{editingAgent.temperature}</span>
+                    <span className="text-white font-bold">{editingAgent.temperature}</span>
                   </label>
                   <input
                     type="range"

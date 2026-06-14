@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Sparkles, Cpu, ShieldAlert, Flame, BookOpen, User, Info, Search, MessageSquare, PenTool, GitCompare, Award, TrendingUp, CheckCircle2, Clock } from "lucide-react";
+import { Sparkles, Cpu, ShieldAlert, Flame, BookOpen, User, Info, Search, MessageSquare, PenTool, GitCompare, Award, TrendingUp, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Agent {
@@ -25,27 +25,111 @@ interface ApiKeys {
   customApiKey: string;
 }
 
+interface GenerationResult {
+  trends: string[];
+  initialDrafts: Array<{
+    name: string;
+    content: string;
+    hookExplanation: string;
+    provider: string;
+    model: string;
+  }>;
+  critiques: Array<{
+    from: string;
+    to: string;
+    content: string;
+    score: number;
+  }>;
+  refinedDrafts: Array<{
+    name: string;
+    content: string;
+    score: number;
+    argument: string;
+    provider: string;
+    model: string;
+  }>;
+  best: {
+    style: string;
+    content: string;
+    scores?: {
+      hookStrength: number;
+      readability: number;
+      credibility: number;
+      viralPotential: number;
+    };
+    score?: number; // legacy
+    critique: string;
+  };
+}
+
+interface GenerationCompletePayload extends GenerationResult {
+  appName?: string;
+  description?: string;
+  targetAudience?: string;
+  tone?: string;
+}
+
+interface ArchivedPost {
+  id: string;
+  timestamp: string;
+  appName: string;
+  description: string;
+  targetAudience: string;
+  tone: string;
+  result: GenerationResult;
+  performance?: {
+    impressions: number;
+    likes: number;
+    comments: number;
+  };
+}
+
+interface StreamEventData {
+  message?: string;
+  type?: "info" | "warning" | "success";
+  name?: string;
+  content?: string;
+  hookExplanation?: string;
+  provider?: string;
+  model?: string;
+  from?: string;
+  to?: string;
+  score?: number;
+  argument?: string;
+  best?: GenerationResult["best"];
+}
+
 export default function PostGeneratorForm({
   agents,
   apiKeys,
   onGenerate,
   onStartGenerate,
+  formData,
+  setFormData,
 }: {
   agents: Agent[];
   apiKeys: ApiKeys;
-  onGenerate: (data: any) => void;
+  onGenerate: (data: GenerationCompletePayload) => void;
   onStartGenerate?: () => void;
   onToggleAgent?: (id: string) => void;
+  formData: {
+    appName: string;
+    description: string;
+    targetAudience: string;
+    tone: string;
+    hookArchetype: string;
+  };
+  setFormData: React.Dispatch<React.SetStateAction<{
+    appName: string;
+    description: string;
+    targetAudience: string;
+    tone: string;
+    hookArchetype: string;
+  }>>;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [formData, setFormData] = useState({
-    appName: "",
-    description: "",
-    targetAudience: "",
-    tone: "Professional, punchy, engaging",
-    hookArchetype: "organic",
-  });
+  const activeAgentsCount = agents.filter((a) => a.enabled).length;
 
   // Real-time streaming debate states
   const [statusMessage, setStatusMessage] = useState("");
@@ -53,7 +137,7 @@ export default function PostGeneratorForm({
   const [drafts, setDrafts] = useState<Record<string, { content: string; hookExplanation: string }>>({});
   const [critiques, setCritiques] = useState<Array<{ from: string; to: string; content: string; score: number }>>([]);
   const [refinements, setRefinements] = useState<Record<string, { content: string; score: number; argument: string }>>({});
-  const [settledPost, setSettledPost] = useState<{ content: string; scores?: any; score?: number; critique: string } | null>(null);
+  const [settledPost, setSettledPost] = useState<GenerationResult["best"] | null>(null);
 
   // Typewriter output states
   const [typedDrafts, setTypedDrafts] = useState<Record<string, string>>({});
@@ -76,7 +160,6 @@ export default function PostGeneratorForm({
   // Stopwatch Timer
   useEffect(() => {
     if (loading) {
-      setElapsedTime(0);
       timerRef.current = setInterval(() => {
         setElapsedTime((prev) => prev + 1);
       }, 1000);
@@ -101,9 +184,9 @@ export default function PostGeneratorForm({
 
   // Refs to prevent state closure bugs in streams
   const trendsRef = useRef<string[]>([]);
-  const draftsRef = useRef<Record<string, any>>({});
-  const critiquesRef = useRef<any[]>([]);
-  const refinementsRef = useRef<Record<string, any>>({});
+  const draftsRef = useRef<Record<string, { name: string; content: string; hookExplanation: string; provider: string; model: string }>>({});
+  const critiquesRef = useRef<Array<{ from: string; to: string; content: string; score: number }>>([]);
+  const refinementsRef = useRef<Record<string, { name: string; content: string; score: number; argument: string; provider: string; model: string }>>({});
 
   // Typewriter simulation helper
   const animateText = (targetKey: string, fullText: string, setter: React.Dispatch<React.SetStateAction<Record<string, string>>>) => {
@@ -148,58 +231,71 @@ export default function PostGeneratorForm({
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleStreamEvent = (event: string, data: any) => {
+  const handleStreamEvent = (event: string, data: StreamEventData | string[]) => {
     switch (event) {
-      case "status":
-        setStatusMessage(data.message);
+      case "status": {
+        const payload = data as StreamEventData;
+        setStatusMessage(payload.message || "");
         break;
+      }
 
-      case "trends":
-        trendsRef.current = data;
-        setTrends(data);
+      case "trends": {
+        const payload = data as string[];
+        trendsRef.current = payload;
+        setTrends(payload);
         break;
+      }
 
-      case "activity":
+      case "activity": {
+        const payload = data as StreamEventData;
         setActivityLogs(prev => [
           ...prev,
           {
             id: `act-${Date.now()}-${Math.random()}`,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-            text: data.message,
-            type: data.type || "info"
+            text: payload.message || "",
+            type: payload.type || "info"
           }
         ]);
         break;
+      }
 
-      case "draft-complete":
-        draftsRef.current[data.name] = data;
+      case "draft-complete": {
+        const payload = data as { name: string; content: string; hookExplanation: string; provider: string; model: string };
+        draftsRef.current[payload.name] = payload;
         setDrafts(prev => {
-          const updated = { ...prev, [data.name]: { content: data.content, hookExplanation: data.hookExplanation } };
-          animateText(data.name, data.content, setTypedDrafts);
+          const updated = { ...prev, [payload.name]: { content: payload.content, hookExplanation: payload.hookExplanation } };
+          animateText(payload.name, payload.content, setTypedDrafts);
           return updated;
         });
         break;
+      }
 
-      case "critique-complete":
-        critiquesRef.current.push({ from: data.from, to: data.to, content: data.content, score: data.score });
+      case "critique-complete": {
+        const payload = data as { from: string; to: string; content: string; score: number };
+        critiquesRef.current.push({ from: payload.from, to: payload.to, content: payload.content, score: payload.score });
         setCritiques(prev => [
           ...prev,
-          { from: data.from, to: data.to, content: data.content, score: data.score }
+          { from: payload.from, to: payload.to, content: payload.content, score: payload.score }
         ]);
         break;
+      }
 
-      case "refine-complete":
-        refinementsRef.current[data.name] = data;
+      case "refine-complete": {
+        const payload = data as { name: string; content: string; score: number; argument: string; provider: string; model: string };
+        refinementsRef.current[payload.name] = payload;
         setRefinements(prev => {
-          const updated = { ...prev, [data.name]: { content: data.content, score: data.score, argument: data.argument } };
-          animateText(data.name, data.content, setTypedRefinements);
+          const updated = { ...prev, [payload.name]: { content: payload.content, score: payload.score, argument: payload.argument } };
+          animateText(payload.name, payload.content, setTypedRefinements);
           return updated;
         });
         break;
+      }
 
-      case "consensus-complete":
-        setSettledPost(data.best);
-        animateSettledText(data.best.content);
+      case "consensus-complete": {
+        const payload = data as { best: GenerationResult["best"] };
+        setSettledPost(payload.best);
+        animateSettledText(payload.best.content);
         
         // Dispatch result after typing transitions complete
         setTimeout(() => {
@@ -209,7 +305,7 @@ export default function PostGeneratorForm({
             targetAudience: formData.targetAudience,
             tone: formData.tone,
             trends: trendsRef.current,
-            initialDrafts: Object.entries(draftsRef.current).map(([name, d]: any) => ({
+            initialDrafts: Object.entries(draftsRef.current).map(([name, d]) => ({
               name,
               content: d.content,
               hookExplanation: d.hookExplanation,
@@ -217,7 +313,7 @@ export default function PostGeneratorForm({
               model: d.model,
             })),
             critiques: critiquesRef.current,
-            refinedDrafts: Object.entries(refinementsRef.current).map(([name, r]: any) => ({
+            refinedDrafts: Object.entries(refinementsRef.current).map(([name, r]) => ({
               name,
               content: r.content,
               score: r.score,
@@ -225,16 +321,19 @@ export default function PostGeneratorForm({
               provider: r.provider,
               model: r.model,
             })),
-            best: data.best
+            best: payload.best
           });
           setLoading(false);
         }, 3000);
         break;
+      }
 
-      case "error":
-        setError(data.message);
+      case "error": {
+        const payload = data as StreamEventData;
+        setError(payload.message || "An unexpected error occurred.");
         setLoading(false);
         break;
+      }
 
       default:
         break;
@@ -275,28 +374,45 @@ export default function PostGeneratorForm({
     }
 
     // Load local feedback-loop analytics templates
-    let enrichedSuccessTemplates = [];
+    let enrichedSuccessTemplates: Array<{
+      content: string;
+      niche: string;
+      metrics: {
+        likes: number;
+        comments: number;
+        reposts: number;
+      };
+      structure: {
+        hook: string;
+        body: string;
+        cta: string;
+        metaphor: string;
+      };
+    }> = [];
     try {
       const localArchiveStr = localStorage.getItem("vm_post_archive");
       if (localArchiveStr) {
-        const parsedArchive = JSON.parse(localArchiveStr);
+        const parsedArchive = JSON.parse(localArchiveStr) as ArchivedPost[];
         enrichedSuccessTemplates = parsedArchive
-          .filter((item: any) => item.performance && item.performance.likes > 0)
-          .map((item: any) => ({
-            content: item.result?.best?.content || "",
-            niche: item.appName || "LinkedIn Post",
-            metrics: {
-              likes: item.performance.likes,
-              comments: item.performance.comments,
-              reposts: Math.round(item.performance.likes * 0.08)
-            },
-            structure: {
-              hook: item.result?.best?.hookExplanation || "Enriched RAG Hook Template.",
-              body: "Self-published successful layout.",
-              cta: "Optimized user CTA.",
-              metaphor: "Ground-truth benchmark."
-            }
-          }));
+          .filter((item) => item.performance && item.performance.likes > 0)
+          .map((item) => {
+            const perf = item.performance!;
+            return {
+              content: item.result?.best?.content || "",
+              niche: item.appName || "LinkedIn Post",
+              metrics: {
+                likes: Number(perf.likes),
+                comments: Number(perf.comments),
+                reposts: Math.round(Number(perf.likes) * 0.08)
+              },
+              structure: {
+                hook: item.result?.best?.scores?.hookStrength ? `Hook strength: ${item.result.best.scores.hookStrength}` : "Enriched RAG Hook Template.",
+                body: "Self-published successful layout.",
+                cta: "Optimized user CTA.",
+                metaphor: "Ground-truth benchmark."
+              }
+            };
+          });
       }
     } catch (e) {
       console.warn("Failed to load local analytics templates for RAG enrichment:", e);
@@ -358,8 +474,9 @@ export default function PostGeneratorForm({
           }
         }
       }
-    } catch (err: any) {
-      setError(err.message || "An unexpected debate pipeline error occurred.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "An unexpected debate pipeline error occurred.";
+      setError(message);
       setLoading(false);
     }
   };
@@ -468,14 +585,25 @@ export default function PostGeneratorForm({
               </div>
 
               {error && (
-                <div className="p-4 flex items-start gap-3 rounded bg-red-950/20 border border-red-500/20">
-                  <ShieldAlert size={16} className="text-rose-500" style={{ marginTop: "2px" }} />
-                  <p style={{ fontSize: "0.85rem", color: "#fca5a5" }}>{error}</p>
+                <div className="p-4 flex items-start gap-3 rounded border" style={{ background: "var(--panel-bg)", borderColor: "var(--border-active)", marginTop: "12px" }}>
+                  <span className="text-zinc-500" style={{ marginTop: "2px", flexShrink: 0 }}>⚠️</span>
+                  <p style={{ fontSize: "0.85rem", color: "var(--foreground)", margin: 0 }}>{error}</p>
                 </div>
               )}
 
-              <button type="submit" className="custom-btn custom-btn-accent w-full" style={{ marginTop: "16px" }}>
-                <Sparkles size={16} className="animate-spin" /> Initiate 3-Agent Copywriting Debate
+              {activeAgentsCount !== 3 && (
+                <div className="p-4 flex items-start gap-3 rounded border text-rose-400 bg-rose-950/10 border-rose-500/20 text-xs" style={{ marginTop: "12px" }}>
+                  <span>⚠️ <strong>Debate Flow Warning</strong>: You have selected <strong>{activeAgentsCount}</strong> active debaters. Go to the <strong>Specialist Agents</strong> tab to toggle exactly 3 active agents to initiate the debate arena.</span>
+                </div>
+              )}
+
+              <button 
+                type="submit" 
+                className="custom-btn custom-btn-accent w-full" 
+                style={{ marginTop: "16px" }}
+                disabled={activeAgentsCount !== 3 || loading}
+              >
+                {loading ? <Sparkles size={16} className="animate-spin" /> : <Sparkles size={16} />} Initiate 3-Agent Copywriting Debate
               </button>
             </form>
 
@@ -489,14 +617,14 @@ export default function PostGeneratorForm({
                 
                 <p style={{ fontSize: "0.85rem", color: "var(--zinc-400)", lineHeight: 1.5 }}>
                   This panel routes your project characteristics through a 3-agent critique network.
-                  The writers construct individual drafts, challenge each other's metrics/hooks, refine their content, and synthesize a single optimized post.
+                  The writers construct individual drafts, challenge each other&apos;s metrics/hooks, refine their content, and synthesize a single optimized post.
                 </p>
 
-                <div className="flex flex-col border border-zinc-800 rounded-lg divide-y divide-zinc-800 bg-[#060608]/40">
-                  {agents.map((agent) => (
-                    <div key={agent.id} className="flex items-center justify-between p-4 transition-all hover:bg-white/5">
+                <div className="flex flex-col border border-zinc-800 rounded-lg divide-y divide-zinc-800" style={{ background: "var(--background)" }}>
+                  {agents.filter((a) => a.enabled).map((agent) => (
+                    <div key={agent.id} className="flex items-center justify-between p-4 transition-all hover:opacity-80">
                       <div className="flex flex-col gap-1">
-                        <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "white" }}>
+                        <span style={{ fontSize: "0.85rem", fontWeight: 600 }} className="text-white">
                           {agent.name}
                         </span>
                         <span style={{ fontSize: "0.7rem", color: "var(--zinc-500)", fontFamily: "var(--font-mono)" }}>
@@ -528,12 +656,12 @@ export default function PostGeneratorForm({
                   <Cpu className="animate-spin text-rose-500" size={20} />
                   <h3 style={{ fontSize: "1.25rem", fontWeight: 600, margin: 0 }} className="text-white">Debate Settle Console</h3>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded bg-zinc-900 border border-zinc-800 text-[11px] font-mono text-zinc-400">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded border text-[11px] font-mono text-zinc-400" style={{ background: "var(--background)", borderColor: "var(--border-muted)" }}>
                   <Clock size={12} className="text-rose-500 animate-pulse" />
                   <span>ELAPSED TIME: {formatTime(elapsedTime)}</span>
                 </div>
               </div>
-              <p style={{ fontSize: "0.9rem", color: "var(--zinc-300)", fontWeight: 500, margin: 0 }} className="serif-italic">
+              <p style={{ fontSize: "0.9rem", color: "var(--zinc-300)", fontWeight: 500, margin: 0 }} className="italic">
                 {statusMessage || "Grounding and preparing agents..."}
               </p>
 
@@ -595,7 +723,8 @@ export default function PostGeneratorForm({
               <motion.div
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="p-5 rounded bg-rose-500/5 border border-rose-500/10"
+                className="p-5 rounded border"
+                style={{ background: "var(--panel-bg)", borderColor: "var(--border-active)" }}
               >
                 <div className="flex items-center gap-2 mb-3 text-rose-400 font-bold text-xs" style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.05em" }}>
                   <TrendingUp size={14} /> SEARCH TRENDS RETRIEVED
@@ -608,7 +737,7 @@ export default function PostGeneratorForm({
 
             {/* 3-Agent side-by-side cards */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: "18px" }}>
-              {agents.map((agent) => {
+              {agents.filter((a) => a.enabled).map((agent) => {
                 const draft = drafts[agent.name];
                 const refinement = refinements[agent.name];
                 const typedDraft = typedDrafts[agent.name] || "";
@@ -641,20 +770,20 @@ export default function PostGeneratorForm({
                     className="glass-panel p-4 flex flex-col gap-4 justify-between"
                     style={{
                       minHeight: "320px",
-                      borderColor: activeStep === 1 && !draft ? "rgba(255, 46, 85, 0.35)" : "var(--border-muted)"
+                      borderColor: activeStep === 1 && !draft ? "var(--border-active)" : "var(--border-muted)"
                     }}
                   >
                     <div className="flex flex-col gap-3">
                       <div className="flex justify-between items-center" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "10px" }}>
-                        <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "white" }}>{agent.name.split(" ")[0]}</span>
+                        <span style={{ fontSize: "0.82rem", fontWeight: 600 }} className="text-white">{agent.name.split(" ")[0]}</span>
                         <span className={`custom-badge ${badgeClass}`} style={{ fontSize: "0.62rem" }}>{statusBadge}</span>
                       </div>
 
                       <div
                         className="p-3 font-mono"
                         style={{
-                          background: "#010102",
-                          border: "1px solid rgba(255,255,255,0.04)",
+                          background: "var(--background)",
+                          border: "1px solid var(--border-muted)",
                           borderRadius: "6px",
                           fontSize: "0.75rem",
                           lineHeight: 1.6,
@@ -674,9 +803,9 @@ export default function PostGeneratorForm({
                     </div>
 
                     {refinement && (
-                      <div className="p-3 rounded bg-emerald-500/5 border border-emerald-500/10" style={{ fontSize: "0.68rem", lineHeight: 1.4 }}>
+                      <div className="p-3 rounded border" style={{ background: "var(--background)", borderColor: "var(--border-muted)", fontSize: "0.68rem", lineHeight: 1.4 }}>
                         <span style={{ fontWeight: 600, color: "var(--zinc-300)", display: "block", marginBottom: "3px" }}>Change Logic:</span>
-                        <span className="serif-italic" style={{ color: "var(--zinc-400)" }}>{refinement.argument}</span>
+                        <span className="italic" style={{ color: "var(--zinc-400)" }}>{refinement.argument}</span>
                       </div>
                     )}
                   </div>
@@ -698,7 +827,7 @@ export default function PostGeneratorForm({
                         initial={{ opacity: 0, scale: 0.96, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         transition={{ duration: 0.25 }}
-                        className="p-4 rounded flex flex-col gap-2 bg-[#020204] border border-zinc-800/60"
+                        className="p-4 rounded flex flex-col gap-2 border" style={{ background: "var(--background)", borderColor: "var(--border-muted)" }}
                       >
                         <div className="flex justify-between items-center" style={{ fontSize: "0.68rem" }}>
                           <div className="flex items-center gap-1.5">
@@ -708,8 +837,8 @@ export default function PostGeneratorForm({
                           </div>
                           <span className="font-bold text-rose-400">Score: {crit.score}</span>
                         </div>
-                        <p style={{ fontSize: "0.78rem", color: "var(--zinc-300)", lineHeight: 1.45, margin: 0 }} className="serif-italic">
-                          "{crit.content}"
+                        <p style={{ fontSize: "0.78rem", color: "var(--zinc-300)", lineHeight: 1.45, margin: 0 }} className="italic">
+                          &ldquo;{crit.content}&rdquo;
                         </p>
                       </motion.div>
                     ))}
@@ -763,27 +892,27 @@ export default function PostGeneratorForm({
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="glass-panel p-6 mt-6"
-                style={{ border: "1px solid rgba(255, 46, 85, 0.35)", background: "rgba(255, 46, 85, 0.02)" }}
+                style={{ borderColor: "var(--border-active)" }}
               >
                 <div className="flex justify-between items-center mb-4">
                   <span className="custom-badge custom-badge-accent">
                     <Award size={12} /> CONSOLIDATED MASTER POST
                   </span>
                   <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-300" style={{ fontFamily: "var(--font-mono)" }}>
-                    <TrendingUp size={12} className="text-amber-400 animate-bounce" /> Viral Potential: {settledPost.scores?.viralPotential || settledPost.score || 95}/100
+                    <TrendingUp size={12} className="text-zinc-500" /> Viral Potential: {settledPost.scores?.viralPotential || settledPost.score || 95}/100
                   </div>
                 </div>
 
                 <div
                   className="p-4"
                   style={{
-                    background: "#000000",
+                    background: "var(--background)",
                     border: "1px solid var(--border-active)",
                     borderRadius: "8px",
                     whiteSpace: "pre-wrap",
                     fontSize: "0.88rem",
                     lineHeight: 1.6,
-                    color: "white",
+                    color: "var(--foreground)",
                     minHeight: "150px",
                     overflowY: "auto",
                     fontFamily: "var(--font-sans)",

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Key, Globe, ShieldCheck, CheckCircle2, XCircle, Loader2, Info, Eye, EyeOff, Save } from "lucide-react";
+import { useState } from "react";
+import { Key, Globe, ShieldCheck, CheckCircle2, XCircle, Loader2, Info, Eye, EyeOff, Save, Palette, Type, Code } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ApiKeys {
@@ -19,19 +19,65 @@ interface ApiKeys {
 export default function SettingsTab({
   apiKeys,
   onSave,
+  customCss,
+  onSaveCustomCss,
 }: {
   apiKeys: ApiKeys;
   onSave: (keys: ApiKeys) => void;
+  customCss: string;
+  onSaveCustomCss: (css: string) => void;
 }) {
   const [keys, setKeys] = useState<ApiKeys>(apiKeys);
   const [testingProvider, setTestingProvider] = useState<string | null>(null);
-  const [testResult, setTestResult] = useState<{ [key: string]: { success: boolean; msg: string } }>({});
+  const [testResult, setTestResult] = useState<{ [key: string]: { success: boolean; msg: string } | undefined }>({});
   const [showKeys, setShowKeys] = useState<{ [key: string]: boolean }>({});
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  useEffect(() => {
+  const [theme, setTheme] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return document.documentElement.getAttribute("data-theme") || "obsidian";
+    }
+    return "obsidian";
+  });
+
+  const [font, setFont] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return document.documentElement.getAttribute("data-font") || "geist";
+    }
+    return "geist";
+  });
+
+  const [cssOverride, setCssOverride] = useState(customCss);
+
+  const [prevCustomCss, setPrevCustomCss] = useState(customCss);
+  if (customCss !== prevCustomCss) {
+    setPrevCustomCss(customCss);
+    setCssOverride(customCss);
+  }
+
+  const [prevApiKeys, setPrevApiKeys] = useState(apiKeys);
+  if (apiKeys !== prevApiKeys) {
+    setPrevApiKeys(apiKeys);
     setKeys(apiKeys);
-  }, [apiKeys]);
+  }
+
+  const handleSelectTheme = (selectedTheme: string) => {
+    setTheme(selectedTheme);
+    document.documentElement.setAttribute("data-theme", selectedTheme);
+    localStorage.setItem("theme", selectedTheme);
+  };
+
+  const handleSelectFont = (selectedFont: string) => {
+    setFont(selectedFont);
+    document.documentElement.setAttribute("data-font", selectedFont);
+    localStorage.setItem("font", selectedFont);
+  };
+
+  const handleCssChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const nextCss = e.target.value;
+    setCssOverride(nextCss);
+    onSaveCustomCss(nextCss);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -52,7 +98,7 @@ export default function SettingsTab({
 
   const testConnection = async (provider: string) => {
     setTestingProvider(provider);
-    setTestResult((prev) => ({ ...prev, [provider]: undefined as any }));
+    setTestResult((prev) => ({ ...prev, [provider]: undefined }));
 
     let apiKey = "";
     let customUrl = "";
@@ -87,10 +133,11 @@ export default function SettingsTab({
           [provider]: { success: false, msg: data.error || "Failed to fetch models." },
         }));
       }
-    } catch (err: any) {
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Connection timed out.";
       setTestResult((prev) => ({
         ...prev,
-        [provider]: { success: false, msg: err.message || "Connection timed out." },
+        [provider]: { success: false, msg: message },
       }));
     } finally {
       setTestingProvider(null);
@@ -390,10 +437,97 @@ export default function SettingsTab({
         </div>
       </div>
 
+      {/* Interface Customizer */}
+      <div className="glass-panel p-6 flex flex-col gap-6">
+        <div className="flex items-center gap-2 mb-2" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "14px" }}>
+          <Palette size={18} className="text-zinc-400" />
+          <h3 style={{ fontSize: "1.05rem", fontWeight: 600 }} className="text-white">Interface Customizer</h3>
+        </div>
+
+        {/* 5 Premium Themes Preset Grid */}
+        <div className="flex flex-col gap-3">
+          <label className="form-label">
+            <Palette size={14} className="text-zinc-400" />
+            <span>Theme Preset</span>
+          </label>
+          <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))" }}>
+            {[
+              { id: "obsidian", name: "Obsidian", bg: "#09090b", panel: "#111113", accent: "#f4f4f5", desc: "Dark charcoal matte" },
+              { id: "nordic", name: "Nordic Slate", bg: "#0b0f19", panel: "#131c2e", accent: "#38bdf8", desc: "Sleek slate blue" },
+              { id: "oled", name: "OLED Black", bg: "#000000", panel: "#090909", accent: "#ffffff", desc: "Pure pitch black" },
+              { id: "alabaster", name: "Alabaster", bg: "#fbfbfa", panel: "#ffffff", accent: "#1c1917", desc: "Warm stone light" },
+              { id: "emerald", name: "Emerald", bg: "#022c22", panel: "#033f30", accent: "#34d399", desc: "Deep forest mint" },
+            ].map((t) => {
+              const isActive = theme === t.id;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => handleSelectTheme(t.id)}
+                  type="button"
+                  className="flex flex-col gap-2 p-3 rounded-lg border text-left cursor-pointer transition-all hover:border-zinc-500 bg-zinc-950/20"
+                  style={{
+                    borderColor: isActive ? "var(--accent)" : "var(--border-muted)",
+                    boxShadow: isActive ? "0 0 12px var(--accent-glow)" : "none",
+                  }}
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-xs font-semibold text-white">{t.name}</span>
+                    {isActive && <CheckCircle2 size={12} className="text-rose-400" style={{ color: "var(--accent)" }} />}
+                  </div>
+                  <div className="flex gap-1.5 my-1">
+                    <span className="w-3.5 h-3.5 rounded-full border border-zinc-800/40 block" style={{ backgroundColor: t.bg }} />
+                    <span className="w-3.5 h-3.5 rounded-full border border-zinc-800/40 block" style={{ backgroundColor: t.panel }} />
+                    <span className="w-3.5 h-3.5 rounded-full border border-zinc-800/40 block" style={{ backgroundColor: t.accent }} />
+                  </div>
+                  <span className="text-[10px] text-zinc-500 font-medium leading-tight">{t.desc}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Typography family picker */}
+        <div className="form-group max-w-sm">
+          <label className="form-label">
+            <Type size={14} className="text-zinc-400" />
+            <span>Typography Family</span>
+          </label>
+          <select
+            value={font}
+            onChange={(e) => handleSelectFont(e.target.value)}
+            className="form-input cursor-pointer"
+            style={{ background: "var(--background)", color: "var(--foreground)" }}
+          >
+            <option value="geist">Geist (Minimal Sans-Serif)</option>
+            <option value="outfit">Outfit (Geometric Modern)</option>
+            <option value="jakarta">Plus Jakarta Sans (Elegant Accent)</option>
+            <option value="inter">Inter (Classic Balanced)</option>
+          </select>
+        </div>
+
+        {/* Advanced CSS Custom overrides */}
+        <div className="form-group">
+          <label className="form-label">
+            <Code size={14} className="text-zinc-400" />
+            <span>Custom CSS Overrides</span>
+          </label>
+          <textarea
+            value={cssOverride}
+            onChange={handleCssChange}
+            className="form-input font-mono"
+            placeholder={`/* Write custom CSS overrides here. e.g. */\nbody {\n  font-size: 15px;\n}\n.sidebar {\n  border-right-color: var(--accent);\n}`}
+            style={{ minHeight: "130px", fontSize: "0.82rem", lineHeight: "1.45" }}
+          />
+          <span className="text-xs text-zinc-500 mt-1 block">
+            Injects styling modifications instantly into the workspace. All parameters persist locally inside the browser.
+          </span>
+        </div>
+      </div>
+
       {/* Info Tip & Save Button Panel */}
       <div className="flex flex-col gap-4">
-        <div className="glass-panel p-4 flex items-start gap-3" style={{ background: "rgba(255, 46, 85, 0.02)", borderColor: "rgba(255, 46, 85, 0.1)" }}>
-          <Info size={16} className="text-rose-400" style={{ marginTop: "2px", flexShrink: 0 }} />
+        <div className="glass-panel p-4 flex items-start gap-3" style={{ background: "var(--panel-bg)", borderColor: "var(--border-muted)" }}>
+          <Info size={16} className="text-zinc-400" style={{ marginTop: "2px", flexShrink: 0 }} />
           <p style={{ fontSize: "0.8rem", color: "var(--zinc-400)", lineHeight: 1.45 }}>
             <strong>Ollama & LM Studio Tip</strong>: Ensure you run the application in your local environment. If they are hosted on a different device or container, configure the dynamic host IP instead of localhost (e.g. <code>http://192.168.1.150:11434</code>).
           </p>
@@ -408,7 +542,7 @@ export default function SettingsTab({
                 exit={{ opacity: 0, x: 10 }}
                 className="text-emerald-400 text-sm font-semibold flex items-center gap-1.5"
               >
-                <CheckCircle2 size={16} /> Credentials saved successfully!
+                <CheckCircle2 size={16} /> Configuration saved successfully!
               </motion.span>
             )}
           </AnimatePresence>
@@ -417,7 +551,7 @@ export default function SettingsTab({
             className="custom-btn custom-btn-accent flex items-center gap-2"
             style={{ width: "220px", height: "46px" }}
           >
-            <Save size={16} /> Save Credentials
+            <Save size={16} /> Save Configuration
           </button>
         </div>
       </div>
