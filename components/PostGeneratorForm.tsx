@@ -99,6 +99,18 @@ interface StreamEventData {
   best?: GenerationResult["best"];
 }
 
+interface UserPreferences {
+  linkedinName: string;
+  linkedinHeadline: string;
+  linkedinAvatar: string;
+  layoutDensity: "compact" | "cozy" | "spacious";
+  sidebarPosition: "left" | "right";
+  autoCopyToClipboard: boolean;
+  defaultHookArchetype: string;
+  fontSize: number;
+  enableRAG: boolean;
+}
+
 export default function PostGeneratorForm({
   agents,
   apiKeys,
@@ -106,6 +118,7 @@ export default function PostGeneratorForm({
   onStartGenerate,
   formData,
   setFormData,
+  preferences,
 }: {
   agents: Agent[];
   apiKeys: ApiKeys;
@@ -126,6 +139,7 @@ export default function PostGeneratorForm({
     tone: string;
     hookArchetype: string;
   }>>;
+  preferences: UserPreferences;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -373,7 +387,7 @@ export default function PostGeneratorForm({
       return;
     }
 
-    // Load local feedback-loop analytics templates
+    // Load local feedback-loop analytics templates if RAG is enabled
     let enrichedSuccessTemplates: Array<{
       content: string;
       niche: string;
@@ -389,33 +403,35 @@ export default function PostGeneratorForm({
         metaphor: string;
       };
     }> = [];
-    try {
-      const localArchiveStr = localStorage.getItem("vm_post_archive");
-      if (localArchiveStr) {
-        const parsedArchive = JSON.parse(localArchiveStr) as ArchivedPost[];
-        enrichedSuccessTemplates = parsedArchive
-          .filter((item) => item.performance && item.performance.likes > 0)
-          .map((item) => {
-            const perf = item.performance!;
-            return {
-              content: item.result?.best?.content || "",
-              niche: item.appName || "LinkedIn Post",
-              metrics: {
-                likes: Number(perf.likes),
-                comments: Number(perf.comments),
-                reposts: Math.round(Number(perf.likes) * 0.08)
-              },
-              structure: {
-                hook: item.result?.best?.scores?.hookStrength ? `Hook strength: ${item.result.best.scores.hookStrength}` : "Enriched RAG Hook Template.",
-                body: "Self-published successful layout.",
-                cta: "Optimized user CTA.",
-                metaphor: "Ground-truth benchmark."
-              }
-            };
-          });
+    if (preferences.enableRAG) {
+      try {
+        const localArchiveStr = localStorage.getItem("vm_post_archive");
+        if (localArchiveStr) {
+          const parsedArchive = JSON.parse(localArchiveStr) as ArchivedPost[];
+          enrichedSuccessTemplates = parsedArchive
+            .filter((item) => item.performance && item.performance.likes > 0)
+            .map((item) => {
+              const perf = item.performance!;
+              return {
+                content: item.result?.best?.content || "",
+                niche: item.appName || "LinkedIn Post",
+                metrics: {
+                  likes: Number(perf.likes),
+                  comments: Number(perf.comments),
+                  reposts: Math.round(Number(perf.likes) * 0.08)
+                },
+                structure: {
+                  hook: item.result?.best?.scores?.hookStrength ? `Hook strength: ${item.result.best.scores.hookStrength}` : "Enriched RAG Hook Template.",
+                  body: "Self-published successful layout.",
+                  cta: "Optimized user CTA.",
+                  metaphor: "Ground-truth benchmark."
+                }
+              };
+            });
+        }
+      } catch (e) {
+        console.warn("Failed to load local analytics templates for RAG enrichment:", e);
       }
-    } catch (e) {
-      console.warn("Failed to load local analytics templates for RAG enrichment:", e);
     }
 
     try {

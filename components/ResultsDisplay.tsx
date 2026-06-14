@@ -1,7 +1,7 @@
 "use client";
 
 import { Copy, TrendingUp, CheckCircle2, Award, Zap, Cpu, Eye, EyeOff, MessageSquare, Heart, Share2, Send } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface GenerationResult {
@@ -49,11 +49,43 @@ interface GenerationResult {
   };
 }
 
-export default function ResultsDisplay({ result }: { result: GenerationResult }) {
+interface UserPreferences {
+  linkedinName: string;
+  linkedinHeadline: string;
+  linkedinAvatar: string;
+  layoutDensity: "compact" | "cozy" | "spacious";
+  sidebarPosition: "left" | "right";
+  autoCopyToClipboard: boolean;
+  defaultHookArchetype: string;
+  fontSize: number;
+  enableRAG: boolean;
+}
+
+export default function ResultsDisplay({
+  result,
+  preferences,
+}: {
+  result: GenerationResult;
+  preferences: UserPreferences;
+}) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [arenaTab, setArenaTab] = useState<"drafts" | "critiques" | "refinements">("drafts");
   const [previewMode, setPreviewMode] = useState<"editor" | "linkedin">("editor");
   const [expandedLinkedIn, setExpandedLinkedIn] = useState(false);
+
+  // Auto-copy clipboard logic
+  useEffect(() => {
+    if (result?.best?.content && preferences.autoCopyToClipboard) {
+      navigator.clipboard.writeText(result.best.content)
+        .then(() => {
+          setCopiedId("best-settled");
+          setTimeout(() => setCopiedId(null), 2000);
+        })
+        .catch((err) => {
+          console.warn("Auto-copy clipboard failed:", err);
+        });
+    }
+  }, [result, preferences.autoCopyToClipboard]);
 
   const copyToClipboard = async (id: string, text: string) => {
     try {
@@ -191,10 +223,10 @@ export default function ResultsDisplay({ result }: { result: GenerationResult })
                   {/* Simulated LinkedIn Desktop Layout Frame */}
                   <div className="linkedin-frame">
                     <div className="linkedin-header">
-                      <div className="linkedin-avatar">💡</div>
+                      <div className="linkedin-avatar">{preferences.linkedinAvatar || "💡"}</div>
                       <div className="linkedin-meta">
-                        <span className="linkedin-name">AI Copywriter Agent Network</span>
-                        <span className="linkedin-title">Synthesized via Virality Settle Engine</span>
+                        <span className="linkedin-name">{preferences.linkedinName || "AI Copywriter Agent Network"}</span>
+                        <span className="linkedin-title">{preferences.linkedinHeadline || "Synthesized via Virality Settle Engine"}</span>
                         <span className="linkedin-time">Just now • 🌐</span>
                       </div>
                     </div>
