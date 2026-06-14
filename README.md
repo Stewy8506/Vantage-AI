@@ -1,29 +1,30 @@
-# Virality Mapper - Viral LinkedIn Post Generator 🚀
+# Virality Mapper - Customizable Multi-Agent Consensus Workspace 🚀
 
-An AI-powered web application that analyzes real-time trending LinkedIn posts and generates highly-optimized, viral content variants tailored to your app or project.
+An advanced, highly-customizable multi-agent LinkedIn post generator (inspired by Open WebUI). The application runs multiple writing agent personas concurrently across local and cloud LLMs, evaluates drafts, and uses a consensus Judge agent to synthesize the absolute best possible viral outcome.
 
-## Features ✨
+## Key Features ✨
 
-- **Real-time Trend Analysis**: Integrates with Web Search APIs (like Tavily) to pull the top trending LinkedIn posts within your specific niche.
-- **AI-Powered Generation**: Uses Google's Gemini 2.5 Flash model to craft 3 distinct post variants based on current viral frameworks.
-- **Scoring & Critiques**: Every generated post comes with a "Virality Score" and an AI critique explaining *why* the post works and how it leverages the target audience's psychology.
-- **Premium UI/UX**: Built with a stunning dark theme featuring glassmorphism, fluid micro-animations, and vibrant gradients.
-- **One-Click Copy**: Easily copy your favorite variant straight to your clipboard to post.
+- **Multi-Agent Consensus Engine**: Configure 2 or more specialized writing agents to draft posts, and let a Master Judge Agent synthesize the strongest elements (hooks, narrative, metrics) into the ultimate viral post.
+- **Dynamic Model Selection**: Connect your credentials and dynamically pull the list of active models directly from the provider.
+- **Infinite Agent Customization**: Create, edit, and toggle custom writing agents. Customize their system prompts, temperature values, providers, and models.
+- **Diverse LLM Providers**:
+  - **Cloud**: Google Gemini, OpenAI, Anthropic
+  - **Router**: OpenRouter (Groq, DeepSeek, Together AI, Mistral)
+  - **Local**: Ollama and LM Studio (via local developer REST endpoints)
+  - **Custom**: Any custom OpenAI-compatible endpoint.
+- **In-App Credentials Manager**: Manage API keys and endpoints securely inside the UI (cached in `localStorage`). No keys are saved on a database or backend.
+- **Vercel-Inspired Minimalist UI**: Built using a typographic dark theme focusing on precise whitespace, clean typography, thin borders, and structured grids.
 
 ## Tech Stack 🛠️
 
-- **Frontend**: Next.js (App Router), React, Vanilla CSS (Custom Design System), Lucide React (Icons)
-- **Backend**: Next.js API Routes
-- **AI Model**: Google Gemini API (`@google/genai`)
-- **Search API**: Tavily Search API (optional, defaults to mocked trends for demo)
+- **Frontend**: Next.js (App Router), React, Vanilla CSS (Geist typographic system)
+- **Backend**: Next.js API Routes, dynamic LLM proxy integrations (`@google/genai`, `@anthropic-ai/sdk`, `openai`)
 
 ## Getting Started 💻
 
 ### Prerequisites
 - Node.js (v18 or higher)
 - npm
-- Google Gemini API Key
-- Tavily API Key (Optional)
 
 ### Installation
 
@@ -37,28 +38,21 @@ An AI-powered web application that analyzes real-time trending LinkedIn posts an
    npm install
    ```
 
-3. **Environment Setup**:
-   Create a `.env.local` file in the root of the project and add your API keys:
-   ```env
-   # Required: Get this from Google AI Studio
-   GEMINI_API_KEY=your_gemini_api_key_here
-
-   # Optional: Get this from Tavily for live search trends. 
-   # If left out, the app will use mocked trend data for demonstrations.
-   TAVILY_API_KEY=your_tavily_api_key_here
-   ```
-
-4. **Run the development server**:
+3. **Run the development server**:
    ```bash
    npm run dev
    ```
 
-5. **Open the app**:
+4. **Open the app**:
    Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
 
-## How It Works 🧠
+## How to Use the App 🧠
 
-1. **Input Details**: Enter your app name, description, target audience, and desired tone (e.g., "Storytelling", "Provocative", "Data-driven").
-2. **Analysis**: The backend searches for top trending LinkedIn posts related to your niche to extract working frameworks.
-3. **Generation**: The context and trends are fed into the Gemini LLM with a specialized prompt to generate 3 unique variants.
-4. **Publish**: Review the virality scores, read the critiques, copy the best one, and post it to LinkedIn!
+1. **Configure Credentials**: 
+   Go to the **Settings** tab in the sidebar and enter your API keys or local base URLs. Use the **Test** button to verify the connection is successful.
+2. **Set Personas**: 
+   Go to the **Agent Playground** tab to enable or configure individual writing personas (e.g., *Storyteller*, *Analytical*, *Contrarian*). Adjust their system instructions and choose the model you want to load dynamically.
+3. **Draft Post**: 
+   Go to the **Workspace** tab, select which agents you want to participate, input your project details (name, description, audience, tone), and click **Run Multi-Agent Consensus**.
+4. **Deliberate & Copy**: 
+   Watch the live consensus loading steps compile. Review the synthesized best outcome and read the Judge's comparison log. Copy the best variant with one click!

@@ -157,53 +157,51 @@ export default function Home() {
       {/* 3-Panel: Panel 1 - Sidebar Navigation */}
       <aside className="sidebar">
         <div className="brand-text">
-          <div className="flow-step-icon active" style={{ width: "32px", height: "32px", border: "1px solid var(--accent)" }}>
-            <Sparkles size={16} />
-          </div>
+          <Sparkles size={16} style={{ color: "white" }} />
           <span>
-            Virality <span className="serif-italic" style={{ color: "var(--accent)" }}>Mapper</span>
+            Virality <span className="serif-italic" style={{ color: "white" }}>Mapper</span>
           </span>
         </div>
 
-        <nav style={{ flex: 1 }}>
+        <nav style={{ flex: 1, marginTop: "24px" }}>
           <div
             className={`nav-item ${activeTab === "workspace" ? "active" : ""}`}
             onClick={() => setActiveTab("workspace")}
           >
-            <Sparkles size={16} />
+            <Sparkles size={14} />
             <span>Workspace</span>
           </div>
           <div
             className={`nav-item ${activeTab === "agents" ? "active" : ""}`}
             onClick={() => setActiveTab("agents")}
           >
-            <Sliders size={16} />
+            <Sliders size={14} />
             <span>Agent Playground</span>
           </div>
           <div
             className={`nav-item ${activeTab === "settings" ? "active" : ""}`}
             onClick={() => setActiveTab("settings")}
           >
-            <Key size={16} />
+            <Key size={14} />
             <span>Settings</span>
           </div>
         </nav>
 
         {/* Sidebar Info/Stats Widget */}
-        <div className="glass-panel p-4 flex flex-col gap-2" style={{ background: "rgba(255,255,255,0.01)" }}>
+        <div className="p-4 border border-zinc-800 rounded-lg flex flex-col gap-2">
           <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-400">
-            <Activity size={12} style={{ color: "var(--accent)" }} />
+            <Activity size={11} />
             <span>Active Status</span>
           </div>
           <div className="flex justify-between text-xs text-zinc-500">
             <span>Enabled Agents:</span>
-            <span style={{ color: activeAgentsCount >= 2 ? "var(--accent)" : "#fca5a5", fontWeight: 700 }}>
+            <span style={{ color: activeAgentsCount >= 2 ? "white" : "var(--zinc-500)", fontWeight: 600 }}>
               {activeAgentsCount}
             </span>
           </div>
           <div className="flex justify-between text-xs text-zinc-500">
             <span>Judge Agent:</span>
-            <span style={{ color: "white" }}>
+            <span style={{ color: "white", fontWeight: 600 }}>
               {judgeConfig.provider.toUpperCase()}
             </span>
           </div>

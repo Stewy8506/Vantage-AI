@@ -173,50 +173,43 @@ export default function AgentPlayground({
         {/* Left Side: Agents List */}
         <div className="flex flex-col gap-4">
           {/* Master Judge Configuration summary */}
-          <div className="glass-panel p-5 flex items-center justify-between border-dashed" style={{ borderStyle: "dashed" }}>
+          <div className="p-5 flex items-center justify-between border border-dashed border-zinc-800 rounded-lg bg-[#0a0a0a]">
             <div className="flex items-center gap-3">
-              <div className="flow-step-icon active" style={{ width: "40px", height: "40px" }}>
-                <Cpu size={18} />
+              <div className="flow-step-icon active" style={{ width: "32px", height: "32px" }}>
+                <Cpu size={14} />
               </div>
               <div className="flex flex-col">
-                <span style={{ fontSize: "0.95rem", fontWeight: 700 }}>Master Judge Consensus Agent</span>
-                <span style={{ fontSize: "0.75rem", color: "var(--zinc-400)" }}>
-                  Synthesizer • {tempJudge.provider.toUpperCase()} / {tempJudge.model}
+                <span style={{ fontSize: "0.9rem", fontWeight: 600 }}>Master Judge Consensus Agent</span>
+                <span style={{ fontSize: "0.75rem", color: "var(--zinc-500)", fontFamily: "var(--font-mono)", marginTop: "2px" }}>
+                  {tempJudge.provider.toUpperCase()} / {tempJudge.model}
                 </span>
               </div>
             </div>
-            <button className="custom-btn custom-btn-secondary" onClick={() => { setIsEditingJudge(true); setEditingAgent(null); loadModels(tempJudge.provider); }}>
-              <Edit2 size={12} /> Configure Judge
+            <button className="custom-btn custom-btn-secondary" style={{ padding: "8px 14px", fontSize: "0.75rem" }} onClick={() => { setIsEditingJudge(true); setEditingAgent(null); loadModels(tempJudge.provider); }}>
+              Configure Judge
             </button>
           </div>
 
-          <div className="grid-2" style={{ gridTemplateColumns: editingAgent || isEditingJudge ? "1fr" : "repeat(auto-fill, minmax(280px, 1fr))", gap: "16px" }}>
+          <div className="flex flex-col border border-zinc-800 rounded-lg divide-y divide-zinc-800 bg-[#0a0a0a]">
             {agents.map((agent) => (
-              <div key={agent.id} className={`glass-panel p-5 flex flex-col justify-between gap-4 ${!agent.enabled ? "opacity-60" : ""}`}>
-                <div className="flex justify-between items-start">
-                  <div className="flex flex-col gap-1">
-                    <span style={{ fontWeight: 700, fontSize: "1rem" }}>{agent.name}</span>
-                    <span style={{ fontSize: "0.75rem", color: "var(--zinc-500)" }}>
-                      {agent.provider.toUpperCase()} • {agent.model}
-                    </span>
+              <div key={agent.id} className="flex items-center justify-between p-5 transition-opacity" style={{ opacity: agent.enabled ? 1 : 0.65 }}>
+                <div className="flex flex-col gap-1 pr-6" style={{ flex: 1 }}>
+                  <div className="flex items-center gap-3">
+                    <span style={{ fontWeight: 600, fontSize: "0.9rem", color: "white" }}>{agent.name}</span>
+                    <span className="custom-badge">{agent.provider.toUpperCase()} • {agent.model}</span>
                   </div>
+                  <p style={{ fontSize: "0.8rem", color: "var(--zinc-400)", marginTop: "4px", lineHeight: 1.4 }}>
+                    {agent.systemPrompt}
+                  </p>
+                </div>
+                <div className="flex items-center gap-6 flex-shrink-0">
                   <label className="switch">
                     <input type="checkbox" checked={agent.enabled} onChange={() => handleToggleAgent(agent.id)} />
                     <span className="slider"></span>
                   </label>
-                </div>
-
-                <p style={{ fontSize: "0.8rem", color: "var(--zinc-400)", minHeight: "40px", lineClamp: 2, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", lineHeight: 1.4 }}>
-                  {agent.systemPrompt}
-                </p>
-
-                <div className="flex items-center justify-between pt-2" style={{ borderTop: "1px solid var(--zinc-900)" }}>
-                  <span style={{ fontSize: "0.75rem", color: "var(--zinc-500)", fontWeight: 500 }}>
-                    Temp: {agent.temperature}
-                  </span>
                   <div className="flex gap-2">
                     <button className="custom-btn custom-btn-secondary" style={{ padding: "6px 12px", fontSize: "0.75rem" }} onClick={() => handleEditAgent(agent)}>
-                      Edit
+                      Configure
                     </button>
                     <button className="custom-btn custom-btn-secondary" style={{ padding: "6px 12px", fontSize: "0.75rem", borderColor: "rgba(239, 68, 68, 0.2)", color: "#fca5a5" }} onClick={() => handleDeleteAgent(agent.id)}>
                       <Trash2 size={12} />

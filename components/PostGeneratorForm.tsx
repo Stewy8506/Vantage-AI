@@ -270,14 +270,14 @@ export default function PostGeneratorForm({
               The context will be sent to the following active agents. Toggle them to test different consensus combinations.
             </p>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col border border-zinc-800 rounded-lg divide-y divide-zinc-800 bg-[#0a0a0a]">
               {agents.map((agent) => (
-                <div key={agent.id} className={`flex items-center justify-between p-3 rounded-8 border ${agent.enabled ? "bg-zinc-950/60 border-zinc-800" : "bg-transparent border-zinc-900 opacity-50"}`} style={{ borderRadius: "8px" }}>
-                  <div className="flex flex-col gap-0.5">
+                <div key={agent.id} className="flex items-center justify-between p-4 transition-all duration-150" style={{ opacity: agent.enabled ? 1 : 0.65 }}>
+                  <div className="flex flex-col gap-1">
                     <span style={{ fontSize: "0.85rem", fontWeight: 600, color: agent.enabled ? "white" : "var(--zinc-400)" }}>
                       {agent.name}
                     </span>
-                    <span style={{ fontSize: "0.7rem", color: "var(--zinc-500)" }}>
+                    <span style={{ fontSize: "0.7rem", color: "var(--zinc-500)", fontFamily: "var(--font-mono)" }}>
                       {agent.provider.toUpperCase()} • {agent.model}
                     </span>
                   </div>
