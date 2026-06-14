@@ -1,7 +1,6 @@
 "use client";
 
 import { Plus, Key, Database, Terminal, Sliders } from "lucide-react";
-import React from "react";
 
 interface ApiKeys {
   gemini: string;
