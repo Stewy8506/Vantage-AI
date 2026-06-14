@@ -39,8 +39,8 @@ graph TD
 
 ### Phase 1: Real-Time Trend Grounding & Drafting
 - **Dynamic Topic Analyzer**: Automatically parses user inputs (`appName`, `description`, `targetAudience`) using an LLM model before running search queries. It extracts 2-3 broader, high-volume industry keywords/niche topics, ensuring that brand-new projects still find highly relevant, active post contexts.
-- **Parallel Regional Scraper**: Triggers concurrent DuckDuckGo searches for each extracted topic, restricting results to English posts from India (`&kl=in-en` parameter with `site:linkedin.com`) to ground draft copy in localized professional trends.
-- **Drafting**: The live search trends are aggregated, deduplicated, and injected into the copywriters' environment. The three specialist agents generate their initial drafts concurrently:
+- **Resilient Multi-Engine Trend Scraper**: Runs a multi-stage regional scraper pipeline to fetch relevant post structures from India (`site:linkedin.com`). It queries **Yahoo Search** as the primary engine (due to permissive bot policies), falling back sequentially to **DuckDuckGo Lite** and **DuckDuckGo HTML Search** (with strict 200 status checks) to ensure high availability of live data.
+- **Drafting**: The live search trends are aggregated, deduplicated, and injected into the copywriters' environment. The three specialist agents generate their initial drafts sequentially (one by one) to avoid rate limits:
   - **Agent Alpha (Hook & Structure)**: Specializes in scroll-stopping pattern-interrupt hooks, crisp visual breaks, and maximized CTR.
   - **Agent Beta (Analytical & Metrics)**: Focuses on checklists, bold numbers, clear business metrics, and raw value.
   - **Agent Gamma (Narrative & Story)**: Employs the hero's journey, lessons learned, and brand vulnerability.
@@ -63,8 +63,9 @@ The 3 refined drafts, their critique histories, and self-change arguments are co
 
 ## ✨ Key Features
 
-- **Live Trend Grounding**: Automatically extracts real-time professional hooks and trending structures from LinkedIn posts via parallel regional scrapers (targeted to India).
+- **Live Trend Grounding**: Automatically extracts real-time professional hooks and trending structures from LinkedIn posts via a multi-engine scraper pipeline (Yahoo Search primary, with DuckDuckGo Lite & HTML search fallbacks).
 - **Dynamic Model Selection**: Connect credentials and dynamically retrieve active model lists from various providers.
+- **Configurable LLM Timeouts**: Built-in timeout mechanism of 30 seconds default per model request, easily adjustable in `app/api/generate/route.ts` via the `LLM_TIMEOUT_MS` constant.
 - **Persistent Post Archive**: Saves all generated runs locally inside your browser's `localStorage`. Review previous generations, browse drafts and peer review ratings, or delete old entries in a clean split-pane history viewer.
 - **Stable Tab State Memory**: Navigating between Workspace, Settings, and Agents tabs keeps the generation state, stream readers, and typewriter animations running smoothly in the background without unmounting.
 - **Live System Activity logs & Stopwatch**: Exposes an interactive Stopwatch elapsed timer and a dark monospace logs feed. Tracks scraper actions, prompt details, api query durations, quota limits, and automatic exponential backoff retries.
