@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import {
-  Key, CheckCircle2, Loader2,
-  Eye, EyeOff, Save, Palette, Code, User, Sliders, Cpu
+  CheckCircle2, Loader2,
+  Eye, EyeOff, Save, Code, Sliders
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -245,7 +245,7 @@ export default function SettingsModal({
               </div>
 
               {/* Close & Save Actions at the bottom of Modal Sidebar */}
-              <div className="mt-auto flex flex-col gap-2 w-full pt-4 border-t border-zinc-800">
+              <div className="mt-auto flex flex-col gap-2 w-full pt-4" style={{ borderTop: "1px solid var(--border-muted)" }}>
                 <button
                   onClick={handleSaveAll}
                   className="custom-btn custom-btn-accent w-full flex items-center justify-center gap-2 text-xs font-semibold py-2.5"

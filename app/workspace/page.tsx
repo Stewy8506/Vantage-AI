@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Sparkles, Sliders, Activity, TrendingUp, ChevronLeft, ChevronRight, Plus, LayoutDashboard, Key, Database, Terminal, Search, Settings } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import PostGeneratorForm from "@/components/PostGeneratorForm";
@@ -380,12 +381,12 @@ export default function WorkspacePage() {
 
           {/* Header & toggle menu */}
           <div className="flex items-center justify-between w-full sidebar-header-container">
-            <div className="brand-text">
+            <Link href="/" className="brand-text" style={{ textDecoration: "none", cursor: "pointer" }}>
               <div className="flex items-center gap-2">
                 <Activity size={20} className="text-zinc-300" />
                 <span className="font-semibold tracking-tight">Virality Mapper</span>
               </div>
-            </div>
+            </Link>
             <button
               onClick={toggleSidebar}
               className="sidebar-toggle-btn"
@@ -488,7 +489,7 @@ export default function WorkspacePage() {
 
         {/* Sidebar Info/Stats Widget merged above profile */}
         {!isSidebarCollapsed && (
-          <div className="sidebar-footer-widget flex flex-col gap-1 font-mono text-[9px] text-zinc-500 px-3 py-2 border-t border-zinc-800/40 mb-2 mt-auto">
+          <div className="sidebar-footer-widget flex flex-col gap-1 font-mono text-[9px] text-zinc-500 px-3 py-2 mb-2 mt-auto" style={{ borderTop: "1px solid var(--border-muted)" }}>
             <div className="flex justify-between">
               <span>POOL:</span>
               <span className="text-zinc-400 font-bold">{activeAgentsCount} ACTIVE</span>
@@ -575,14 +576,14 @@ export default function WorkspacePage() {
                     const selectedItem = archive.find(item => item.id === selectedArchiveId);
                     if (!selectedItem) {
                       return (
-                        <div className="glass-panel p-8 text-center text-zinc-500 text-xs">
+                        <div className="p-8 text-center text-zinc-500 text-xs" style={{ background: "transparent" }}>
                           Publication record not found.
                         </div>
                       );
                     }
                     return (
                       <>
-                        <div className="glass-panel p-6 flex flex-col gap-4">
+                        <div className="flex flex-col gap-4" style={{ borderTop: "1px solid var(--border-muted)", paddingTop: "24px" }}>
                           <div className="flex items-center justify-between" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "12px" }}>
                             <div className="flex items-center gap-2">
                               <Sparkles size={15} className="text-zinc-400" />
@@ -811,7 +812,7 @@ export default function WorkspacePage() {
                             </div>
 
                             {archive.length === 0 ? (
-                              <div className="glass-panel p-10 text-center text-zinc-500 text-xs flex flex-col items-center justify-center gap-4">
+                              <div className="p-10 text-center text-zinc-500 text-xs flex flex-col items-center justify-center gap-4" style={{ background: "transparent" }}>
                                 <span>No publications generated yet. Ready to start your first draft?</span>
                                 <button
                                   onClick={() => setActiveTab("new-publication")}
@@ -871,12 +872,12 @@ export default function WorkspacePage() {
                               <div className="flex flex-col gap-4">
 
                                 {/* API Key Checklist */}
-                                <div className="glass-panel flex flex-col gap-3 p-4">
+                                <div className="flex flex-col gap-3" style={{ borderTop: "1px dashed var(--border-muted)", paddingTop: "24px", background: "transparent" }}>
                                   <div className="flex items-center gap-2 text-zinc-300 font-semibold text-xs">
                                     <Key size={14} className="text-zinc-400" />
                                     <span>API Gateway Status</span>
                                   </div>
-                                  <div className="flex flex-col gap-2 font-mono text-[10px] border-t border-zinc-800/40 pt-2.5">
+                                  <div className="flex flex-col gap-2 font-mono text-[10px] pt-2.5" style={{ borderTop: "1px solid var(--border-muted)" }}>
                                     <div className="flex justify-between items-center">
                                       <span>Gemini API:</span>
                                       <span className={apiKeys.gemini ? "text-emerald-400 font-bold" : "text-zinc-500"}>
@@ -905,12 +906,12 @@ export default function WorkspacePage() {
                                 </div>
 
                                 {/* RAG Context Card */}
-                                <div className="glass-panel flex flex-col gap-3 p-4">
+                                <div className="flex flex-col gap-3" style={{ borderTop: "1px dashed var(--border-muted)", paddingTop: "24px", background: "transparent", marginTop: "12px" }}>
                                   <div className="flex items-center gap-2 text-zinc-300 font-semibold text-xs">
                                     <Database size={14} className="text-zinc-400" />
                                     <span>Database Context (RAG)</span>
                                   </div>
-                                  <div className="flex items-center justify-between text-xs border-t border-zinc-800/40 pt-2.5">
+                                  <div className="flex items-center justify-between text-xs pt-2.5" style={{ borderTop: "1px solid var(--border-muted)" }}>
                                     <span className="text-zinc-400">Feedback Loop database:</span>
                                     <span className={preferences.enableRAG ? "text-emerald-400 font-bold" : "text-zinc-500"}>
                                       {preferences.enableRAG ? "ACTIVE" : "DISABLED"}
@@ -924,7 +925,7 @@ export default function WorkspacePage() {
                                 </div>
 
                                 {/* Quick Launch Panel */}
-                                <div className="glass-panel flex flex-col gap-3 p-4">
+                                <div className="flex flex-col gap-3" style={{ borderTop: "1px dashed var(--border-muted)", paddingTop: "24px", background: "transparent", marginTop: "12px" }}>
                                   <div className="flex items-center gap-2 text-zinc-300 font-semibold text-xs">
                                     <Terminal size={14} className="text-zinc-400" />
                                     <span>Console Management</span>
