@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Sparkles, Sliders, Activity, TrendingUp, ChevronLeft, ChevronRight, Plus, LayoutDashboard, Key, Database, Terminal, Search, Settings } from "lucide-react";
+import { Sliders, Activity } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import PostGeneratorForm from "@/components/PostGeneratorForm";
 import ResultsDisplay from "@/components/ResultsDisplay";
 import AgentPlayground from "@/components/AgentPlayground";
 import SettingsModal from "@/components/SettingsModal";
+import Sidebar from "@/components/workspace/Sidebar";
+import DashboardOverview from "@/components/workspace/DashboardOverview";
+import PerformanceAnalytics from "@/components/workspace/PerformanceAnalytics";
 
 interface UserPreferences {
   linkedinName: string;
@@ -449,8 +451,6 @@ export default function WorkspacePage() {
     }
   };
 
-
-
   const updateAgents = (newAgents: Agent[]) => {
     setMasterConfig(prev => {
       const next = { ...prev, agents: newAgents };
@@ -515,12 +515,6 @@ export default function WorkspacePage() {
 
   const activeAgentsCount = agents.filter((a) => a.enabled).length;
 
-  const filteredArchive = archive.filter(item =>
-    item.appName.toLowerCase().includes(archiveSearch.toLowerCase()) ||
-    item.description.toLowerCase().includes(archiveSearch.toLowerCase()) ||
-    (item.result?.best?.content || "").toLowerCase().includes(archiveSearch.toLowerCase())
-  );
-
   return (
     <div className={`dashboard-layout layout-${preferences.layoutDensity} ${preferences.sidebarPosition === "right" ? "sidebar-right" : ""}`}>
       {/* Dynamic Style Injection element */}
@@ -533,165 +527,21 @@ export default function WorkspacePage() {
       `}} />
 
       {/* Collapsible Sidebar edge pane */}
-      <aside className={`sidebar ${isSidebarCollapsed ? "collapsed" : ""}`}>
-        <div className="flex flex-col gap-6 flex-1 overflow-hidden">
-
-          {/* Header & toggle menu */}
-          <div className="flex items-center justify-between w-full sidebar-header-container">
-            <Link href="/" className="brand-text" style={{ textDecoration: "none", cursor: "pointer" }}>
-              <div className="flex items-center gap-2">
-                <Activity size={20} className="text-zinc-300" />
-                <span className="font-semibold tracking-tight">Virality Mapper</span>
-              </div>
-            </Link>
-            <button
-              onClick={toggleSidebar}
-              className="sidebar-toggle-btn"
-              title={isSidebarCollapsed ? "Expand Sidebar (Ctrl + \\)" : "Collapse Sidebar (Ctrl + \\)"}
-            >
-              {isSidebarCollapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
-            </button>
-          </div>
-
-          {/* New publication trigger */}
-          <button
-            className="custom-btn custom-btn-accent w-full flex items-center gap-2 new-pub-btn"
-            onClick={() => {
-              setSelectedArchiveId(null);
-              setResult(null);
-              setActiveTab("new-publication");
-            }}
-            style={{ padding: "12px 18px", fontSize: "0.82rem" }}
-            title="Create New Publication"
-          >
-            <Plus size={15} />
-            <span>New Publication</span>
-          </button>
-
-          {/* Main navigation links */}
-          <nav>
-            <div
-              className={`nav-item ${activeTab === "workspace" && !selectedArchiveId ? "active" : ""}`}
-              onClick={() => {
-                setSelectedArchiveId(null);
-                setActiveTab("workspace");
-              }}
-              title="Workspace Control Hub"
-            >
-              <LayoutDashboard size={16} />
-              <span>Workspace</span>
-            </div>
-            <div
-              className={`nav-item ${activeTab === "agents" ? "active" : ""}`}
-              onClick={() => setActiveTab("agents")}
-              title="Specialist Agents"
-            >
-              <Sliders size={16} />
-              <span>Specialist Agents</span>
-            </div>
-          </nav>
-
-          {/* Historical Saved Publications integrated */}
-          <div className="flex flex-col gap-2 flex-1 overflow-hidden sidebar-archive-list" style={{ borderTop: "1px solid var(--border-muted)", paddingTop: "16px" }}>
-            <div className="text-[10px] font-mono font-semibold uppercase text-zinc-500 tracking-wider mb-1 px-2 flex items-center justify-between">
-              <span>Saved History</span>
-              {archive.length > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 font-bold">{archive.length}</span>}
-            </div>
-
-            {/* Filter Search */}
-            {archive.length > 0 && (
-              <div className="relative px-2 mb-1 flex items-center">
-                <Search size={12} className="absolute left-4 text-zinc-500" />
-                <input
-                  type="text"
-                  placeholder="Filter history..."
-                  value={archiveSearch}
-                  onChange={(e) => setArchiveSearch(e.target.value)}
-                  className="form-input text-xs w-full pl-7 py-1.5"
-                  style={{
-                    borderRadius: "8px",
-                    height: "28px",
-                    background: "rgba(0, 0, 0, 0.15)",
-                    border: "1px solid var(--border-muted)"
-                  }}
-                />
-              </div>
-            )}
-
-            {filteredArchive.length === 0 ? (
-              <div className="text-[10px] text-zinc-500 italic px-2 py-3 leading-normal">
-                {archive.length === 0 ? "No publications saved yet." : "No matching records found."}
-              </div>
-            ) : (
-              <div className="flex flex-col overflow-y-auto pr-1 flex-1">
-                {filteredArchive.map((item, idx) => (
-                  <div
-                    key={item.id}
-                    onClick={() => {
-                      setSelectedArchiveId(item.id);
-                      setResult(item.result);
-                      setActiveTab("workspace");
-                    }}
-                    className={`sidebar-archive-item ${selectedArchiveId === item.id ? "active" : ""}`}
-                  >
-                    <span className="archive-item-num">{String(idx + 1).padStart(2, "0")} /</span>
-                    <span className="archive-item-name">{item.appName}</span>
-                    <span className="archive-item-date">{item.timestamp.split(",")[0]}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Sidebar Info/Stats Widget merged above profile */}
-        {!isSidebarCollapsed && (
-          <div className="sidebar-footer-widget flex flex-col gap-1 font-mono text-[9px] text-zinc-500 px-3 py-2 mb-2 mt-auto" style={{ borderTop: "1px solid var(--border-muted)" }}>
-            <div className="flex justify-between">
-              <span>POOL:</span>
-              <span className="text-zinc-400 font-bold">{activeAgentsCount} ACTIVE</span>
-            </div>
-            <div className="flex justify-between">
-              <span>ENGINE:</span>
-              <span className="text-zinc-400 font-bold">DEBATE SETTLE</span>
-            </div>
-          </div>
-        )}
-
-        {/* Profile Card & Settings trigger at the bottom of the sidebar */}
-        {!isSidebarCollapsed ? (
-          <div className="sidebar-profile">
-            <div className="sidebar-profile-info cursor-pointer" onClick={() => setIsSettingsOpen(true)}>
-              <div className="sidebar-profile-avatar">
-                {preferences.linkedinAvatar || "💡"}
-              </div>
-              <div className="sidebar-profile-meta">
-                <span className="sidebar-profile-name">
-                  {preferences.linkedinName || "AI Copywriter"}
-                </span>
-                <span className="sidebar-profile-headline">
-                  {preferences.linkedinHeadline || "Consensus strategist"}
-                </span>
-              </div>
-            </div>
-            <button
-              onClick={() => setIsSettingsOpen(true)}
-              className="sidebar-profile-btn"
-              title="Settings & Configurations"
-            >
-              <Settings size={15} className="transition-transform duration-300 hover:rotate-90" />
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => setIsSettingsOpen(true)}
-            className="sidebar-profile-collapsed-btn"
-            title="Settings & Configurations"
-          >
-            {preferences.linkedinAvatar || "💡"}
-          </button>
-        )}
-      </aside>
+      <Sidebar
+        isSidebarCollapsed={isSidebarCollapsed}
+        toggleSidebar={toggleSidebar}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        selectedArchiveId={selectedArchiveId}
+        setSelectedArchiveId={setSelectedArchiveId}
+        setResult={setResult}
+        archive={archive}
+        archiveSearch={archiveSearch}
+        setArchiveSearch={setArchiveSearch}
+        activeAgentsCount={activeAgentsCount}
+        preferences={preferences}
+        setIsSettingsOpen={setIsSettingsOpen}
+      />
 
       {/* Main dashboard console workspace */}
       <main className="main-content">
@@ -740,369 +590,38 @@ export default function WorkspacePage() {
                     }
                     return (
                       <>
-                        <div className="flex flex-col gap-4" style={{ borderTop: "1px solid var(--border-muted)", paddingTop: "24px" }}>
-                          <div className="flex items-center justify-between" style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "12px" }}>
-                            <div className="flex items-center gap-2">
-                              <Sparkles size={15} className="text-zinc-400" />
-                              <span style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--zinc-400)" }}>Original Prompt Context</span>
-                            </div>
-                            <button
-                              onClick={() => {
-                                setEditorFormData({
-                                  appName: selectedItem.appName,
-                                  description: selectedItem.description,
-                                  targetAudience: selectedItem.targetAudience,
-                                  tone: selectedItem.tone,
-                                  hookArchetype: selectedItem.result?.best?.style || "organic",
-                                });
-                                setSelectedArchiveId(null);
-                                setResult(null);
-                                setActiveTab("new-publication");
-                              }}
-                              className="custom-btn custom-btn-secondary text-[11px] h-8 px-4 flex items-center justify-center cursor-pointer font-bold"
-                            >
-                              Clone parameters to Editor
-                            </button>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-4 text-xs">
-                            <div><strong className="text-zinc-500 uppercase tracking-wider text-[10px] block mb-1">AppName</strong> <span className="text-zinc-200 font-medium">{selectedItem.appName}</span></div>
-                            <div><strong className="text-zinc-500 uppercase tracking-wider text-[10px] block mb-1">Tone</strong> <span className="text-zinc-200 font-medium">{selectedItem.tone || "General"}</span></div>
-                            <div style={{ gridColumn: "span 2" }}><strong className="text-zinc-500 uppercase tracking-wider text-[10px] block mb-1">Description</strong> <span className="text-zinc-300 leading-relaxed">{selectedItem.description}</span></div>
-                            <div style={{ gridColumn: "span 2" }}><strong className="text-zinc-500 uppercase tracking-wider text-[10px] block mb-1">Target Audience</strong> <span className="text-zinc-300 leading-relaxed">{selectedItem.targetAudience || "General Professionals"}</span></div>
-                          </div>
-
-                          {/* Performance metrics dashboard inline */}
-                          <div style={{ borderTop: "1px dashed var(--border-muted)", paddingTop: "16px", marginTop: "8px" }}>
-                            <div className="flex justify-between items-center mb-3">
-                              <div className="flex items-center gap-1.5 text-zinc-400 font-semibold uppercase text-[10px] tracking-wider font-mono">
-                                <TrendingUp size={13} className="text-zinc-400 animate-pulse" />
-                                <span>Self-Published Analytics (Feedback Loop)</span>
-                              </div>
-                              {!selectedItem.performance && editingPerformanceId !== selectedItem.id && (
-                                <button
-                                  onClick={() => {
-                                    setEditingPerformanceId(selectedItem.id);
-                                    setImpressions(0);
-                                    setLikes(0);
-                                    setComments(0);
-                                  }}
-                                  className="text-[10px] text-zinc-400 font-semibold cursor-pointer hover:underline border-0 bg-transparent"
-                                >
-                                  + Record Actual Metrics
-                                </button>
-                              )}
-                            </div>
-
-                            {editingPerformanceId === selectedItem.id ? (
-                              <div className="flex flex-wrap gap-4 items-end p-4 rounded-xl border border-zinc-800/40" style={{ background: "rgba(0,0,0,0.15)", borderColor: "var(--border-muted)" }}>
-                                <div className="flex flex-col gap-1 text-[10px] font-mono text-zinc-400">
-                                  <span>Impressions</span>
-                                  <input
-                                    type="number"
-                                    className="form-input text-xs w-28 h-8 p-1.5"
-                                    value={impressions}
-                                    onChange={(e) => setImpressions(Number(e.target.value))}
-                                  />
-                                </div>
-                                <div className="flex flex-col gap-1 text-[10px] font-mono text-zinc-400">
-                                  <span>Likes</span>
-                                  <input
-                                    type="number"
-                                    className="form-input text-xs w-28 h-8 p-1.5"
-                                    value={likes}
-                                    onChange={(e) => setLikes(Number(e.target.value))}
-                                  />
-                                </div>
-                                <div className="flex flex-col gap-1 text-[10px] font-mono text-zinc-400">
-                                  <span>Comments</span>
-                                  <input
-                                    type="number"
-                                    className="form-input text-xs w-28 h-8 p-1.5"
-                                    value={comments}
-                                    onChange={(e) => setComments(Number(e.target.value))}
-                                  />
-                                </div>
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={() => {
-                                      handleSavePerformance(selectedItem.id, { impressions, likes, comments });
-                                      setEditingPerformanceId(null);
-                                    }}
-                                    className="custom-btn custom-btn-accent text-[11px] h-8 px-4 flex items-center justify-center cursor-pointer"
-                                  >
-                                    Save
-                                  </button>
-                                  <button
-                                    onClick={() => setEditingPerformanceId(null)}
-                                    className="custom-btn custom-btn-secondary text-[11px] h-8 px-4 flex items-center justify-center cursor-pointer"
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              </div>
-                            ) : selectedItem.performance ? (
-                              <div className="flex items-center gap-4 justify-between bg-zinc-900/10 border border-zinc-800/20 p-3 rounded-xl text-xs font-mono text-zinc-300">
-                                <div className="flex gap-6">
-                                  <div><span className="text-zinc-500 font-semibold uppercase text-[9px] mr-1">Impressions:</span> {selectedItem.performance!.impressions.toLocaleString()}</div>
-                                  <div><span className="text-zinc-500 font-semibold uppercase text-[9px] mr-1">Likes:</span> {selectedItem.performance!.likes.toLocaleString()}</div>
-                                  <div><span className="text-zinc-500 font-semibold uppercase text-[9px] mr-1">Comments:</span> {selectedItem.performance!.comments.toLocaleString()}</div>
-                                </div>
-                                <div className="flex gap-3">
-                                  <button
-                                    onClick={() => {
-                                      setEditingPerformanceId(selectedItem.id);
-                                      setImpressions(selectedItem.performance!.impressions);
-                                      setLikes(selectedItem.performance!.likes);
-                                      setComments(selectedItem.performance!.comments);
-                                    }}
-                                    className="text-[10px] text-zinc-500 hover:text-white cursor-pointer border-0 bg-transparent"
-                                  >
-                                    [Edit]
-                                  </button>
-                                  <button
-                                    onClick={() => handleDeleteArchive(selectedItem.id)}
-                                    className="text-[10px] text-rose-400 hover:text-rose-300 cursor-pointer border-0 bg-transparent font-bold"
-                                  >
-                                    [Delete]
-                                  </button>
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="flex items-center justify-between text-[10px] text-zinc-500 font-mono italic">
-                                <span>No performance metrics recorded for this publication yet. Record them once published to feed the self-improving RAG database.</span>
-                                <button
-                                  onClick={() => handleDeleteArchive(selectedItem.id)}
-                                  className="text-[10px] text-rose-400 hover:text-rose-300 cursor-pointer border-0 bg-transparent font-bold ml-2"
-                                >
-                                  [Delete Publication]
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                        <PerformanceAnalytics
+                          selectedItem={selectedItem}
+                          editingPerformanceId={editingPerformanceId}
+                          setEditingPerformanceId={setEditingPerformanceId}
+                          impressions={impressions}
+                          setImpressions={setImpressions}
+                          likes={likes}
+                          setLikes={setLikes}
+                          comments={comments}
+                          setComments={setComments}
+                          handleSavePerformance={handleSavePerformance}
+                          handleDeleteArchive={handleDeleteArchive}
+                          setEditorFormData={setEditorFormData}
+                          setSelectedArchiveId={setSelectedArchiveId}
+                          setResult={setResult}
+                          setActiveTab={setActiveTab}
+                        />
                         <ResultsDisplay result={selectedItem.result} preferences={preferences} />
                       </>
                     );
                   })()
                 ) : (
                   /* Workspace Dashboard Overview Bento style */
-                  (() => {
-                    const totalPubs = archive.length;
-                    const totalImpressions = archive.reduce((sum, item) => sum + (item.performance?.impressions || 0), 0);
-                    const totalLikes = archive.reduce((sum, item) => sum + (item.performance?.likes || 0), 0);
-                    const totalComments = archive.reduce((sum, item) => sum + (item.performance?.comments || 0), 0);
-                    const totalEngagement = totalLikes + totalComments;
-
-                    const validScores = archive.map(item => {
-                      const scores = item.result?.best?.scores;
-                      if (scores) {
-                        return (scores.hookStrength + scores.readability + scores.credibility + scores.viralPotential) / 4;
-                      }
-                      return item.result?.best?.score || 0;
-                    }).filter(s => s > 0);
-
-                    const avgQualityScore = validScores.length > 0
-                      ? (validScores.reduce((sum, s) => sum + s, 0) / validScores.length).toFixed(1) + "/10"
-                      : "N/A";
-
-                    return (
-                      <div className="flex flex-col gap-8 w-full animate-fade-up">
-                        {/* Dashboard Header */}
-                        <div className="flex justify-between items-center mb-2">
-                          <div>
-                            <h2 className="text-2xl font-semibold tracking-tight text-white">Workspace Studio</h2>
-                            <p className="text-xs text-zinc-400 mt-1">Review metrics, analyze critiques, and manage drafts in your publication history.</p>
-                          </div>
-                          <button
-                            onClick={() => setActiveTab("new-publication")}
-                            className="custom-btn custom-btn-accent text-xs h-9 px-4 flex items-center justify-center gap-1.5 cursor-pointer font-bold"
-                          >
-                            <Plus size={14} />
-                            <span>Create Publication</span>
-                          </button>
-                        </div>
-
-                        {/* KPI Cards Grid */}
-                        <div className="minimal-kpi-row">
-                          <div className="minimal-kpi-col">
-                            <span className="kpi-index">01 /</span>
-                            <div className="kpi-content">
-                              <span className="kpi-label">Total Publications</span>
-                              <span className="kpi-value">{totalPubs}</span>
-                              <span className="kpi-meta">Saved in archive</span>
-                            </div>
-                          </div>
-                          <div className="minimal-kpi-col">
-                            <span className="kpi-index">02 /</span>
-                            <div className="kpi-content">
-                              <span className="kpi-label">Impressions</span>
-                              <span className="kpi-value">{totalImpressions.toLocaleString()}</span>
-                              <span className="kpi-meta">Recorded reach</span>
-                            </div>
-                          </div>
-                          <div className="minimal-kpi-col">
-                            <span className="kpi-index">03 /</span>
-                            <div className="kpi-content">
-                              <span className="kpi-label">Engagement</span>
-                              <span className="kpi-value">{totalEngagement.toLocaleString()}</span>
-                              <span className="kpi-meta">Likes & comments</span>
-                            </div>
-                          </div>
-                          <div className="minimal-kpi-col">
-                            <span className="kpi-index">04 /</span>
-                            <div className="kpi-content">
-                              <span className="kpi-label">Avg Quality Score</span>
-                              <span className="kpi-value">{avgQualityScore}</span>
-                              <span className="kpi-meta">Strategist rating</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Split section */}
-                        <div className="dashboard-layout-split">
-                          {/* Left: Saved Publications Grid (2/3 width) */}
-                          <div className="dashboard-split-main flex flex-col gap-4">
-                            <div className="flex justify-between items-center">
-                              <h3 className="text-xs font-semibold uppercase text-zinc-500 tracking-wider">Publications Catalog</h3>
-                              {totalPubs > 0 && <span className="text-xs text-zinc-500 font-mono">Showing {totalPubs} posts</span>}
-                            </div>
-
-                            {archive.length === 0 ? (
-                              <div className="p-10 text-center text-zinc-500 text-xs flex flex-col items-center justify-center gap-4" style={{ background: "transparent" }}>
-                                <span>No publications generated yet. Ready to start your first draft?</span>
-                                <button
-                                  onClick={() => setActiveTab("new-publication")}
-                                  className="custom-btn custom-btn-secondary text-xs px-4 py-2"
-                                >
-                                  Launch Debate Engine
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="minimal-catalog-list">
-                                {archive.map((item, idx) => {
-                                  const hasPerformance = !!item.performance;
-                                  return (
-                                    <div
-                                      key={item.id}
-                                      onClick={() => {
-                                        setSelectedArchiveId(item.id);
-                                        setResult(item.result);
-                                        setActiveTab("workspace");
-                                      }}
-                                      className="minimal-catalog-item"
-                                    >
-                                      <div className="row-num">{String(idx + 1).padStart(2, "0")} /</div>
-                                      <div className="catalog-item-main">
-                                        <div className="catalog-item-header">
-                                          <span className="catalog-item-title">{item.appName}</span>
-                                          <span className="catalog-item-date">{item.timestamp.split(",")[0]}</span>
-                                        </div>
-                                        <p className="catalog-item-desc">
-                                          {item.result?.best?.content || item.description}
-                                        </p>
-                                        <div className="catalog-item-footer">
-                                          <span className="catalog-item-tag">
-                                            {item.result?.best?.style || "Organic"}
-                                          </span>
-                                          {hasPerformance ? (
-                                            <div className="catalog-item-metrics">
-                                              <span>👁️ {item.performance!.impressions.toLocaleString()}</span>
-                                              <span>👍 {item.performance!.likes.toLocaleString()}</span>
-                                            </div>
-                                          ) : (
-                                            <span className="text-[10px] text-zinc-500 font-mono">No stats recorded</span>
-                                          )}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Right: Quick Actions & Engine Status (1/3 width) */}
-                          <div className="dashboard-split-side flex flex-col gap-6">
-                            <div>
-                              <h3 className="text-xs font-semibold uppercase text-zinc-500 tracking-wider mb-4">Engine Integration</h3>
-                              <div className="flex flex-col gap-4">
-
-                                {/* API Key Checklist */}
-                                <div className="flex flex-col gap-3" style={{ borderTop: "1px dashed var(--border-muted)", paddingTop: "24px", background: "transparent" }}>
-                                  <div className="flex items-center gap-2 text-zinc-300 font-semibold text-xs">
-                                    <Key size={14} className="text-zinc-400" />
-                                    <span>API Gateway Status</span>
-                                  </div>
-                                  <div className="flex flex-col gap-2 font-mono text-[10px] pt-2.5" style={{ borderTop: "1px solid var(--border-muted)" }}>
-                                    <div className="flex justify-between items-center">
-                                      <span>Gemini API:</span>
-                                      <span className={apiKeys.gemini ? "text-emerald-400 font-bold" : "text-zinc-500"}>
-                                        {apiKeys.gemini ? "CONNECTED" : "MISSING"}
-                                      </span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                      <span>OpenAI API:</span>
-                                      <span className={apiKeys.openai ? "text-emerald-400 font-bold" : "text-zinc-500"}>
-                                        {apiKeys.openai ? "CONNECTED" : "MISSING"}
-                                      </span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                      <span>Anthropic API:</span>
-                                      <span className={apiKeys.anthropic ? "text-emerald-400 font-bold" : "text-zinc-500"}>
-                                        {apiKeys.anthropic ? "CONNECTED" : "MISSING"}
-                                      </span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                      <span>OpenRouter:</span>
-                                      <span className={apiKeys.openrouter ? "text-emerald-400 font-bold" : "text-zinc-500"}>
-                                        {apiKeys.openrouter ? "CONNECTED" : "MISSING"}
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* RAG Context Card */}
-                                <div className="flex flex-col gap-3" style={{ borderTop: "1px dashed var(--border-muted)", paddingTop: "24px", background: "transparent", marginTop: "12px" }}>
-                                  <div className="flex items-center gap-2 text-zinc-300 font-semibold text-xs">
-                                    <Database size={14} className="text-zinc-400" />
-                                    <span>Database Context (RAG)</span>
-                                  </div>
-                                  <div className="flex items-center justify-between text-xs pt-2.5" style={{ borderTop: "1px solid var(--border-muted)" }}>
-                                    <span className="text-zinc-400">Feedback Loop database:</span>
-                                    <span className={preferences.enableRAG ? "text-emerald-400 font-bold" : "text-zinc-500"}>
-                                      {preferences.enableRAG ? "ACTIVE" : "DISABLED"}
-                                    </span>
-                                  </div>
-                                  <p className="text-[10px] text-zinc-500 leading-relaxed">
-                                    {preferences.enableRAG
-                                      ? "Synthesis will dynamically query historical publication parameters and performance metrics to align generation hooks."
-                                      : "RAG query is disabled. Standard templates will be used for synthesis context."}
-                                  </p>
-                                </div>
-
-                                {/* Quick Launch Panel */}
-                                <div className="flex flex-col gap-3" style={{ borderTop: "1px dashed var(--border-muted)", paddingTop: "24px", background: "transparent", marginTop: "12px" }}>
-                                  <div className="flex items-center gap-2 text-zinc-300 font-semibold text-xs">
-                                    <Terminal size={14} className="text-zinc-400" />
-                                    <span>Console Management</span>
-                                  </div>
-                                  <button
-                                    onClick={() => setIsSettingsOpen(true)}
-                                    className="custom-btn custom-btn-secondary text-[11px] w-full py-2.5 flex items-center justify-center gap-1.5"
-                                  >
-                                    <Sliders size={12} />
-                                    <span>Aesthetic Configurations</span>
-                                  </button>
-                                </div>
-
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })()
+                  <DashboardOverview
+                    archive={archive}
+                    apiKeys={apiKeys}
+                    preferences={preferences}
+                    setActiveTab={setActiveTab}
+                    setSelectedArchiveId={setSelectedArchiveId}
+                    setResult={setResult}
+                    setIsSettingsOpen={setIsSettingsOpen}
+                  />
                 )}
               </motion.div>
             )}

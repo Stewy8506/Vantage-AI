@@ -117,7 +117,7 @@ function countSyllablesInWord(word: string): number {
   if (cleanWord.length <= 3) return 1;
 
   // Simple vowel matching
-  let vowelMatches = cleanWord.match(/[aeiouy]+/g);
+  const vowelMatches = cleanWord.match(/[aeiouy]+/g);
   let count = vowelMatches ? vowelMatches.length : 0;
 
   // Subtract silent 'e' at end

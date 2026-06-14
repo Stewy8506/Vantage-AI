@@ -197,7 +197,23 @@ Hot take: If you need a daily call to know what your developers are doing, you h
   }
 ];
 
-export function findRelevantViralPosts(topics: string[], enrichedSuccessTemplates?: any[]): ViralPost[] {
+interface EnrichedSuccessTemplate {
+  content: string;
+  niche: string;
+  metrics?: {
+    likes: number;
+    comments: number;
+    reposts: number;
+  };
+  structure?: {
+    hook: string;
+    body: string;
+    cta: string;
+    metaphor: string;
+  };
+}
+
+export function findRelevantViralPosts(topics: string[], enrichedSuccessTemplates?: EnrichedSuccessTemplate[]): ViralPost[] {
   // Combine native DB with user's enriched templates
   let database = [...VIRAL_POSTS_DB];
   if (enrichedSuccessTemplates && enrichedSuccessTemplates.length > 0) {

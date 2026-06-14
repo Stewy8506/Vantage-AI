@@ -19,9 +19,53 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Virality Mapper | Premium AI LinkedIn Ghostwriter",
+  metadataBase: new URL("https://virality-booster.vercel.app"),
+  title: {
+    default: "Virality Mapper | Premium AI LinkedIn Ghostwriter",
+    template: "%s | Virality Mapper",
+  },
   description: "Analyze top LinkedIn trends in real-time and generate highly optimized, high-impact post variants with advanced AI critiques.",
+  keywords: [
+    "LinkedIn AI writer",
+    "AI copywriting",
+    "multi-agent copywriting",
+    "LinkedIn ghostwriter",
+    "viral post generator",
+    "neuromarketing hooks",
+    "content optimizer"
+  ],
+  authors: [{ name: "Virality Mapper Studio" }],
+  creator: "Virality Mapper Studio",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://virality-booster.vercel.app",
+    title: "Virality Mapper | Premium AI LinkedIn Ghostwriter",
+    description: "Analyze top LinkedIn trends in real-time and generate highly optimized, high-impact post variants with advanced AI critiques.",
+    siteName: "Virality Mapper",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Virality Mapper | AI LinkedIn Copywriting Arena",
+    description: "Generate peer-critiqued post variants grounded in live search trends.",
+    creator: "@viralitymapper",
+  },
 };
+
 
 export default function RootLayout({
   children,

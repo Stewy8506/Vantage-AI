@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Cpu, ShieldAlert, MessageSquare, Award, TrendingUp, Clock, ArrowRight } from "lucide-react";
+import { Cpu, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import PostInputFields from "./workspace/PostInputFields";
+import HUDLogConsole from "./workspace/HUDLogConsole";
+import DebateTimeline from "./workspace/DebateTimeline";
 
 interface Agent {
   id: string;
@@ -23,6 +26,7 @@ interface ApiKeys {
   lmStudioUrl: string;
   customBaseUrl: string;
   customApiKey: string;
+  serpapi: string;
 }
 
 interface GenerationResult {
@@ -202,9 +206,9 @@ export default function PostGeneratorForm({
   // Real-time streaming debate states
   const [statusMessage, setStatusMessage] = useState("");
   const [trends, setTrends] = useState<string[]>([]);
-  const [drafts, setDrafts] = useState<Record<string, { content: string; hookExplanation: string }>>({});
+  const [, setDrafts] = useState<Record<string, { content: string; hookExplanation: string }>>({});
   const [critiques, setCritiques] = useState<Array<{ from: string; to: string; content: string; score: number }>>([]);
-  const [refinements, setRefinements] = useState<Record<string, { content: string; score: number; argument: string }>>({});
+  const [, setRefinements] = useState<Record<string, { content: string; score: number; argument: string }>>({});
   const [settledPost, setSettledPost] = useState<GenerationResult["best"] | null>(null);
 
   // Typewriter output states
@@ -565,144 +569,16 @@ export default function PostGeneratorForm({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="flex flex-col gap-6"
           >
-            {/* Top Panel: Stacked Input context form */}
-            <form onSubmit={handleSubmit} className="glass-panel typographic-form">
-
-              <div className="form-row">
-                <div className="row-num">01 /</div>
-                <div className="row-content">
-                  <label className="row-label">We are building (App / Project Name)</label>
-                  <input
-                    required
-                    type="text"
-                    id="appName"
-                    name="appName"
-                    className="minimal-input"
-                    placeholder="e.g. Virality Mapper"
-                    value={formData.appName}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="row-num">02 /</div>
-                <div className="row-content">
-                  <label className="row-label">What does it do? (Features & Problems Solved)</label>
-                  <textarea
-                    required
-                    id="description"
-                    name="description"
-                    className="minimal-input"
-                    placeholder="Explain what problem it solves, its target core features, benchmarks, and technology used..."
-                    value={formData.description}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              <div className="form-row grid-2">
-                <div style={{ display: "flex", gap: "24px", alignItems: "start" }}>
-                  <div className="row-num">03 /</div>
-                  <div className="row-content">
-                    <label className="row-label">Target Audience</label>
-                    <input
-                      type="text"
-                      id="targetAudience"
-                      name="targetAudience"
-                      className="minimal-input"
-                      placeholder="e.g. Senior Developers, Tech Managers"
-                      value={formData.targetAudience}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-
-                <div style={{ display: "flex", gap: "24px", alignItems: "start" }}>
-                  <div className="row-num">04 /</div>
-                  <div className="row-content">
-                    <label className="row-label">Writing Tone</label>
-                    <input
-                      type="text"
-                      id="tone"
-                      name="tone"
-                      className="minimal-input"
-                      placeholder="e.g. Technical, punchy, narrative"
-                      value={formData.tone}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="row-num">05 /</div>
-                <div className="row-content">
-                  <label className="row-label">Hook Archetype</label>
-                  <select
-                    id="hookArchetype"
-                    name="hookArchetype"
-                    className="minimal-select"
-                    value={formData.hookArchetype}
-                    onChange={handleChange}
-                  >
-                    <option value="organic">Organic / Default</option>
-                    <option value="contrarian">Contrarian Interrupt (Shock & Debunk)</option>
-                    <option value="vulnerable">Vulnerable Disclosure (Failure & Trust)</option>
-                    <option value="value-stash">High-Value Stash (Resources & Curation)</option>
-                    <option value="threat-fear">Threat & Fear (Risks & Heuristics)</option>
-                  </select>
-                </div>
-              </div>
-
-              {error && (
-                <div className="p-4 flex items-start gap-3 rounded border" style={{ background: "var(--panel-bg)", borderColor: "var(--border-active)", marginTop: "24px" }}>
-                  <span className="text-zinc-500" style={{ marginTop: "2px", flexShrink: 0 }}>⚠️</span>
-                  <p style={{ fontSize: "0.85rem", color: "var(--foreground)", margin: 0 }}>{error}</p>
-                </div>
-              )}
-
-              {activeAgentsCount !== 3 && (
-                <div className="p-4 flex items-start gap-3 rounded border text-rose-400 bg-rose-950/10 border-rose-500/20 text-xs" style={{ marginTop: "24px" }}>
-                  <span>⚠️ <strong>Debate Flow Warning</strong>: You have selected <strong>{activeAgentsCount}</strong> active debaters. Go to the <strong>Specialist Agents</strong> tab to toggle exactly 3 active agents to initiate the debate arena.</span>
-                </div>
-              )}
-
-              <button
-                type="submit"
-                className="minimal-submit-btn"
-                disabled={activeAgentsCount !== 3 || loading}
-              >
-                <span>Initiate 3-Agent Copywriting Debate</span>
-                <ArrowRight size={18} />
-              </button>
-            </form>
-
-            {/* Bottom Panel: plain text agent pool list directly under card */}
-            <div className="arena-preview-pane">
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-                <span className="status-dot animate-pulse" style={{ background: "var(--accent)" }}></span>
-                <span style={{ fontSize: "0.72rem", fontFamily: "var(--font-mono)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--zinc-400)" }}>
-                  Active Debate Arena Pool
-                </span>
-              </div>
-              <p style={{ fontSize: "0.82rem", color: "var(--zinc-400)", lineHeight: 1.5, margin: "0 0 16px 0" }}>
-                Your project characteristics are routed through a 3-agent peer critique network.
-                The writers construct drafts, review metrics/hooks, refine recursively, and consolidate outputs.
-              </p>
-
-              <div style={{ display: "flex", flexWrap: "wrap", columnGap: "32px", rowGap: "8px", fontSize: "0.8rem", fontFamily: "var(--font-mono)", color: "var(--zinc-300)" }}>
-                {agents.filter((a) => a.enabled).map((agent, index) => (
-                  <div key={agent.id} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span style={{ color: "var(--accent)", fontWeight: 700 }}>0{index + 1} {"//"}</span>
-                    <span style={{ color: "var(--foreground)", fontWeight: 700 }}>{agent.name.split(" ")[0]} {agent.name.split(" ")[1] || ""}</span>
-                    <span style={{ fontSize: "0.7rem", color: "var(--zinc-500)" }}>({agent.provider.toUpperCase()} &bull; {agent.model})</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <PostInputFields
+              formData={formData}
+              handleChange={handleChange}
+              activeAgentsCount={activeAgentsCount}
+              loading={loading}
+              error={error}
+              agents={agents}
+              handleSubmit={handleSubmit}
+            />
           </motion.div>
         ) : (
           /* Live Visual Whiteboard Debate Panel */
@@ -735,279 +611,24 @@ export default function PostGeneratorForm({
             {/* Split layout: Vertical timeline on the left rail, debate content on the right */}
             <div className="flex flex-col md:flex-row gap-8 items-start">
               {/* Left Column: Vertical Timeline */}
-              <div className="w-full md:w-[150px] flex-shrink-0">
-                <div className="vertical-timeline">
-                  <div className="vertical-timeline-line" />
-
-                  <div className={`timeline-node ${activeStep === 0 ? "active" : activeStep > 0 ? "success" : ""}`}>
-                    <div className="timeline-node-dot" />
-                    <div className="timeline-node-content">
-                      <span className="timeline-node-label">Grounding</span>
-                    </div>
-                  </div>
-
-                  <div className={`timeline-node ${activeStep === 1 ? "active" : activeStep > 1 ? "success" : ""}`}>
-                    <div className="timeline-node-dot" />
-                    <div className="timeline-node-content">
-                      <span className="timeline-node-label">Drafting</span>
-                    </div>
-                  </div>
-
-                  <div className={`timeline-node ${activeStep === 2 ? "active" : activeStep > 2 ? "success" : ""}`}>
-                    <div className="timeline-node-dot" />
-                    <div className="timeline-node-content">
-                      <span className="timeline-node-label">Critiques</span>
-                    </div>
-                  </div>
-
-                  <div className={`timeline-node ${activeStep === 3 ? "active" : activeStep > 3 ? "success" : ""}`}>
-                    <div className="timeline-node-dot" />
-                    <div className="timeline-node-content">
-                      <span className="timeline-node-label">Refining</span>
-                    </div>
-                  </div>
-
-                  <div className={`timeline-node ${activeStep === 4 ? "active" : ""}`}>
-                    <div className="timeline-node-dot" />
-                    <div className="timeline-node-content">
-                      <span className="timeline-node-label">Synthesis</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <DebateTimeline activeStep={activeStep} />
 
               {/* Right Column: Main Debate Content */}
-              <div className="flex-1 flex flex-col gap-6 w-full">
-
-                {/* Error Overlay */}
-                {error && (
-                  <div className="p-4 flex items-start gap-3 rounded-xl bg-red-950/20 border border-red-500/20">
-                    <ShieldAlert size={16} className="text-rose-500" style={{ marginTop: "2px" }} />
-                    <p style={{ fontSize: "0.85rem", color: "#fca5a5", margin: 0 }}>{error}</p>
-                  </div>
-                )}
-
-                {/* Step 1: Trends Box */}
-                {trends.length > 0 && activeStep === 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="p-5 rounded-xl border"
-                    style={{ background: "var(--panel-bg)", borderColor: "var(--border-active)" }}
-                  >
-                    <div className="flex items-center gap-2 mb-3 text-rose-400 font-bold text-xs" style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.05em" }}>
-                      <TrendingUp size={14} /> SEARCH TRENDS RETRIEVED
-                    </div>
-                    <ul className="flex flex-col gap-2 pl-4 m-0" style={{ fontSize: "0.8rem", color: "var(--zinc-300)", lineHeight: 1.4 }}>
-                      {trends.map((t, i) => <li key={i}>{t}</li>)}
-                    </ul>
-                  </motion.div>
-                )}
-
-                {/* 3-Agent side-by-side cards */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {agents.filter((a) => a.enabled).map((agent) => {
-                    const draft = drafts[agent.name];
-                    const refinement = refinements[agent.name];
-                    const typedDraft = typedDrafts[agent.name] || "";
-                    const typedRefine = typedRefinements[agent.name] || "";
-
-                    // Determine active badge
-                    let statusBadge = "🔍 Waiting...";
-                    let badgeClass = "text-zinc-500 border-zinc-800";
-
-                    if (activeStep === 0) {
-                      statusBadge = "🔍 Grounding...";
-                      badgeClass = "text-rose-400 border-rose-500/20 bg-rose-500/5 animate-pulse font-bold";
-                    } else if (activeStep === 1) {
-                      statusBadge = draft ? "✍️ Draft Ready" : "✍️ Drafting...";
-                      badgeClass = draft ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/5 font-bold" : "text-rose-400 border-rose-500/20 bg-rose-500/5 animate-pulse font-bold";
-                    } else if (activeStep === 2) {
-                      statusBadge = "💬 Peer Critique";
-                      badgeClass = "text-rose-400 border-rose-500/20 bg-rose-500/5 animate-pulse font-bold";
-                    } else if (activeStep === 3) {
-                      statusBadge = refinement ? "🔄 Refined" : "🔄 Refining...";
-                      badgeClass = refinement ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/5 font-bold" : "text-rose-400 border-rose-500/20 bg-rose-500/5 animate-pulse font-bold";
-                    } else if (activeStep === 4) {
-                      statusBadge = "🤝 Settled";
-                      badgeClass = "text-emerald-400 border-emerald-500/20 bg-emerald-500/5 font-bold";
-                    }
-
-                    return (
-                      <div
-                        key={agent.id}
-                        className="glass-panel p-5 flex flex-col gap-4 justify-between relative min-h-[380px]"
-                        style={{
-                          borderColor: activeStep === 1 && !draft ? "var(--border-active)" : "var(--border-muted)"
-                        }}
-                      >
-                        <div className="flex flex-col gap-3">
-                          <div className="flex justify-between items-center pl-2" style={{ borderLeft: "3px solid var(--accent)", borderBottom: "1px solid var(--border-muted)", paddingBottom: "10px" }}>
-                            <span style={{ fontSize: "0.85rem", fontWeight: 600 }} className="text-white">{agent.name.split(" ")[0]}</span>
-                          </div>
-
-                          <span className={`custom-badge ${badgeClass} absolute top-5 right-5`} style={{ fontSize: "0.62rem" }}>
-                            {statusBadge}
-                          </span>
-
-                          <div
-                            className="p-3 font-mono mt-4"
-                            style={{
-                              background: "var(--background)",
-                              border: "1px solid var(--border-muted)",
-                              borderRadius: "10px",
-                              fontSize: "0.75rem",
-                              lineHeight: 1.6,
-                              height: "260px",
-                              overflowY: "auto",
-                              color: "var(--zinc-300)",
-                              whiteSpace: "pre-wrap",
-                            }}
-                          >
-                            {activeStep >= 3 && typedRefine
-                              ? typedRefine
-                              : typedDraft
-                                ? typedDraft
-                                : <span className="text-zinc-600 italic">[Awaiting agent processing...]</span>
-                            }
-                          </div>
-                        </div>
-
-                        {refinement && (
-                          <div className="p-3 rounded-lg border mt-2" style={{ background: "var(--background)", borderColor: "var(--border-muted)", fontSize: "0.68rem", lineHeight: 1.45 }}>
-                            <span style={{ fontWeight: 600, color: "var(--zinc-300)", display: "block", marginBottom: "3px" }}>Change Logic:</span>
-                            <span className="italic" style={{ color: "var(--zinc-400)" }}>{refinement.argument}</span>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Critique Feed Chat bubbles */}
-                {critiques.length > 0 && (
-                  <div className="flex flex-col gap-4 mt-4" style={{ borderTop: "1px solid var(--border-muted)", paddingTop: "24px" }}>
-                    <div style={{ fontSize: "0.8rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--zinc-400)", fontFamily: "var(--font-mono)" }} className="flex items-center gap-2">
-                      <MessageSquare size={14} className="text-zinc-500" />
-                      <span>Peer Critique Arena Feed</span>
-                    </div>
-                    <div className="chat-feed">
-                      <AnimatePresence>
-                        {critiques.map((crit, idx) => (
-                          <motion.div
-                            key={idx}
-                            initial={{ opacity: 0, scale: 0.96, y: 10 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            transition={{ duration: 0.25 }}
-                            className="chat-bubble-container"
-                          >
-                            <div className="chat-bubble-meta chat-bubble-left-meta">
-                              <span>From: <strong className="text-zinc-300">{crit.from.split(" ")[0]}</strong></span>
-                              <span className="text-zinc-600 font-bold mx-1">➔</span>
-                              <span>To: <strong className="text-zinc-300">{crit.to.split(" ")[0]}</strong></span>
-                            </div>
-                            <div className="chat-bubble chat-bubble-left">
-                              <p style={{ margin: 0, paddingRight: "36px" }}>
-                                &ldquo;{crit.content}&rdquo;
-                              </p>
-                              <span className="absolute top-3 right-3 flex items-center justify-center w-7 h-7 rounded-full bg-zinc-900 text-[10px] font-bold text-rose-400 border border-zinc-800" title="Critique Score">
-                                {crit.score}
-                              </span>
-                            </div>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                )}
-
-                {/* Live System Monitor HUD terminal */}
-                <div className="flex flex-col gap-2 mt-4" style={{ borderTop: "1px solid var(--border-muted)", paddingTop: "24px" }}>
-                  <div className="flex items-center justify-between">
-                    <div style={{ fontSize: "0.8rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--zinc-400)", fontFamily: "var(--font-mono)" }}>
-                      💻 HUD Systems Console
-                    </div>
-                    {activityLogs.length > 0 && (
-                      <span className="text-[10px] font-mono text-rose-400 font-semibold uppercase animate-pulse">
-                        Streaming Active Logs
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="hud-console">
-                    <div className="hud-header">
-                      <div className="hud-dots">
-                        <span className="hud-dot red"></span>
-                        <span className="hud-dot yellow"></span>
-                        <span className="hud-dot green"></span>
-                      </div>
-                      <span style={{ marginLeft: "12px", marginRight: "auto" }}>LOG BUFFER SYSTEM</span>
-                      <span>ID: VM_DEBATE_STREAM</span>
-                    </div>
-                    <div ref={activityContainerRef} className="hud-body" data-lenis-prevent>
-                      {activityLogs.length === 0 ? (
-                        <span style={{ color: "var(--zinc-600)" }} className="italic">[Awaiting socket stream initialization...]</span>
-                      ) : (
-                        activityLogs.map((log) => {
-                          let logClass = "hud-log-info";
-                          if (log.type === "success") logClass = "hud-log-success";
-                          if (log.type === "warning") logClass = "hud-log-warning";
-
-                          return (
-                            <div key={log.id} className="hud-log-row">
-                              <span className="hud-log-time">[{log.time}]</span>
-                              <span className={`hud-log-text ${logClass}`}>{log.text}</span>
-                            </div>
-                          );
-                        })
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Settle consensus panel */}
-                {settledPost && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="glass-panel p-6 mt-6"
-                    style={{ borderColor: "var(--border-active)" }}
-                  >
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="custom-badge custom-badge-accent">
-                        <Award size={12} /> CONSOLIDATED MASTER POST
-                      </span>
-                      <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-300" style={{ fontFamily: "var(--font-mono)" }}>
-                        <TrendingUp size={12} className="text-zinc-500" /> Viral Potential: {settledPost.scores?.viralPotential || settledPost.score || 95}/100
-                      </div>
-                    </div>
-
-                    <div
-                      className="p-4"
-                      style={{
-                        background: "var(--background)",
-                        border: "1px solid var(--border-active)",
-                        borderRadius: "10px",
-                        whiteSpace: "pre-wrap",
-                        fontSize: "0.88rem",
-                        lineHeight: 1.6,
-                        color: "var(--foreground)",
-                        minHeight: "150px",
-                        overflowY: "auto",
-                        fontFamily: "var(--font-sans)",
-                      }}
-                    >
-                      {typedSettledContent}
-                    </div>
-                    <p style={{ fontSize: "0.75rem", color: "var(--zinc-500)", fontStyle: "italic", marginTop: "14px", margin: 0 }}>
-                      Consensus reached. Writing and synchronizing with workspace displays...
-                    </p>
-                  </motion.div>
-                )}
-
-              </div>
+              <HUDLogConsole
+                statusMessage={statusMessage}
+                elapsedTime={elapsedTime}
+                formatTime={formatTime}
+                activityLogs={activityLogs}
+                activityContainerRef={activityContainerRef}
+                trends={trends}
+                activeStep={activeStep}
+                typedDrafts={typedDrafts}
+                typedRefinements={typedRefinements}
+                typedSettledContent={typedSettledContent}
+                error={error}
+                critiques={critiques}
+              />
             </div>
-
           </motion.div>
         )}
       </AnimatePresence>
