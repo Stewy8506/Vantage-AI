@@ -289,21 +289,33 @@ export default function LandingPage() {
           >
             <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="smiley-svg">
               <circle cx="20" cy="20" r="16" stroke="currentColor" strokeWidth="2.5" fill="var(--background)" />
-              <line x1="15" y1="16" x2="15" y2="18.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-              <line x1="25" y1="16" x2="25" y2="18.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-              <path d="M13 24C13 24 16 28 20 28C24 28 27 24 27 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="20" y1="20" x2="27" y2="13" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="20" y1="20" x2="13" y2="27" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="20" y1="20" x2="13" y2="14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+              <circle cx="20" cy="20" r="3.5" fill="currentColor" />
+              <circle cx="27" cy="13" r="2.5" fill="currentColor" />
+              <circle cx="13" cy="27" r="2.5" fill="currentColor" />
+              <circle cx="13" cy="14" r="2.5" fill="currentColor" />
             </svg>
             <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="smiley-svg second">
               <circle cx="20" cy="20" r="16" stroke="currentColor" strokeWidth="2.5" fill="var(--background)" />
-              <line x1="15" y1="16" x2="15" y2="18.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-              <line x1="25" y1="16" x2="25" y2="18.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-              <path d="M13 24C13 24 16 28 20 28C24 28 27 24 27 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="20" y1="20" x2="27" y2="13" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="20" y1="20" x2="13" y2="27" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="20" y1="20" x2="13" y2="14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+              <circle cx="20" cy="20" r="3.5" fill="currentColor" />
+              <circle cx="27" cy="13" r="2.5" fill="currentColor" />
+              <circle cx="13" cy="27" r="2.5" fill="currentColor" />
+              <circle cx="13" cy="14" r="2.5" fill="currentColor" />
             </svg>
             <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="smiley-svg third">
               <circle cx="20" cy="20" r="16" stroke="currentColor" strokeWidth="2.5" fill="var(--background)" />
-              <line x1="15" y1="16" x2="15" y2="18.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-              <line x1="25" y1="16" x2="25" y2="18.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-              <path d="M13 24C13 24 16 28 20 28C24 28 27 24 27 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="20" y1="20" x2="27" y2="13" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="20" y1="20" x2="13" y2="27" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="20" y1="20" x2="13" y2="14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+              <circle cx="20" cy="20" r="3.5" fill="currentColor" />
+              <circle cx="27" cy="13" r="2.5" fill="currentColor" />
+              <circle cx="13" cy="27" r="2.5" fill="currentColor" />
+              <circle cx="13" cy="14" r="2.5" fill="currentColor" />
             </svg>
           </motion.div>
 

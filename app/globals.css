@@ -2154,21 +2154,22 @@ html[data-theme="alabaster"] .nav-horizontal-line {
 
 .outline-hero-title {
   font-family: 'Saira Extra Condensed', 'Teko', 'Oswald', sans-serif;
-  font-size: clamp(6rem, 16vw, 20rem);
+  font-size: clamp(6rem, 15vw, 20rem);
   font-weight: 900;
   line-height: 0.72;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.02em;
   /* Tight editorial spacing */
   text-transform: uppercase;
   margin: 0;
   position: relative;
   z-index: 2;
-  pointer-events: auto; /* Enable hover triggers */
+  pointer-events: auto;
+  /* Enable hover triggers */
   white-space: nowrap;
 }
 
 .outline-hero-title.large-title {
-  font-size: clamp(7.5rem, 20vw, 25rem);
+  font-size: clamp(7.5rem, 19vw, 25rem);
   line-height: 0.7;
   margin-left: 20%;
   /* Shift only the ENGAGE text to the right */
