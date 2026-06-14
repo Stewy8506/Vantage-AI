@@ -520,6 +520,14 @@ Context:
 LinkedIn Search Context:
 ${trendsContext}
 
+CRITICAL COPYWRITING RULES:
+1. The Hook (Relatable Fear): Start with a gut-punch reality of the developer/professional experience. Example: "If I touch this file, what breaks?" DO NOT use emojis in the hook.
+2. Kill Marketing Fluff: NEVER use phrases like "digital abyss", "spaghetti graphs", "future of", "game-changer", or "early access alert". Speak like an engineer, not a marketer.
+3. Proof & Real Benchmarks: Replace fake stats with verifiable or hardcoded benchmarks (e.g., "We parse 1.8M lines of code locally in 4.3 seconds using Rust"). Do not use generic claims like "saves 15 hours".
+4. The "Ship the GIF" Rule: Include exactly one mandatory visual proof placeholder (e.g. "[Insert 5-sec GIF showing the blast radius in action]"). Posts with visual media are mandatory.
+5. Spicy, Binary Question: End the post with a hot take followed by a binary question to drive comments (e.g., "Hot take: Refactoring without a map is just guessing. Agree?").
+6. Urgent CTA: Frame the Call-to-Action with non-marketing urgency (e.g., "Drop a comment and I'll DM you the repo").
+
 CRITICAL FORMAT REQUIREMENT:
 You must output a JSON object containing the exact properties: "content" and "hookExplanation".
 Example:
@@ -737,13 +745,22 @@ Self-Score: ${refinedC.score}/100
 Argument: ${refinedC.argument}
 
 Your task is to analyze these 3 refined options, synthesize their absolute strongest features (e.g. Agent Alpha's pattern-interrupting hook, Agent Beta's value-driven list, Agent Gamma's storytelling arc), and compile the single absolute best LinkedIn post.
+
+CRITICAL COPYWRITING QUALITY CHECKS:
+1. The Hook: Ensure it uses a sharp, relatable fear-based hook (e.g. "If I touch this file, what breaks?"). No emojis in the hook.
+2. Zero Marketing Fluff: Strip out words like "digital abyss", "spaghetti graphs", "future of", or "game-changing". The tone must be engineering-authentic.
+3. Real Benchmarks: Ensure any metrics are realistic and specific (e.g., "1.8M lines in 4.3 seconds") instead of generic "65% faster" claims.
+4. Visual Proof: The post MUST include exactly one descriptive visual placeholder (e.g., "[Insert 5-sec GIF showing the blast radius in action here]").
+5. Spicy, Binary Engagement: The post must end with a hot take and a binary question (e.g., "Hot take: [spicy belief]. Agree?") to drive comments.
+6. CTA: Non-marketing CTA (e.g., "Drop a comment and I'll DM the repo").
+
 Output a JSON object with properties 'content', 'score' (estimated viral likelihood out of 100), and 'synthesisRationale'.
 
 CRITICAL FORMAT REQUIREMENT:
 {
   "content": "The finalized absolute best LinkedIn post content...",
   "score": 98,
-  "synthesisRationale": "A detailed explanation of how you merged their best parts..."
+  "synthesisRationale": "A detailed explanation of how you merged their best parts and applied the quality checks..."
 }
 `;
 

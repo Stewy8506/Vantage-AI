@@ -45,10 +45,12 @@ export default function AgentPlayground({
   agents,
   apiKeys,
   onUpdateAgents,
+  onResetAgents,
 }: {
   agents: Agent[];
   apiKeys: ApiKeys;
   onUpdateAgents: (agents: Agent[]) => void;
+  onResetAgents: () => void;
 }) {
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
   const [models, setModels] = useState<string[]>([]);
@@ -110,6 +112,18 @@ export default function AgentPlayground({
             Configure and refine the models, system instructions, and temperature metrics for each of the 3 debating agents.
           </p>
         </div>
+        <button
+          className="custom-btn custom-btn-secondary flex items-center gap-2"
+          onClick={() => {
+            if (confirm("Are you sure you want to reset all agent configurations to defaults? This will overwrite your current configurations.")) {
+              onResetAgents();
+            }
+          }}
+          style={{ padding: "8px 16px", fontSize: "0.8rem" }}
+        >
+          <RefreshCw size={12} />
+          Reset to Defaults
+        </button>
       </div>
 
       <div className="grid" style={{ gridTemplateColumns: editingAgent ? "1.2fr 1fr" : "1fr", gap: "24px" }}>
