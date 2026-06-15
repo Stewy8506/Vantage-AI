@@ -20,7 +20,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://virality-booster.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://vantage-theta-five.vercel.app/"),
   title: {
     default: "Vantage AI | Premium AI LinkedIn Ghostwriter",
     template: "%s | Vantage AI",
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://virality-booster.vercel.app",
+    url: "https://vantage-theta-five.vercel.app/",
     title: "Vantage AI | Premium AI LinkedIn Ghostwriter",
     description: "Analyze top LinkedIn trends in real-time and generate highly optimized, high-impact post variants with advanced AI critiques.",
     siteName: "Vantage AI",

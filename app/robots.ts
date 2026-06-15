@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/workspace", "/api/"],
     },
-    sitemap: "https://virality-booster.vercel.app/sitemap.xml",
+    sitemap: "https://vantage-theta-five.vercel.app/sitemap.xml",
   };
 }
