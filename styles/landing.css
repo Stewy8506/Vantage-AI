@@ -410,9 +410,13 @@ html[data-theme="alabaster"] .outline-hero-title span {
 
 @media (max-width: 1023px) {
 
-  .hero-row-1,
-  .hero-row-2 {
+  .hero-row-1 {
     flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hero-row-2 {
+    flex-direction: column-reverse;
     align-items: flex-start;
   }
 
