@@ -1,6 +1,6 @@
-# Virality Mapper — Multi-Agent LinkedIn Debate Arena & Master Synthesizer 🚀
+# Vantage AI — Multi-Agent LinkedIn Debate Arena & Master Synthesizer 🚀
 
-An advanced, premium multi-agent workspace designed to generate high-performing, viral LinkedIn posts. Instead of relying on single-pass AI prompts that yield generic, robotic copy, **Virality Mapper** runs a dynamic **3-Agent Copywriting Panel**, subjects their drafts to a **bidirectional peer review critique arena**, refines the content recursively, and synthesizes the ultimate post under the guidance of an **unbiased Master Synthesizer**—grounded in real-time LinkedIn search trends.
+An advanced, premium multi-agent workspace designed to generate high-performing, viral LinkedIn posts. Instead of relying on single-pass AI prompts that yield generic, robotic copy, **Vantage AI** runs a dynamic **3-Agent Copywriting Panel**, subjects their drafts to a **bidirectional peer review critique arena**, refines the content recursively, and synthesizes the ultimate post under the guidance of an **unbiased Master Synthesizer**—grounded in real-time LinkedIn search trends.
 
 The application is structured as a two-stage routing architecture:
 1. **`/` (Landing Page)**: An award-worthy, minimalist, and typographic showcase featuring interactive A/B visualizers, stepper pipelines, and layout transitions.
@@ -10,7 +10,7 @@ The application is structured as a two-stage routing architecture:
 
 ## 🏗️ System Architecture & Debate Flow
 
-The core of Virality Mapper is its multi-phase consensus and debate pipeline, which models a high-performance marketing brainstorming session:
+The core of Vantage AI is its multi-phase consensus and debate pipeline, which models a high-performance marketing brainstorming session:
 
 ```mermaid
 graph TD

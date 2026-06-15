@@ -50,7 +50,7 @@ export default function PostInputFields({
               id="appName"
               name="appName"
               className="minimal-input"
-              placeholder="e.g. Virality Mapper"
+              placeholder="e.g. Vantage AI"
               value={formData.appName}
               onChange={handleChange}
             />

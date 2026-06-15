@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Virality Mapper",
+    name: "Vantage AI",
     short_name: "ViralityMapper",
     description: "Premium AI LinkedIn Ghostwriter & Multi-Agent Debate Studio",
     start_url: "/",

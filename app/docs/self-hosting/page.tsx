@@ -14,7 +14,7 @@ export default function SelfHostingPage() {
           <span>Self-Hosting & API</span>
         </h1>
         <p style={{ color: "var(--zinc-400)", fontSize: "0.95rem", marginTop: "8px", marginBottom: 0 }}>
-          Guide to deploying Virality Mapper on local servers, connecting to local LLMs, and understanding security guards.
+          Guide to deploying Vantage AI on local servers, connecting to local LLMs, and understanding security guards.
         </p>
       </div>
 
@@ -24,8 +24,8 @@ export default function SelfHostingPage() {
         transition={{ delay: 0.1 }}
       >
         <p>
-          Virality Mapper can be run entirely in self-hosted environments. You can configure global API keys and base URLs 
-          using server environment variables or browser settings, allowing local multi-agent copy generation 
+          Vantage AI can be run entirely in self-hosted environments. You can configure global API keys and base URLs
+          using server environment variables or browser settings, allowing local multi-agent copy generation
           using models on your machine.
         </p>
       </motion.div>
@@ -50,7 +50,7 @@ npm run dev`}</code>
       <section>
         <h2 id="environment-variables">02 / Environment Variables</h2>
         <p>
-          Instead of entering API credentials in the browser settings modal, you can configure them server-side inside 
+          Instead of entering API credentials in the browser settings modal, you can configure them server-side inside
           a `.env.local` file:
         </p>
         <pre>
@@ -76,16 +76,16 @@ SERPAPI_KEY=your_serpapi_key`}</code>
         </p>
         <ol>
           <li>
-            <strong>Ollama</strong>: Start Ollama on your machine. Ensure it is listening on port 11434. 
+            <strong>Ollama</strong>: Start Ollama on your machine. Ensure it is listening on port 11434.
             Confirm the models you want to use (such as `llama3` or `mistral`) are pulled:
             <pre><code>ollama pull llama3</code></pre>
           </li>
           <li>
-            <strong>LM Studio</strong>: Open LM Studio, select your model, navigate to the **Local Server** tab, 
+            <strong>LM Studio</strong>: Open LM Studio, select your model, navigate to the **Local Server** tab,
             and start the server on port 1234.
           </li>
           <li>
-            <strong>Settings Modal</strong>: In the Virality Mapper workspace, open **Settings → API Connections**, 
+            <strong>Settings Modal</strong>: In the Vantage AI workspace, open **Settings → API Connections**,
             select local providers, and confirm the base URL connection is running.
           </li>
         </ol>
@@ -98,9 +98,9 @@ SERPAPI_KEY=your_serpapi_key`}</code>
         <div>
           <h3 style={{ margin: "0 0 4px", fontSize: "0.9rem", fontWeight: 700 }}># 01 / SSRF & Request Forgery Guards</h3>
           <p style={{ margin: 0, fontSize: "0.85rem", lineHeight: 1.5 }}>
-            To prevent SSRF (Server-Side Request Forgery) attacks in outgoing HTTP queries, Virality Mapper enforces 
-            strict base URL filtering before issuing client calls. Any configured URLs that use non-HTTP/HTTPS protocols, 
-            contain credentials/passwords, or attempt to resolve cloud metadata hosts (`169.254.169.254`, `metadata.google.internal`) 
+            To prevent SSRF (Server-Side Request Forgery) attacks in outgoing HTTP queries, Vantage AI enforces
+            strict base URL filtering before issuing client calls. Any configured URLs that use non-HTTP/HTTPS protocols,
+            contain credentials/passwords, or attempt to resolve cloud metadata hosts (`169.254.169.254`, `metadata.google.internal`)
             are blocked.
           </p>
         </div>

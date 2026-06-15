@@ -24,8 +24,8 @@ export default function MethodologyPage() {
         transition={{ delay: 0.1 }}
       >
         <p>
-          Unlike standard single-shot LLM generators, Virality Mapper operates as a multi-agent state machine. 
-          It runs specialized sub-agents through structured phases of writing, critique, and revision before delivering the 
+          Unlike standard single-shot LLM generators, Vantage AI operates as a multi-agent state machine.
+          It runs specialized sub-agents through structured phases of writing, critique, and revision before delivering the
           final refined output.
         </p>
       </motion.div>
@@ -53,7 +53,7 @@ export default function MethodologyPage() {
               role: "Fills the body with real-world scenarios, professional vulnerabilities, and analogies. Focuses on authentic brand communication and emotional storytelling."
             }
           ].map((agent) => (
-            <div 
+            <div
               key={agent.num}
               style={{
                 border: "1px solid var(--border-muted)",
@@ -87,7 +87,7 @@ export default function MethodologyPage() {
             { step: "Phase 04: Refinement", desc: "Agents receive peer reviews and update their drafts. Unnecessary words are pruned and readability is checked." },
             { step: "Phase 05: Settle", desc: "A synthesis model merges the best elements into a single cohesive copy, ready to publish." }
           ].map((phase, idx) => (
-            <div 
+            <div
               key={idx}
               style={{
                 display: "flex",
@@ -111,7 +111,7 @@ export default function MethodologyPage() {
         <p>
           After the consensus model settles, the refined post is tested against a simulated panel of LinkedIn reader personas:
         </p>
-        <div 
+        <div
           style={{
             border: "1px solid var(--border-muted)",
             backgroundColor: "var(--panel-bg-solid)",
@@ -131,7 +131,7 @@ export default function MethodologyPage() {
               <li><strong>Founder / Executive</strong>: Searches for vulnerability, growth strategies, and real-world failure analyses.</li>
             </ul>
             <p style={{ margin: "12px 0 0", fontSize: "0.825rem", color: "var(--zinc-500)" }}>
-              The simulator returns three scores: <strong>Scroll-Stopping Probability</strong> (hook efficiency), 
+              The simulator returns three scores: <strong>Scroll-Stopping Probability</strong> (hook efficiency),
               <strong>Engagement Level</strong> (readability), and <strong>Virality Ratio</strong> (likelihood to share).
             </p>
           </div>

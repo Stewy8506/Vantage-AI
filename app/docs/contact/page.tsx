@@ -8,7 +8,7 @@ export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    subject: "Virality Mapper Inquiry",
+    subject: "Vantage AI Inquiry",
     message: "",
   });
 
@@ -68,7 +68,7 @@ export default function ContactPage() {
         {/* Form Container */}
         <div>
           {status === "success" ? (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               style={{
@@ -86,12 +86,12 @@ export default function ContactPage() {
               <CheckCircle2 size={48} className="text-[#22c55e]" />
               <h3 style={{ margin: 0, color: "var(--zinc-100)" }}>Message Encoded</h3>
               <p style={{ margin: 0, color: "var(--zinc-400)", fontSize: "0.875rem", lineHeight: 1.6 }}>
-                Opening your email client to dispatch the message. If it doesn't open automatically, 
+                Opening your email client to dispatch the message. If it doesn't open automatically,
                 you can manually write to <strong style={{ color: "var(--accent)" }}>anuvab@anv.dev</strong>.
               </p>
-              <button 
-                onClick={() => setStatus("idle")} 
-                className="custom-btn custom-btn-secondary" 
+              <button
+                onClick={() => setStatus("idle")}
+                className="custom-btn custom-btn-secondary"
                 style={{ alignSelf: "center", marginTop: "8px" }}
               >
                 Send Another Message
@@ -100,7 +100,7 @@ export default function ContactPage() {
           ) : (
             <form onSubmit={handleSubmit} className="typographic-form" style={{ marginTop: 0 }}>
               {status === "error" && (
-                <div 
+                <div
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -214,11 +214,11 @@ export default function ContactPage() {
           <div className="system-stats-panel" style={{ height: "auto" }}>
             <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}># 01 / Developer Office</h3>
             <p style={{ margin: "12px 0 0", fontSize: "0.85rem", color: "var(--zinc-400)", lineHeight: 1.6 }}>
-              Virality Mapper is developed and maintained by Anuvab Das, a freelance systems and AI consultant. 
-              Have questions about deploying this at your company or setting up a custom database RAG loop? 
+              Vantage AI is developed and maintained by Anuvab Das, a freelance systems and AI consultant.
+              Have questions about deploying this at your company or setting up a custom database RAG loop?
               Get in touch!
             </p>
-            
+
             <div style={{ borderTop: "1px solid var(--border-muted)", paddingTop: "20px", marginTop: "20px", display: "flex", flexDirection: "column", gap: "16px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <div style={{ color: "var(--accent)" }}><Mail size={16} /></div>

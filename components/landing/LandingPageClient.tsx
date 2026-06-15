@@ -225,7 +225,7 @@ export default function LandingPageClient() {
               {/* Quadrant 1 (Top Left) */}
               <div className="loader-quadrant top-left">
                 <div className="quadrant-meta">
-                  <span className="mono-label">VIRALITY MAPPER</span>
+                  <span className="mono-label">Vantage AI</span>
                   <span className="mono-val">STATUS // ONLINE</span>
                 </div>
               </div>
@@ -525,7 +525,7 @@ export default function LandingPageClient() {
                 {/* Simulator Content Panel */}
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
                   <AnimatePresence mode="wait">
-                     {simStep === 0 && (
+                    {simStep === 0 && (
                       <motion.div
                         key="step-grounding"
                         initial={{ opacity: 0, scale: 0.99 }}
@@ -789,7 +789,7 @@ export default function LandingPageClient() {
               {[
                 { q: "How is this different from ChatGPT?", a: "Instead of one AI pass, three specialist copywriters debate, critique each other, refine their drafts, and a master synthesizer merges the best elements — grounded in live LinkedIn search trends." },
                 { q: "Where are my API keys stored?", a: "Locally in your browser by default. For hosted deployments, configure keys as server environment variables so they never travel in request bodies." },
-                { q: "Does it post to LinkedIn for me?", a: "No. Virality Mapper generates and scores copy. You review the output and publish manually." },
+                { q: "Does it post to LinkedIn for me?", a: "No. Vantage AI generates and scores copy. You review the output and publish manually." },
                 { q: "What is the RAG feedback loop?", a: "After publishing, record your post's impressions, likes, and comments. Your best-performing posts become few-shot templates for future generations — stored locally in your browser." },
               ].map((item) => (
                 <div key={item.q} style={{ borderBottom: "1px solid var(--border-muted)", paddingBottom: "20px" }}>

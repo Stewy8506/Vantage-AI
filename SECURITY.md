@@ -2,7 +2,7 @@
 
 ## 01 / Supported Versions
 
-The table below outlines the versions of Virality Mapper that actively receive security updates and patches:
+The table below outlines the versions of Vantage AI that actively receive security updates and patches:
 
 | Version | Supported |
 | ------- | --------- |
@@ -13,7 +13,7 @@ The table below outlines the versions of Virality Mapper that actively receive s
 
 ## 02 / Reporting a Vulnerability
 
-We take the security of Virality Mapper very seriously. If you discover a potential vulnerability or security flaw (especially regarding API key transmission or Request Forgery), please **do not open a public issue or pull request**.
+We take the security of Vantage AI very seriously. If you discover a potential vulnerability or security flaw (especially regarding API key transmission or Request Forgery), please **do not open a public issue or pull request**.
 
 Instead, report vulnerabilities privately by emailing the developer at:
 **[anuvab@anv.dev](mailto:dasanuvab38@gmail.com)**
@@ -31,7 +31,7 @@ We will acknowledge your report within 48 hours and work to release a patch as q
 
 All user configurations and credentials respect a strict **local-first privacy architecture**:
 - **Browser-Only Storage**: All API connection keys (Google Gemini, OpenAI, Anthropic, OpenRouter, SerpApi) are saved directly on the client side using browser `localStorage` or secure cookies.
-- **No Telemetry Mirroring**: Credentials are never sent to or mirrored on any central Virality Mapper server or telemetry database. They travel only to the corresponding target provider endpoints during generation runs.
+- **No Telemetry Mirroring**: Credentials are never sent to or mirrored on any central Vantage AI server or telemetry database. They travel only to the corresponding target provider endpoints during generation runs.
 
 ---
 

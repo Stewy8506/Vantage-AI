@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "How Virality Mapper handles your data and API keys.",
+  description: "How Vantage AI handles your data and API keys.",
 };
 
 export default function PrivacyPage() {

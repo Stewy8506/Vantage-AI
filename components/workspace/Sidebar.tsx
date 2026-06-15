@@ -104,7 +104,7 @@ export default function Sidebar({
           <Link href="/" className="brand-text" style={{ textDecoration: "none", cursor: "pointer" }}>
             <div className="flex items-center gap-2">
               <Activity size={20} className="text-zinc-300" />
-              <span className="font-semibold tracking-tight">Virality Mapper</span>
+              <span className="font-semibold tracking-tight">Vantage AI</span>
             </div>
           </Link>
           <button

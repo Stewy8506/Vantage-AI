@@ -3,7 +3,7 @@ import LandingPageClient from "@/components/landing/LandingPageClient";
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "Virality Mapper",
+  name: "Vantage AI",
   operatingSystem: "All",
   applicationCategory: "BusinessApplication",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
@@ -22,10 +22,10 @@ const faqJsonLd = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "How is Virality Mapper different from ChatGPT?",
+      name: "How is Vantage AI different from ChatGPT?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Instead of a single AI pass, Virality Mapper runs three specialist copywriters through a bidirectional critique arena, then synthesizes the best elements into one post grounded in live LinkedIn search trends.",
+        text: "Instead of a single AI pass, Vantage AI runs three specialist copywriters through a bidirectional critique arena, then synthesizes the best elements into one post grounded in live LinkedIn search trends.",
       },
     },
     {
@@ -41,7 +41,7 @@ const faqJsonLd = {
       name: "Does it post to LinkedIn automatically?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. Virality Mapper generates and scores copy. You review the output and publish manually to LinkedIn.",
+        text: "No. Vantage AI generates and scores copy. You review the output and publish manually to LinkedIn.",
       },
     },
   ],

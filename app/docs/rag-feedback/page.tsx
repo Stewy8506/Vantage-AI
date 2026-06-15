@@ -24,12 +24,12 @@ export default function RagFeedbackPage() {
         transition={{ delay: 0.1 }}
       >
         <p>
-          AI models output generic templates because they lack a feedback loop. They do not know which posts 
+          AI models output generic templates because they lack a feedback loop. They do not know which posts
           actually performed well on your LinkedIn feed, resulting in repeated patterns.
         </p>
         <p>
-          <strong>Virality Mapper</strong> implements a client-side **Retrieval-Augmented Generation (RAG)** loop. 
-          By recording real performance analytics (views, likes, comments) from your published posts, the engine learns 
+          <strong>Vantage AI</strong> implements a client-side **Retrieval-Augmented Generation (RAG)** loop.
+          By recording real performance analytics (views, likes, comments) from your published posts, the engine learns
           your personal writing style and references successful runs as examples for future drafts.
         </p>
       </motion.div>
@@ -51,7 +51,7 @@ export default function RagFeedbackPage() {
               desc: "When you start a new draft session, if the **Enable RAG** preference is toggled ON in Settings, the engine queries your local high-performance index. It fetches the text structure of your best posts and injects them directly into the system prompts as few-shot reference examples."
             }
           ].map((item, idx) => (
-            <div 
+            <div
               key={idx}
               style={{
                 borderLeft: "2px solid var(--accent)",
@@ -73,8 +73,8 @@ export default function RagFeedbackPage() {
         <div>
           <h3 style={{ margin: "0 0 4px", fontSize: "0.9rem", fontWeight: 700 }}># 04 / Activating the RAG Context</h3>
           <p style={{ margin: 0, fontSize: "0.85rem", lineHeight: 1.5 }}>
-            To verify RAG templates are active: open **Settings Modal**, navigate to **Preferences**, 
-            and toggle **Enable RAG Context**. Make sure you have recorded performance data for at least 1-2 posts 
+            To verify RAG templates are active: open **Settings Modal**, navigate to **Preferences**,
+            and toggle **Enable RAG Context**. Make sure you have recorded performance data for at least 1-2 posts
             under the Review tab to give the model reference examples.
           </p>
         </div>

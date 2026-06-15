@@ -3,15 +3,15 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  Menu, 
-  X, 
-  Terminal, 
-  BookOpen, 
-  Cpu, 
-  Mail, 
-  ShieldAlert, 
-  Home, 
+import {
+  Menu,
+  X,
+  Terminal,
+  BookOpen,
+  Cpu,
+  Mail,
+  ShieldAlert,
+  Home,
   RefreshCw,
   Search,
   Hash,
@@ -129,7 +129,7 @@ export default function DocsLayout({
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <span style={{ fontSize: "11px", fontFamily: "var(--font-mono)", color: "var(--zinc-400)", fontWeight: 600 }}>{activeTitle}</span>
-          <button 
+          <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             style={{ padding: "8px", margin: "0 -8px", color: "var(--zinc-400)", backgroundColor: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
             aria-label="Toggle Navigation Menu"
@@ -143,7 +143,7 @@ export default function DocsLayout({
       <aside className={`docs-sidebar ${isSidebarOpen ? "open" : ""}`}>
         <div className="docs-sidebar-header">
           <Link href="/" className="docs-brand-link">
-            <span>// VIRALITY MAPPER</span>
+            <span>// Vantage AI</span>
           </Link>
         </div>
 
@@ -158,7 +158,7 @@ export default function DocsLayout({
             className="docs-search-input"
           />
           {searchQuery && (
-            <button 
+            <button
               onClick={() => setSearchQuery("")}
               style={{
                 position: "absolute",
@@ -209,16 +209,16 @@ export default function DocsLayout({
 
         {/* Sidebar Footer links */}
         <div style={{ marginTop: "auto", borderTop: "1px solid var(--border-muted)", paddingTop: "16px" }}>
-          <Link 
-            href="/workspace" 
+          <Link
+            href="/workspace"
             className="docs-nav-link"
             style={{ fontSize: "0.8rem", color: "var(--zinc-400)", display: "flex", gap: "8px", alignItems: "center", marginBottom: "8px" }}
           >
             <Terminal size={12} />
             <span>Launch Workspace</span>
           </Link>
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="docs-nav-link"
             style={{ fontSize: "0.8rem", color: "var(--zinc-500)", display: "flex", gap: "8px", alignItems: "center" }}
           >
@@ -230,7 +230,7 @@ export default function DocsLayout({
 
       {/* Overlay for mobile sidebar */}
       {isSidebarOpen && (
-        <div 
+        <div
           onClick={() => setIsSidebarOpen(false)}
           style={{
             position: "fixed",
@@ -248,15 +248,15 @@ export default function DocsLayout({
           {/* Main Article Body */}
           <div style={{ flexGrow: 1, minWidth: 0, maxWidth: "760px" }}>
             {/* Breadcrumbs */}
-            <div 
-              style={{ 
-                display: "flex", 
-                alignItems: "center", 
-                gap: "8px", 
-                fontSize: "0.75rem", 
-                fontFamily: "var(--font-mono)", 
-                color: "var(--zinc-500)", 
-                marginBottom: "32px" 
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                fontSize: "0.75rem",
+                fontFamily: "var(--font-mono)",
+                color: "var(--zinc-500)",
+                marginBottom: "32px"
               }}
             >
               <Link href="/" style={{ color: "inherit", textDecoration: "none" }}>HOME</Link>
@@ -306,8 +306,8 @@ export default function DocsLayout({
               <span className="docs-toc-title">On This Page</span>
               <ul className="docs-toc-list">
                 {headings.map((heading) => (
-                  <li 
-                    key={heading.id} 
+                  <li
+                    key={heading.id}
                     className="docs-toc-item"
                     style={{ paddingLeft: heading.level === 3 ? "12px" : "0px" }}
                   >

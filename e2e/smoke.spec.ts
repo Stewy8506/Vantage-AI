@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Virality Mapper Smoke Tests", () => {
+test.describe("Vantage AI Smoke Tests", () => {
   test("should load the landing page successfully", async ({ page }) => {
     await page.goto("/");
-    await expect(page).toHaveTitle(/Virality Mapper/);
+    await expect(page).toHaveTitle(/Vantage AI/);
     const launchCta = page.getByRole("link", { name: "LAUNCH STUDIO", exact: true });
     await expect(launchCta).toBeVisible();
   });

@@ -23,7 +23,7 @@ export default function DataHandlingSecurityPage() {
         transition={{ delay: 0.1 }}
       >
         <p>
-          Virality Mapper follows a strict local-first architectural model. We do not maintain databases to store your posts, 
+          Vantage AI follows a strict local-first architectural model. We do not maintain databases to store your posts,
           histories, or API configuration keys. Your personal hardware is the direct boundary of the application&apos;s data storage.
         </p>
       </motion.div>
@@ -35,14 +35,14 @@ export default function DataHandlingSecurityPage() {
         </p>
         <ul>
           <li><strong>Storage Area</strong>: Keys are saved directly in your browser&apos;s <code>localStorage</code> database or secure local cookies.</li>
-          <li><strong>Transmission Safety</strong>: Credentials travel exclusively from your browser to the select model endpoints (e.g. Google Gemini, Anthropic, or OpenAI API). They are never mirrored or uploaded to any central Virality Mapper telemetry databases.</li>
+          <li><strong>Transmission Safety</strong>: Credentials travel exclusively from your browser to the select model endpoints (e.g. Google Gemini, Anthropic, or OpenAI API). They are never mirrored or uploaded to any central Vantage AI telemetry databases.</li>
         </ul>
       </section>
 
       <section>
         <h2 id="ssrf-guards">02 / Server-Side Request Forgery (SSRF) Whitelisting</h2>
         <p>
-          When deploying custom OpenAI API gateways or using local models (such as Ollama or LM Studio), the application employs 
+          When deploying custom OpenAI API gateways or using local models (such as Ollama or LM Studio), the application employs
           strict SSRF validation on the resolved base URLs:
         </p>
         <ul>

@@ -21,8 +21,8 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://virality-booster.vercel.app"),
   title: {
-    default: "Virality Mapper | Premium AI LinkedIn Ghostwriter",
-    template: "%s | Virality Mapper",
+    default: "Vantage AI | Premium AI LinkedIn Ghostwriter",
+    template: "%s | Vantage AI",
   },
   description: "Analyze top LinkedIn trends in real-time and generate highly optimized, high-impact post variants with advanced AI critiques.",
   keywords: [
@@ -54,13 +54,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://virality-booster.vercel.app",
-    title: "Virality Mapper | Premium AI LinkedIn Ghostwriter",
+    title: "Vantage AI | Premium AI LinkedIn Ghostwriter",
     description: "Analyze top LinkedIn trends in real-time and generate highly optimized, high-impact post variants with advanced AI critiques.",
-    siteName: "Virality Mapper",
+    siteName: "Vantage AI",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Virality Mapper | AI LinkedIn Copywriting Arena",
+    title: "Vantage AI | AI LinkedIn Copywriting Arena",
     description: "Generate peer-critiqued post variants grounded in live search trends.",
     creator: "@viralitymapper",
   },

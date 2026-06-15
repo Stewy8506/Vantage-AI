@@ -23,7 +23,7 @@ export default function TermsOfServicePage() {
         transition={{ delay: 0.1 }}
       >
         <p>
-          Welcome to <strong>Virality Mapper</strong>. By utilizing this client-side software workspace or self-hosting 
+          Welcome to <strong>Vantage AI</strong>. By utilizing this client-side software workspace or self-hosting
           the code repository, you agree to comply with the terms and agreements outlined below.
         </p>
       </motion.div>
@@ -31,7 +31,7 @@ export default function TermsOfServicePage() {
       <section>
         <h2 id="licensing">01 / Software License</h2>
         <p>
-          Virality Mapper is provided under a local workspace developer license. You are permitted to:
+          Vantage AI is provided under a local workspace developer license. You are permitted to:
         </p>
         <ul>
           <li>Execute the application code in local browser sessions.</li>
@@ -55,9 +55,9 @@ export default function TermsOfServicePage() {
       <section>
         <h2 id="no-warranty">03 / Warranty Disclaimer</h2>
         <p>
-          THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO 
-          THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS 
-          OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, 
+          THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+          THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+          OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE,
           ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE.
         </p>
       </section>
@@ -65,7 +65,7 @@ export default function TermsOfServicePage() {
       <section>
         <h2 id="termination">04 / Local Termination</h2>
         <p>
-          You can terminate this agreement at any time by deleting the local repository, closing active browser tabs, and clearing 
+          You can terminate this agreement at any time by deleting the local repository, closing active browser tabs, and clearing
           your cookies and localStorage history.
         </p>
       </section>

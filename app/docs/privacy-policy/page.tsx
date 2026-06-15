@@ -23,8 +23,8 @@ export default function PrivacyPolicyPage() {
         transition={{ delay: 0.1 }}
       >
         <p>
-          At <strong>Virality Mapper</strong>, we prioritize user privacy above all else. This application is designed with a 
-          <strong> local-first architecture</strong>, meaning that your data, API credentials, prompts, and drafted publications 
+          At <strong>Vantage AI</strong>, we prioritize user privacy above all else. This application is designed with a
+          <strong> local-first architecture</strong>, meaning that your data, API credentials, prompts, and drafted publications
           remain stored directly on your personal computer, not on external server databases.
         </p>
       </motion.div>

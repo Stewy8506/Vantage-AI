@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Virality Mapper - AI LinkedIn Copywriting Arena";
+export const alt = "Vantage AI - AI LinkedIn Copywriting Arena";
 export const size = {
   width: 1200,
   height: 630,
@@ -78,7 +78,7 @@ export default function Image() {
                 letterSpacing: "3px",
               }}
             >
-              VIRALITY MAPPER
+              Vantage AI
             </span>
           </div>
 

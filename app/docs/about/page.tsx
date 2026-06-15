@@ -13,7 +13,7 @@ export default function AboutPlatformPage() {
           <span>About Platform</span>
         </h1>
         <p style={{ color: "var(--zinc-400)", fontSize: "0.95rem", marginTop: "8px", marginBottom: 0 }}>
-          A detailed guide on Virality Mapper's core writing engine, features, and system architecture.
+          A detailed guide on Vantage AI's core writing engine, features, and system architecture.
         </p>
       </div>
 
@@ -23,13 +23,13 @@ export default function AboutPlatformPage() {
         transition={{ delay: 0.1 }}
       >
         <p>
-          Standard large language models write LinkedIn content that looks dry, predictable, and artificial. 
-          They are filled with over-used buzzwords (<em>"in today's fast-paced world"</em>, <em>"thrilled to announce"</em>, 
+          Standard large language models write LinkedIn content that looks dry, predictable, and artificial.
+          They are filled with over-used buzzwords (<em>"in today's fast-paced world"</em>, <em>"thrilled to announce"</em>,
           <em>"delve"</em>, <em>"testament"</em>) and formatting styles that scream AI generator.
         </p>
         <p>
-          <strong>Virality Mapper</strong> was built to escape these templates. Instead of relying on a single AI pass, 
-          it places three distinct agent specialists inside a peer-critique debate arena, refines the text to make it more 
+          <strong>Vantage AI</strong> was built to escape these templates. Instead of relying on a single AI pass,
+          it places three distinct agent specialists inside a peer-critique debate arena, refines the text to make it more
           human, grounds it against live search trends, and simulates real-world reader personas to verify the copy.
         </p>
       </motion.div>
@@ -49,7 +49,7 @@ export default function AboutPlatformPage() {
       <section>
         <h2 id="trend-grounding">02 / Live Trend Grounding</h2>
         <p>
-          To ensure your posts match active industry conversations, Virality Mapper grounds generation prompts in real-time search queries:
+          To ensure your posts match active industry conversations, Vantage AI grounds generation prompts in real-time search queries:
         </p>
         <ul>
           <li><strong>Low-Latency Crawler Fallbacks</strong>: When search grounding is enabled, the system crawls DuckDuckGo and Yahoo search endpoints to gather recent keyword associations and trending hashtags.</li>
@@ -76,7 +76,7 @@ export default function AboutPlatformPage() {
       <section>
         <h2 id="rag-performance">04 / RAG Performance Loops</h2>
         <p>
-          When you log organic metrics (likes, impressions, comments) for published items, Virality Mapper closes the feedback loop:
+          When you log organic metrics (likes, impressions, comments) for published items, Vantage AI closes the feedback loop:
         </p>
         <ul>
           <li><strong>Performance Indexing</strong>: Your best-performing posts are indexed inside your local browser database.</li>
@@ -92,7 +92,7 @@ export default function AboutPlatformPage() {
         <ul>
           <li><strong>Zero Central Storage</strong>: Your posts, metrics, history, and preferences are saved only in your local browser&apos;s IndexedDB/localStorage databases.</li>
           <li><strong>Secure Client Keys</strong>: API keys are stored in client-side cookies or localStorage and travel to servers only when initiating generative requests.</li>
-          <li><strong>Self-Hosting</strong>: You can host Virality Mapper on private servers and run LLMs entirely locally using Ollama or LM Studio.</li>
+          <li><strong>Self-Hosting</strong>: You can host Vantage AI on private servers and run LLMs entirely locally using Ollama or LM Studio.</li>
         </ul>
       </section>
     </div>

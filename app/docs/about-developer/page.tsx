@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { 
-  Globe, 
-  Cpu, 
-  Terminal as TermIcon, 
-  Layers, 
+import {
+  Globe,
+  Cpu,
+  Terminal as TermIcon,
+  Layers,
   Zap,
   GitBranch,
   Briefcase,
@@ -41,7 +41,7 @@ const DecodingText = ({ text }: { text: string }) => {
   const handleMouseEnter = () => {
     let iteration = 0;
     if (intervalRef.current) clearInterval(intervalRef.current);
-    
+
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
     intervalRef.current = setInterval(() => {
       setDisplayText(
@@ -85,7 +85,7 @@ const DecodingText = ({ text }: { text: string }) => {
 export default function AboutDeveloperPage() {
   const [terminalLines, setTerminalLines] = useState<TerminalLine[]>([]);
   const [logIndex, setLogIndex] = useState(0);
-  
+
   const terminalBodyRef = useRef<HTMLDivElement>(null);
   const terminalEndRef = useRef<HTMLDivElement>(null);
 
@@ -182,7 +182,7 @@ export default function AboutDeveloperPage() {
           <DecodingText text="About Developer" />
         </h1>
         <p style={{ color: "var(--zinc-400)", fontSize: "0.95rem", marginTop: "8px", marginBottom: 0 }}>
-          Anuvab Das — Fullstack Architect, Compiler Craftsman & Creator of Virality Mapper.
+          Anuvab Das — Fullstack Architect, Compiler Craftsman & Creator of Vantage AI.
         </p>
       </div>
 
@@ -207,12 +207,12 @@ export default function AboutDeveloperPage() {
                 ) : (
                   <span style={{ color: "var(--zinc-600)" }}>//</span>
                 )}
-                <span 
+                <span
                   style={{
-                    color: 
+                    color:
                       line.type === "command" ? "var(--zinc-100)" :
-                      line.type === "success" ? "#22c55e" :
-                      line.type === "warning" ? "#eab308" : "var(--zinc-300)"
+                        line.type === "success" ? "#22c55e" :
+                          line.type === "warning" ? "#eab308" : "var(--zinc-300)"
                   }}
                 >
                   {line.text}
@@ -227,7 +227,7 @@ export default function AboutDeveloperPage() {
             ) : (
               <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
                 <span style={{ color: "#22c55e" }}>$</span>
-                <span 
+                <span
                   style={{
                     width: "8px",
                     height: "14px",
@@ -287,7 +287,7 @@ export default function AboutDeveloperPage() {
       </div>
 
       {/* Developer Profile Bio */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
@@ -300,8 +300,8 @@ export default function AboutDeveloperPage() {
         <div>
           <h3 style={{ margin: "0 0 4px", fontSize: "0.95rem", fontWeight: 700 }}># 01 / Synthesis Core</h3>
           <p style={{ margin: 0, fontSize: "0.875rem", lineHeight: 1.6, color: "var(--zinc-300)" }}>
-            Anuvab is a software craftsman building AI developer tools, robust compiler structures, and fast front-ends. 
-            He designed Virality Mapper to escape standard ChatGPT templates and provide a high-agency workspace that 
+            Anuvab is a software craftsman building AI developer tools, robust compiler structures, and fast front-ends.
+            He designed Vantage AI to escape standard ChatGPT templates and provide a high-agency workspace that
             empowers professionals to write authentic, high-impact content.
           </p>
         </div>
@@ -315,7 +315,7 @@ export default function AboutDeveloperPage() {
         <p style={{ color: "var(--zinc-400)" }}>Hover over nodes to inspect structural ASCII schematics.</p>
         <div className="skill-matrix-grid">
           {skillCards.map((card, idx) => (
-            <motion.div 
+            <motion.div
               key={card.num}
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -351,7 +351,7 @@ export default function AboutDeveloperPage() {
             { label: "LinkedIn", url: "https://linkedin.com/in/anuvabdas", icon: <Briefcase size={14} /> },
             { label: "Twitter / X", url: "https://twitter.com/anuvab_das", icon: <MessageSquare size={14} /> },
           ].map((social) => (
-            <a 
+            <a
               key={social.label}
               href={social.url}
               target="_blank"
