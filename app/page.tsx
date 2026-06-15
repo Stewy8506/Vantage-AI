@@ -67,7 +67,7 @@ const firstTitleVariants = {
   animate: (idx: number) => ({
     y: "0%",
     opacity: 1,
-    transition: { duration: 0.8, delay: 0.6 + idx * 0.035, ease: [0.16, 1, 0.3, 1] as const }
+    transition: { duration: 0.8, delay: 0.35 + idx * 0.025, ease: [0.16, 1, 0.3, 1] as const }
   }),
   hover: {
     y: -15,
@@ -81,7 +81,7 @@ const secondTitleVariants = {
   animate: (idx: number) => ({
     y: "0%",
     opacity: 1,
-    transition: { duration: 0.8, delay: 0.95 + idx * 0.035, ease: [0.16, 1, 0.3, 1] as const }
+    transition: { duration: 0.8, delay: 0.55 + idx * 0.025, ease: [0.16, 1, 0.3, 1] as const }
   }),
   hover: {
     y: -20,
@@ -108,21 +108,95 @@ export default function LandingPage() {
   const [copied, setCopied] = useState(false);
   const [loadingPercent, setLoadingPercent] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [sandboxActiveIndex, setSandboxActiveIndex] = useState(0);
-  const sandboxPrompts = [
-    {
-      title: "Local-first Synchronization CRDTs",
-      preview: "Querying local DB context...\nIntegrating Alpha hooks:\n'Most apps let saved links rot in a black hole. We built a local-first SQLite library to treat info as a perishable asset.'\nStatus: [Consensus Settle Complete - CTR Ready]"
-    },
-    {
-      title: "Design System Velocity Bloat",
-      preview: "Analyzing Button Primitive latency...\nIntegrating Beta hooks:\n'Your design system is slowly killing your product velocity. We went from 12 button styles to 450+ components.'\nStatus: [Consensus Settle Complete - CTR Ready]"
-    },
-    {
-      title: "Cloud Database Cost Reductions",
-      preview: "Analyzing flat server cost metrics...\nIntegrating Gamma hooks:\n'We deleted our cloud database cluster and saved $1,200/month. No postgres clusters. No Serverless pools.'\nStatus: [Consensus Settle Complete - CTR Ready]"
+
+  // Audit Playground States
+  const [auditText, setAuditText] = useState(
+    "We deleted our cloud database cluster and saved $1,200/month. No Postgres. No serverless connection pooling.\n\nWe migrated the entire application to local-first SQLite databases running directly in the browser and syncing via CRDTs.\n\n⚡ 0.8ms DB queries: Reads/writes happen in local memory.\n🔋 Offline capability: The app works on a flight, syncing upon landing.\n💸 Flat $40/month server cost.\n\nComment 'SYNC' below and we will DM you the synchronization script repository."
+  );
+  const [isAuditing, setIsAuditing] = useState(false);
+  const [auditStep, setAuditStep] = useState(0); // 0 = idle, 1 = hook checking, 2 = readability analysis, 3 = conversion audit, 4 = complete
+  const [auditScore, setAuditScore] = useState(88);
+
+  const runConsensusAudit = () => {
+    if (isAuditing) return;
+    setIsAuditing(true);
+    setAuditStep(1);
+
+    setTimeout(() => {
+      setAuditStep(2);
+    }, 700);
+
+    setTimeout(() => {
+      setAuditStep(3);
+    }, 1400);
+
+    setTimeout(() => {
+      // Dynamic rules-based scoring calculation
+      let score = 70;
+      const lowerText = auditText.toLowerCase();
+
+      if (auditText.split("\n\n").length >= 3) score += 8;
+      if (auditText.length > 120 && auditText.length < 500) score += 7;
+
+      if (lowerText.includes("$") || lowerText.includes("%") || /[0-9]+ms/.test(lowerText) || /[0-9]+%/.test(lowerText)) {
+        score += 10;
+      }
+      if (lowerText.includes("crdt") || lowerText.includes("sqlite") || lowerText.includes("offline") || lowerText.includes("local-first")) {
+        score += 5;
+      }
+      if (lowerText.includes("comment") || lowerText.includes("dm you") || lowerText.includes("agree or disagree") || lowerText.includes("ask")) {
+        score += 8;
+      }
+
+      if (lowerText.includes("synergy") || lowerText.includes("agile") || lowerText.includes("next-gen") || lowerText.includes("robust") || lowerText.includes("disruptive")) {
+        score -= 15;
+      }
+
+      const finalScore = Math.min(Math.max(score, 45), 98);
+      setAuditScore(finalScore);
+      setAuditStep(4);
+      setIsAuditing(false);
+    }, 2100);
+  };
+
+  const getDynamicCritiques = () => {
+    const lowerText = auditText.toLowerCase();
+    const length = auditText.length;
+
+    let alphaStatus = "OK";
+    let alphaText = "Hook metrics are strong. The draft details specific financial or performance savings ($1,200/month, 0.8ms) that catch scroll attention.";
+    if (!lowerText.includes("$") && !lowerText.includes("%") && !/[0-9]/.test(lowerText)) {
+      alphaStatus = "WARNING";
+      alphaText = "Hook is missing numerical metrics. Add concrete values, timelines, or percentages to establish quantitative proof.";
+    } else if (length < 80) {
+      alphaStatus = "WARNING";
+      alphaText = "Draft text is too short. Establish context hooks and outcomes to validate reader interest.";
     }
-  ];
+
+    let betaStatus = "OK";
+    let betaText = "Visual readability is excellent. Clean line-breaks separate content, preventing block text layout fatigue.";
+    if (auditText.split("\n\n").length < 3) {
+      betaStatus = "WARNING";
+      betaText = "High layout density. Text lacks visual breathing room. Break content up with double line-breaks or bullet structures.";
+    }
+
+    let gammaStatus = "OK";
+    let gammaText = "CTR call-to-action is active. The request for comments triggers viral distribution loops on standard platform feeds.";
+    if (!lowerText.includes("comment") && !lowerText.includes("dm") && !lowerText.includes("agree")) {
+      gammaStatus = "WARNING";
+      gammaText = "Passive conversion loop. No organic CTR trigger detected. Ask readers to comment or vote to activate distribution.";
+    }
+    if (lowerText.includes("synergy") || lowerText.includes("agile") || lowerText.includes("next-gen") || lowerText.includes("robust")) {
+      gammaStatus = "WARNING";
+      gammaText = "Jargon warning. Dry marketing cliches detected. Swap empty descriptors with clear active verbs.";
+    }
+
+    return [
+      { agent: "Alpha Agent / Hook Validator", status: alphaStatus, text: alphaText },
+      { agent: "Beta Agent / Readability Optimizer", status: betaStatus, text: betaText },
+      { agent: "Gamma Agent / CTR & Conversion Settle", status: gammaStatus, text: gammaText }
+    ];
+  };
 
   // Monospace Loader simulation
   useEffect(() => {
@@ -142,32 +216,52 @@ export default function LandingPage() {
   }, []);
 
   useEffect(() => {
-    const spotlight = document.querySelector(".grid-spotlight") as HTMLElement | null;
-    const glow = document.querySelector(".cursor-spotlight-glow") as HTMLElement | null;
+    let targetX = typeof window !== "undefined" ? window.innerWidth / 2 : 0;
+    let targetY = typeof window !== "undefined" ? window.innerHeight / 2 : 0;
+    let currentX = targetX;
+    let currentY = targetY;
+    let frameId: number;
 
     const handleMouseMove = (e: MouseEvent) => {
-      const x = `${e.clientX}px`;
-      const y = `${e.clientY}px`;
-      document.documentElement.style.setProperty("--mouse-x", x);
-      document.documentElement.style.setProperty("--mouse-y", y);
+      targetX = e.clientX;
+      targetY = e.clientY;
+    };
+
+    const updatePosition = () => {
+      // Linear interpolation for smooth trailing drag inertia
+      currentX += (targetX - currentX) * 0.085;
+      currentY += (targetY - currentY) * 0.085;
+
+      const pxX = `${currentX}px`;
+      const pxY = `${currentY}px`;
+
+      document.documentElement.style.setProperty("--mouse-x", pxX);
+      document.documentElement.style.setProperty("--mouse-y", pxY);
+
+      const spotlight = document.querySelector(".grid-spotlight") as HTMLElement | null;
+      const glow = document.querySelector(".cursor-spotlight-glow") as HTMLElement | null;
 
       if (spotlight) {
-        const mask = `radial-gradient(circle 350px at ${x} ${y}, black 0%, rgba(0, 0, 0, 0.45) 45%, rgba(0, 0, 0, 0.12) 75%, transparent 100%)`;
+        const mask = `radial-gradient(circle 280px at ${pxX} ${pxY}, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0.05) 75%, transparent 100%)`;
         spotlight.style.maskImage = mask;
         spotlight.style.webkitMaskImage = mask;
       }
       if (glow) {
-        glow.style.backgroundImage = `radial-gradient(circle 350px at ${x} ${y}, var(--accent-glow) 0%, rgba(255, 255, 255, 0.01) 60%, transparent 100%)`;
+        glow.style.backgroundImage = `radial-gradient(circle 280px at ${pxX} ${pxY}, var(--accent-glow) 0%, rgba(255, 255, 255, 0.005) 60%, transparent 100%)`;
       }
+
+      frameId = requestAnimationFrame(updatePosition);
     };
 
     if (typeof window !== "undefined") {
       window.addEventListener("mousemove", handleMouseMove);
+      frameId = requestAnimationFrame(updatePosition);
     }
     return () => {
       if (typeof window !== "undefined") {
         window.removeEventListener("mousemove", handleMouseMove);
       }
+      cancelAnimationFrame(frameId);
     };
   }, []);
 
@@ -204,84 +298,82 @@ export default function LandingPage() {
   return (
     <div style={{ background: "var(--background)", minHeight: "100vh", position: "relative", overflowX: "hidden" }}>
 
-      {/* Custom Monospace Loader Overlay */}
+      {/* Custom Premium Typographic Grid Loader Overlay */}
       <AnimatePresence>
         {isLoading && (
           <motion.div
             key="custom-loader"
             className="monospace-loader"
-            exit={{ y: "-100%", opacity: 0, filter: "blur(20px)" }}
-            transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0, scale: 1.03, filter: "blur(30px)" }}
+            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* Immersive Background Orbs */}
             <div className="loader-glow-orb loader-glow-orb-1" />
             <div className="loader-glow-orb loader-glow-orb-2" />
 
-            <div className="loader-terminal">
-              {/* Spinning Logo Stack */}
-              <div className="loader-logo-pulse">
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="smiley-svg">
-                  <circle cx="20" cy="20" r="16" stroke="currentColor" strokeWidth="2.5" fill="var(--background)" />
-                  <line x1="20" y1="20" x2="27" y2="13" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                  <line x1="20" y1="20" x2="13" y2="27" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                  <line x1="20" y1="20" x2="13" y2="14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                  <circle cx="20" cy="20" r="3.5" fill="currentColor" />
-                  <circle cx="27" cy="13" r="2.5" fill="currentColor" />
-                  <circle cx="13" cy="27" r="2.5" fill="currentColor" />
-                  <circle cx="13" cy="14" r="2.5" fill="currentColor" />
-                </svg>
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="smiley-svg second">
-                  <circle cx="20" cy="20" r="16" stroke="currentColor" strokeWidth="2.5" fill="var(--background)" />
-                  <line x1="20" y1="20" x2="27" y2="13" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                  <line x1="20" y1="20" x2="13" y2="27" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                  <line x1="20" y1="20" x2="13" y2="14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                  <circle cx="20" cy="20" r="3.5" fill="currentColor" />
-                  <circle cx="27" cy="13" r="2.5" fill="currentColor" />
-                  <circle cx="13" cy="27" r="2.5" fill="currentColor" />
-                  <circle cx="13" cy="14" r="2.5" fill="currentColor" />
-                </svg>
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="smiley-svg third">
-                  <circle cx="20" cy="20" r="16" stroke="currentColor" strokeWidth="2.5" fill="var(--background)" />
-                  <line x1="20" y1="20" x2="27" y2="13" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                  <line x1="20" y1="20" x2="13" y2="27" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                  <line x1="20" y1="20" x2="13" y2="14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                  <circle cx="20" cy="20" r="3.5" fill="currentColor" />
-                  <circle cx="27" cy="13" r="2.5" fill="currentColor" />
-                  <circle cx="13" cy="27" r="2.5" fill="currentColor" />
-                  <circle cx="13" cy="14" r="2.5" fill="currentColor" />
-                </svg>
-              </div>
+            <div className="premium-loader-grid">
+              {/* Grid Lines */}
+              <div className="loader-grid-line-h loader-grid-line-h-1" />
+              <div className="loader-grid-line-h loader-grid-line-h-2" />
+              <div className="loader-grid-line-v loader-grid-line-v-1" />
+              <div className="loader-grid-line-v loader-grid-line-v-2" />
 
-              <div className="loader-header">
-                <span className="loader-header-title">[ VIRALITY MAPPER STUDIO ]</span>
-                <span>v1.0.4</span>
-              </div>
-              <div className="loader-logs">
-                <div className={`loader-log-row ${loadingPercent >= 0 ? (loadingPercent >= 25 ? "done" : "active") : ""}`}>
-                  <span>01 / INITIALIZE DEBATE CONTEXT CORE</span>
-                  <span>{loadingPercent >= 25 ? "[OK]" : "[BUSY]"}</span>
-                </div>
-                <div className={`loader-log-row ${loadingPercent >= 25 ? (loadingPercent >= 55 ? "done" : "active") : ""}`}>
-                  <span>02 / CONNECTING DEBATE ARENA GATEWAYS</span>
-                  <span>{loadingPercent >= 55 ? "[OK]" : (loadingPercent >= 25 ? "[BUSY]" : "[WAIT]")}</span>
-                </div>
-                <div className={`loader-log-row ${loadingPercent >= 55 ? (loadingPercent >= 85 ? "done" : "active") : ""}`}>
-                  <span>03 / GROUNDING LIVE FEED TELEMETRY</span>
-                  <span>{loadingPercent >= 85 ? "[OK]" : (loadingPercent >= 55 ? "[BUSY]" : "[WAIT]")}</span>
-                </div>
-                <div className={`loader-log-row ${loadingPercent >= 85 ? (loadingPercent >= 100 ? "done" : "active") : ""}`}>
-                  <span>04 / AGENT POOL SYNCHRONIZATION</span>
-                  <span>{loadingPercent >= 100 ? "[OK]" : (loadingPercent >= 85 ? "[BUSY]" : "[WAIT]")}</span>
+              {/* Quadrant 1 (Top Left) */}
+              <div className="loader-quadrant top-left">
+                <div className="quadrant-meta">
+                  <span className="mono-label">SYS_ID // VIRALITY_MAPPER</span>
+                  <span className="mono-val">LOC_52.3 // NODE_ACTIVE</span>
                 </div>
               </div>
 
-              <div className="loader-progress-section">
-                <div className="loader-progress-info">
-                  <span>BOOTING SETTLE ENGINE</span>
-                  <span>{loadingPercent}%</span>
+              {/* Quadrant 2 (Top Right) */}
+              <div className="loader-quadrant top-right">
+                <div className="quadrant-meta text-right">
+                  <span className="mono-label">ENG_BUILD // V1.0.4</span>
+                  <span className="mono-val">SETTLE_POOL // ACTIVE</span>
                 </div>
-                <div className="loader-progress-bar">
-                  <div className="loader-progress-fill" style={{ width: `${loadingPercent}%` }} />
+              </div>
+
+              {/* Center counter display */}
+              <div className="loader-center-display">
+                <div className="concentric-rings">
+                  <div className="ring ring-1" />
+                  <div className="ring ring-2" />
+                  <div className="ring ring-3" />
+                </div>
+
+                <div className="loader-giant-counter">
+                  <span className="counter-num">{String(loadingPercent).padStart(3, "0")}</span>
+                  <span className="counter-pct">%</span>
+                </div>
+
+                <div className="loader-phase-text">
+                  {loadingPercent < 25 && "INITIALIZING DEBATE CONTEXT CORE..."}
+                  {loadingPercent >= 25 && loadingPercent < 55 && "CONNECTING DEBATE ARENA GATEWAYS..."}
+                  {loadingPercent >= 55 && loadingPercent < 85 && "GROUNDING LIVE FEED TELEMETRY..."}
+                  {loadingPercent >= 85 && "SYNCHRONIZING AGENT PEER POOL..."}
+                </div>
+              </div>
+
+              {/* Quadrant 3 (Bottom Left) */}
+              <div className="loader-quadrant bottom-left">
+                <div className="quadrant-meta">
+                  <span className="mono-label">BOOT_DIAGNOSTICS</span>
+                  <div className="bar-wrapper">
+                    <div className="mini-progress-bar">
+                      <div className="mini-progress-fill" style={{ width: `${loadingPercent}%` }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quadrant 4 (Bottom Right) */}
+              <div className="loader-quadrant bottom-right">
+                <div className="quadrant-meta text-right">
+                  <span className="mono-label">ENGINE_STATUS</span>
+                  <span className="mono-val color-accent">
+                    {loadingPercent === 100 ? "ENGINE_READY" : "SETTLING_SURVIVOR"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -302,9 +394,24 @@ export default function LandingPage() {
       <div className="noise-grain-overlay" />
 
       {/* Dynamic Grid Backdrop & Spotlight */}
-      <div className="grid-base" />
-      <div className="cursor-spotlight-glow" />
-      <div className="grid-spotlight" />
+      <motion.div
+        className="grid-base"
+        initial={{ opacity: 0 }}
+        animate={isLoading ? { opacity: 0 } : { opacity: 1 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      />
+      <motion.div
+        className="cursor-spotlight-glow"
+        initial={{ opacity: 0 }}
+        animate={isLoading ? { opacity: 0 } : { opacity: 1 }}
+        transition={{ duration: 1.2, delay: 0.1, ease: "easeOut" }}
+      />
+      <motion.div
+        className="grid-spotlight"
+        initial={{ opacity: 0 }}
+        animate={isLoading ? { opacity: 0 } : { opacity: 1 }}
+        transition={{ duration: 1.2, delay: 0.1, ease: "easeOut" }}
+      />
 
 
       <script
@@ -314,16 +421,27 @@ export default function LandingPage() {
         }}
       />
 
-      <div className="typographic-landing">
+      <motion.div
+        className="typographic-landing"
+        initial={{ opacity: 0, scale: 0.98, filter: "blur(12px)" }}
+        animate={isLoading ? {} : { opacity: 1, scale: 1, filter: "blur(0px)" }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+      >
 
         {/* Redesigned Navigation Bar matching the Sample */}
         <header className="minimal-nav">
-          <div className="nav-horizontal-line" />
+          <motion.div
+            className="nav-horizontal-line"
+            initial={{ scaleX: 0 }}
+            animate={isLoading ? { scaleX: 0 } : { scaleX: 1 }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            style={{ originX: 0 }}
+          />
           <motion.div
             className="smiley-logo-stack"
             initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            animate={isLoading ? { opacity: 0, scale: 0.9 } : { opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           >
             <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="smiley-svg">
               <circle cx="20" cy="20" r="16" stroke="currentColor" strokeWidth="2.5" fill="var(--background)" />
@@ -358,15 +476,25 @@ export default function LandingPage() {
           </motion.div>
 
           <nav className="minimal-nav-links">
-            <Link href="#features" className="nav-link-item">FEATURES</Link>
-            <Link href="#pipeline" className="nav-link-item">PROCESS</Link>
-            <Link href="/workspace" className="nav-link-item">WORKSPACE</Link>
+            {["FEATURES", "PROCESS", "WORKSPACE"].map((link, i) => (
+              <motion.div
+                key={link}
+                initial={{ opacity: 0, y: -8 }}
+                animate={isLoading ? { opacity: 0, y: -8 } : { opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                style={{ display: "inline-block" }}
+              >
+                <Link href={link === "WORKSPACE" ? "/workspace" : `#${link.toLowerCase()}`} className="nav-link-item">
+                  {link}
+                </Link>
+              </motion.div>
+            ))}
           </nav>
 
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={isLoading ? { opacity: 0, scale: 0.95 } : { opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
             <Link href="/workspace" className="nav-pill-cta">
               LAUNCH ENGINE
@@ -459,8 +587,8 @@ export default function LandingPage() {
           {/* Interactive Live Debate Arena Simulator */}
           <motion.section
             className="scroll-reveal"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
@@ -755,53 +883,104 @@ export default function LandingPage() {
             </div>
           </section>
 
-          {/* Bottom CTA Runway Section */}
-          <section className="cta-runway-section scroll-reveal" id="cta">
-            <div className="cta-runway-grid">
-              <div className="cta-left">
-                <div className="cta-title-small">
-                  <Zap size={14} className="text-amber-400" />
-                  <span>READY TO SHIFT THE CTR CURVE?</span>
+          {/* Interactive Consensus Audit Playground */}
+          <section className="audit-playground-section scroll-reveal" id="playground">
+            <div className="relative mb-14">
+              <h2 className="catalog-header">
+                {"Audit Playground".split("").map((char, idx) => (
+                  <span key={idx}>{char === " " ? "\u00a0" : char}</span>
+                ))}
+              </h2>
+            </div>
+
+            <div className="playground-grid">
+              {/* Left Column: Input Panel */}
+              <div className="playground-left">
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "16px" }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--zinc-500)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                    Console Editor / paste your draft copy
+                  </span>
                 </div>
-                <h2 className="cta-title-large">
-                  {"Settle the copy. Settle the score.".split("").map((char, idx) => (
-                    <span key={idx}>{char === " " ? "\u00a0" : char}</span>
-                  ))}
-                </h2>
-                <p className="cta-desc">
-                  Join the elite group of developers and founders optimizing their growth channels. Ground drafts, simulate debates, and run professional campaigns with peer-critiqued copywriting models.
-                </p>
-                <div>
-                  <Link href="/workspace" className="hero-cta-button">
-                    <span>Enter Settle Engine Workspace</span>
-                    <ArrowRight size={14} />
-                  </Link>
+                <textarea
+                  className="playground-textarea"
+                  value={auditText}
+                  onChange={(e) => setAuditText(e.target.value)}
+                  disabled={isAuditing}
+                  placeholder="Paste your copywriting draft here..."
+                />
+
+                {/* Audit Terminal Log Console */}
+                <div className="audit-terminal">
+                  <div className="audit-terminal-row active" style={{ opacity: isAuditing || auditStep > 0 ? 1 : 0.45 }}>
+                    <span>01 / ANALYZING HOOK STRUCTURE SAVINGS</span>
+                    <span>
+                      {auditStep > 1 ? "[OK]" : (auditStep === 1 ? "[RUNNING]" : "[IDLE]")}
+                    </span>
+                  </div>
+                  <div className="audit-terminal-row" style={{ color: auditStep >= 2 ? "var(--foreground)" : "var(--zinc-600)", opacity: auditStep >= 2 ? 1 : 0.45 }}>
+                    <span>02 / CRITIQUING VISUAL LINE DENSITY</span>
+                    <span>
+                      {auditStep > 2 ? "[OK]" : (auditStep === 2 ? "[RUNNING]" : "[WAIT]")}
+                    </span>
+                  </div>
+                  <div className="audit-terminal-row" style={{ color: auditStep >= 3 ? "var(--foreground)" : "var(--zinc-600)", opacity: auditStep >= 3 ? 1 : 0.45 }}>
+                    <span>03 / VIRAL CTR FEED TRIGGER ANALYSIS</span>
+                    <span>
+                      {auditStep > 3 ? "[OK]" : (auditStep === 3 ? "[RUNNING]" : "[WAIT]")}
+                    </span>
+                  </div>
                 </div>
+
+                <button
+                  className="audit-action-btn"
+                  onClick={runConsensusAudit}
+                  disabled={isAuditing}
+                >
+                  {isAuditing ? (
+                    <>
+                      <RefreshCw size={14} className="animate-spin" />
+                      <span>Auditing consensus...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Zap size={14} />
+                      <span>Run Consensus Audit</span>
+                    </>
+                  )}
+                </button>
               </div>
 
-              <div className="cta-right">
-                {/* Prompt Sandbox Widget */}
-                <div className="sandbox-widget">
-                  <div className="sandbox-header">
-                    <span>Interactive Prompt Sandbox</span>
+              {/* Right Column: Dynamic Output Panel */}
+              <div className="playground-right">
+                {/* Score Widget */}
+                <div className="score-card-widget">
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--zinc-500)", letterSpacing: "0.08em" }}>
+                      CONSENSUS DRAFT SCORE
+                    </span>
+                    <span style={{ fontSize: "0.82rem", color: "var(--zinc-400)" }}>
+                      {auditScore >= 80 ? "Settle survivor CTR verified." : "Low response rate risk."}
+                    </span>
                   </div>
-                  <div className="sandbox-prompt-list">
-                    {sandboxPrompts.map((prompt, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setSandboxActiveIndex(idx)}
-                        className={`sandbox-prompt-option ${sandboxActiveIndex === idx ? "active" : ""}`}
-                      >
-                        {prompt.title}
-                      </button>
-                    ))}
+                  <div className="score-value-large">
+                    {auditScore}
+                    <span style={{ fontSize: "1.2rem", color: "var(--zinc-500)", fontFamily: "var(--font-mono)" }}>%</span>
                   </div>
-                  <div className="sandbox-preview-container">
-                    <div className="sandbox-preview-label">Compilation Preview</div>
-                    <div className="sandbox-preview-box">
-                      {sandboxPrompts[sandboxActiveIndex].preview}
+                </div>
+
+                {/* Critique Cards List */}
+                <div className="critique-list">
+                  {getDynamicCritiques().map((crit, idx) => (
+                    <div key={idx} className="critique-card-item">
+                      <div className="critique-card-header">
+                        <span className="critique-card-agent">{crit.agent}</span>
+                        <span className={`critique-card-status ${crit.status === "OK" ? "flag-ok" : "flag-warning"}`}>
+                          {crit.status === "OK" ? "● OK" : "▲ WARNING"}
+                        </span>
+                      </div>
+                      <p className="critique-card-text">{crit.text}</p>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -818,7 +997,7 @@ export default function LandingPage() {
           </div>
         </footer>
 
-      </div>
+      </motion.div>
     </div>
   );
 }
