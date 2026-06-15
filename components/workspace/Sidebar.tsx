@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Activity, ChevronRight, ChevronLeft, Plus, LayoutDashboard, Sliders, Search, Settings } from "lucide-react";
+import { Activity, ChevronRight, ChevronLeft, Plus, LayoutDashboard, Sliders, Search, Settings, BookOpen } from "lucide-react";
 import React from "react";
 
 interface UserPreferences {
@@ -152,6 +152,17 @@ export default function Sidebar({
             <Sliders size={16} />
             <span>Specialist Agents</span>
           </div>
+          <a
+            href="/docs/about"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav-item"
+            title="Read Documentation"
+            style={{ textDecoration: "none" }}
+          >
+            <BookOpen size={16} />
+            <span>Documentation</span>
+          </a>
         </nav>
 
         {/* Historical Saved Publications integrated */}

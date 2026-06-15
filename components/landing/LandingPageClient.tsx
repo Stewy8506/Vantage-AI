@@ -833,8 +833,12 @@ export default function LandingPageClient() {
         <footer className="minimal-footer">
           <span>anv.dev</span>
           <span>&copy; 2026. All rights reserved.</span>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <Link href="/privacy" style={{ fontSize: "0.75rem", color: "var(--zinc-500)" }}>Privacy</Link>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "16px" }}>
+            <Link href="/docs/about-developer" style={{ fontSize: "0.75rem", color: "var(--zinc-500)", textDecoration: "none" }}>About Dev</Link>
+            <Link href="/docs/about" style={{ fontSize: "0.75rem", color: "var(--zinc-500)", textDecoration: "none" }}>Platform</Link>
+            <Link href="/docs/contact" style={{ fontSize: "0.75rem", color: "var(--zinc-500)", textDecoration: "none" }}>Contact</Link>
+            <Link href="/docs/self-hosting" style={{ fontSize: "0.75rem", color: "var(--zinc-500)", textDecoration: "none" }}>Self-Hosting</Link>
+            <Link href="/privacy" style={{ fontSize: "0.75rem", color: "var(--zinc-500)", textDecoration: "none" }}>Privacy</Link>
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping"></span>
             <span className="text-[10px] font-bold text-zinc-500 font-mono">Live</span>
           </div>
