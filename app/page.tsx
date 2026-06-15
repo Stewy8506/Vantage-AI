@@ -34,31 +34,31 @@ const mockSimulationData = {
   ],
   agents: [
     {
-      name: "Alpha Agent",
-      provider: "Gemini 2.5",
+      name: "Hook Specialist",
+      provider: "Hook & CTR Focus",
       draft: "We stopped relying on hope-driven development to manage our archives.\n\nMost SaaS tools let links rot in a black hole. We built a local-first SQLite library to treat info as a perishable asset.",
-      critique: "Gemini 2.5 → GPT-4o:\n'Draft has great technical grounding, but layout density is too tight for mobile dwell times. Split the second paragraph.'",
+      critique: "Hook Specialist → Metrics Specialist:\n'Draft has great technical grounding, but layout density is too tight for mobile dwell times. Split the second paragraph.'",
       refinement: "We stopped relying on hope-driven development to manage our archives.\n\nMost apps let saved links rot in a black hole.\n\nSo we built LinkShelf to treat info as a perishable asset."
     },
     {
-      name: "Beta Agent",
-      provider: "GPT-4o",
+      name: "Metrics Specialist",
+      provider: "Data & Growth Focus",
       draft: "Your design system is slowly killing your product velocity.\n\nWe went from 12 button styles to 450+ components. Our mobile parse latency spiked to 4.2 seconds. We didn't build a system, we built a digital graveyard.",
-      critique: "GPT-4o → Claude 3.5:\n'Excellent hooks, but CTA is missing. Recommend adding a low-friction comment request to distribute synchronization blueprints.'",
+      critique: "Metrics Specialist → Narrative Specialist:\n'Excellent hooks, but CTA is missing. Recommend adding a low-friction comment request to distribute synchronization blueprints.'",
       refinement: "Your design system is slowly killing your product velocity.\n\nWe went from 12 buttons to 450+ components and 4.2s parse latency.\n\nComment 'CLEAN' below to get our primitive CSS variables blueprint."
     },
     {
-      name: "Gamma Agent",
-      provider: "Claude 3.5",
+      name: "Narrative Specialist",
+      provider: "Storytelling Focus",
       draft: "We deleted our cloud database cluster and saved $1,200/month.\n\nNo postgres clusters. No Serverless connection pools. Just SQLite synced via CRDTs directly in browser memory.",
-      critique: "Claude 3.5 → Gemini 2.5:\n'Metaphors are clean, but needs concrete metrics to justify offline synchronization reliability.'",
+      critique: "Narrative Specialist → Hook Specialist:\n'Metaphors are clean, but needs concrete metrics to justify offline synchronization reliability.'",
       refinement: "We deleted our cloud database cluster and saved $1,200/month.\n\nSQLite synced in local memory via CRDTs.\n\n⚡ 0.8ms DB queries. 🔋 100% Offline capability. 💸 flat $40/month costs."
     }
   ],
   survivor: {
     content: "We deleted our cloud database cluster and saved $1,200/month.\n\nNo Postgres. No Redis cluster. No serverless connection pooling.\n\nWe migrated the entire application to local-first SQLite databases running directly in the browser and syncing via CRDTs.\n\nHere is the telemetry data from our production release:\n\n⚡ 0.8ms DB queries: Reads/writes happen in local memory.\n🔋 Offline capability: The app works on a flight, syncing upon landing.\n💸 Flat $40/month server cost.\n\nComment \"SYNC\" below and we will DM you the synchronization script repository.\n\nHot take: 90% of user data does not need to live in a centralized cloud database. Agree or disagree?",
     score: 96,
-    critique: "Gamma Agent proposed the cleanest architecture narrative. The debate pool resolved to incorporate Beta Agent's low-friction CTA and Alpha Agent's performance grounding metrics, maximizing conversion potential."
+    critique: "Narrative Specialist proposed the cleanest storytelling angle. The debate panel resolved to incorporate Metrics Specialist's low-friction CTA and Hook Specialist's telemetry metrics, maximizing conversion potential."
   }
 };
 
@@ -108,95 +108,6 @@ export default function LandingPage() {
   const [copied, setCopied] = useState(false);
   const [loadingPercent, setLoadingPercent] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Audit Playground States
-  const [auditText, setAuditText] = useState(
-    "We deleted our cloud database cluster and saved $1,200/month. No Postgres. No serverless connection pooling.\n\nWe migrated the entire application to local-first SQLite databases running directly in the browser and syncing via CRDTs.\n\n⚡ 0.8ms DB queries: Reads/writes happen in local memory.\n🔋 Offline capability: The app works on a flight, syncing upon landing.\n💸 Flat $40/month server cost.\n\nComment 'SYNC' below and we will DM you the synchronization script repository."
-  );
-  const [isAuditing, setIsAuditing] = useState(false);
-  const [auditStep, setAuditStep] = useState(0); // 0 = idle, 1 = hook checking, 2 = readability analysis, 3 = conversion audit, 4 = complete
-  const [auditScore, setAuditScore] = useState(88);
-
-  const runConsensusAudit = () => {
-    if (isAuditing) return;
-    setIsAuditing(true);
-    setAuditStep(1);
-
-    setTimeout(() => {
-      setAuditStep(2);
-    }, 700);
-
-    setTimeout(() => {
-      setAuditStep(3);
-    }, 1400);
-
-    setTimeout(() => {
-      // Dynamic rules-based scoring calculation
-      let score = 70;
-      const lowerText = auditText.toLowerCase();
-
-      if (auditText.split("\n\n").length >= 3) score += 8;
-      if (auditText.length > 120 && auditText.length < 500) score += 7;
-
-      if (lowerText.includes("$") || lowerText.includes("%") || /[0-9]+ms/.test(lowerText) || /[0-9]+%/.test(lowerText)) {
-        score += 10;
-      }
-      if (lowerText.includes("crdt") || lowerText.includes("sqlite") || lowerText.includes("offline") || lowerText.includes("local-first")) {
-        score += 5;
-      }
-      if (lowerText.includes("comment") || lowerText.includes("dm you") || lowerText.includes("agree or disagree") || lowerText.includes("ask")) {
-        score += 8;
-      }
-
-      if (lowerText.includes("synergy") || lowerText.includes("agile") || lowerText.includes("next-gen") || lowerText.includes("robust") || lowerText.includes("disruptive")) {
-        score -= 15;
-      }
-
-      const finalScore = Math.min(Math.max(score, 45), 98);
-      setAuditScore(finalScore);
-      setAuditStep(4);
-      setIsAuditing(false);
-    }, 2100);
-  };
-
-  const getDynamicCritiques = () => {
-    const lowerText = auditText.toLowerCase();
-    const length = auditText.length;
-
-    let alphaStatus = "OK";
-    let alphaText = "Hook metrics are strong. The draft details specific financial or performance savings ($1,200/month, 0.8ms) that catch scroll attention.";
-    if (!lowerText.includes("$") && !lowerText.includes("%") && !/[0-9]/.test(lowerText)) {
-      alphaStatus = "WARNING";
-      alphaText = "Hook is missing numerical metrics. Add concrete values, timelines, or percentages to establish quantitative proof.";
-    } else if (length < 80) {
-      alphaStatus = "WARNING";
-      alphaText = "Draft text is too short. Establish context hooks and outcomes to validate reader interest.";
-    }
-
-    let betaStatus = "OK";
-    let betaText = "Visual readability is excellent. Clean line-breaks separate content, preventing block text layout fatigue.";
-    if (auditText.split("\n\n").length < 3) {
-      betaStatus = "WARNING";
-      betaText = "High layout density. Text lacks visual breathing room. Break content up with double line-breaks or bullet structures.";
-    }
-
-    let gammaStatus = "OK";
-    let gammaText = "CTR call-to-action is active. The request for comments triggers viral distribution loops on standard platform feeds.";
-    if (!lowerText.includes("comment") && !lowerText.includes("dm") && !lowerText.includes("agree")) {
-      gammaStatus = "WARNING";
-      gammaText = "Passive conversion loop. No organic CTR trigger detected. Ask readers to comment or vote to activate distribution.";
-    }
-    if (lowerText.includes("synergy") || lowerText.includes("agile") || lowerText.includes("next-gen") || lowerText.includes("robust")) {
-      gammaStatus = "WARNING";
-      gammaText = "Jargon warning. Dry marketing cliches detected. Swap empty descriptors with clear active verbs.";
-    }
-
-    return [
-      { agent: "Alpha Agent / Hook Validator", status: alphaStatus, text: alphaText },
-      { agent: "Beta Agent / Readability Optimizer", status: betaStatus, text: betaText },
-      { agent: "Gamma Agent / CTR & Conversion Settle", status: gammaStatus, text: gammaText }
-    ];
-  };
 
   // Monospace Loader simulation
   useEffect(() => {
@@ -321,16 +232,16 @@ export default function LandingPage() {
               {/* Quadrant 1 (Top Left) */}
               <div className="loader-quadrant top-left">
                 <div className="quadrant-meta">
-                  <span className="mono-label">SYS_ID // VIRALITY_MAPPER</span>
-                  <span className="mono-val">LOC_52.3 // NODE_ACTIVE</span>
+                  <span className="mono-label">VIRALITY MAPPER</span>
+                  <span className="mono-val">STATUS // ONLINE</span>
                 </div>
               </div>
 
               {/* Quadrant 2 (Top Right) */}
               <div className="loader-quadrant top-right">
                 <div className="quadrant-meta text-right">
-                  <span className="mono-label">ENG_BUILD // V1.0.4</span>
-                  <span className="mono-val">SETTLE_POOL // ACTIVE</span>
+                  <span className="mono-label">VERSION // 1.0.4</span>
+                  <span className="mono-val">COGNITIVE CORE // ONLINE</span>
                 </div>
               </div>
 
@@ -348,17 +259,17 @@ export default function LandingPage() {
                 </div>
 
                 <div className="loader-phase-text">
-                  {loadingPercent < 25 && "INITIALIZING DEBATE CONTEXT CORE..."}
-                  {loadingPercent >= 25 && loadingPercent < 55 && "CONNECTING DEBATE ARENA GATEWAYS..."}
-                  {loadingPercent >= 55 && loadingPercent < 85 && "GROUNDING LIVE FEED TELEMETRY..."}
-                  {loadingPercent >= 85 && "SYNCHRONIZING AGENT PEER POOL..."}
+                  {loadingPercent < 25 && "Initializing copywriting modules..."}
+                  {loadingPercent >= 25 && loadingPercent < 55 && "Connecting AI peer review panel..."}
+                  {loadingPercent >= 55 && loadingPercent < 85 && "Retrieving real-time feed trends..."}
+                  {loadingPercent >= 85 && "Synchronizing specialist agents..."}
                 </div>
               </div>
 
               {/* Quadrant 3 (Bottom Left) */}
               <div className="loader-quadrant bottom-left">
                 <div className="quadrant-meta">
-                  <span className="mono-label">BOOT_DIAGNOSTICS</span>
+                  <span className="mono-label">PREPARING WORKSPACE</span>
                   <div className="bar-wrapper">
                     <div className="mini-progress-bar">
                       <div className="mini-progress-fill" style={{ width: `${loadingPercent}%` }} />
@@ -370,9 +281,9 @@ export default function LandingPage() {
               {/* Quadrant 4 (Bottom Right) */}
               <div className="loader-quadrant bottom-right">
                 <div className="quadrant-meta text-right">
-                  <span className="mono-label">ENGINE_STATUS</span>
+                  <span className="mono-label">SYSTEM STATUS</span>
                   <span className="mono-val color-accent">
-                    {loadingPercent === 100 ? "ENGINE_READY" : "SETTLING_SURVIVOR"}
+                    {loadingPercent === 100 ? "READY" : "LOADING ENGINE"}
                   </span>
                 </div>
               </div>
@@ -497,7 +408,7 @@ export default function LandingPage() {
             transition={{ duration: 0.6, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
             <Link href="/workspace" className="nav-pill-cta">
-              LAUNCH ENGINE
+              LAUNCH STUDIO
             </Link>
           </motion.div>
         </header>
@@ -597,7 +508,7 @@ export default function LandingPage() {
                 <div className="flex items-center gap-2" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   <Zap size={14} className="text-amber-400 animate-pulse" />
                   <span style={{ fontSize: "0.75rem", fontWeight: 700, fontFamily: "var(--font-mono)", letterSpacing: "0.08em", color: "var(--zinc-300)" }}>
-                    LIVE ARENA SIMULATOR
+                    DEBATE ARENA SIMULATION
                   </span>
                 </div>
                 <button
@@ -626,7 +537,7 @@ export default function LandingPage() {
                 {/* Simulator Content Panel */}
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
                   <AnimatePresence mode="wait">
-                    {simStep === 0 && (
+                     {simStep === 0 && (
                       <motion.div
                         key="step-grounding"
                         initial={{ opacity: 0, scale: 0.99 }}
@@ -636,7 +547,7 @@ export default function LandingPage() {
                       >
                         <div className="flex flex-col gap-4">
                           <span style={{ fontSize: "0.68rem", fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 700 }}>
-                            [CRAWLER GROUNDING ENGINE] RETRIEVING CRAWLED LINKEDIN TARGET TELEMETRY...
+                            Scanning current LinkedIn trends...
                           </span>
                           <div className="flex flex-col gap-3">
                             {mockSimulationData.trends.map((trend, idx) => (
@@ -663,7 +574,7 @@ export default function LandingPage() {
                       >
                         <div className="flex flex-col gap-4">
                           <span style={{ fontSize: "0.68rem", fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 700 }}>
-                            [CONCURRENT GENERATORS] CREATING FIRST DRAFT PROPOSALS...
+                            Generating draft options across copywriting styles...
                           </span>
                           <div className="simulator-agent-cards">
                             {mockSimulationData.agents.map((agent, idx) => (
@@ -692,7 +603,7 @@ export default function LandingPage() {
                       >
                         <div className="flex flex-col gap-4">
                           <span style={{ fontSize: "0.68rem", fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 700 }}>
-                            [DEBATE ARENA] CROSS-CRITIQUING DRAFT CLICHES & MOBILE CTR READABILITY...
+                            Critiquing drafts for hook strength, readability, and CTR...
                           </span>
                           <div className="simulator-critique-flow">
                             {mockSimulationData.agents.map((agent, idx) => (
@@ -715,7 +626,7 @@ export default function LandingPage() {
                       >
                         <div className="flex flex-col gap-4">
                           <span style={{ fontSize: "0.68rem", fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 700 }}>
-                            [ITERATIVE REFINEMENT] REWRITING POSTS TO COMPLY WITH PEER FEEDBACK...
+                            Refining drafts based on peer review...
                           </span>
                           <div className="simulator-agent-cards">
                             {mockSimulationData.agents.map((agent, idx) => (
@@ -745,7 +656,7 @@ export default function LandingPage() {
                         <div className="flex flex-col gap-4">
                           <div className="flex justify-between items-center" style={{ display: "flex", justifyContent: "space-between" }}>
                             <span style={{ fontSize: "0.68rem", fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 700 }}>
-                              [CONSENSUS SETTLED] MASTER COPIWRITER SURVIVOR OUTPUT
+                              Final optimized post ready for publishing
                             </span>
                             <div className="flex items-center gap-4 text-xs font-mono text-zinc-400" style={{ display: "flex", alignItems: "center", gap: "16px" }}>
                               <span>Score: {mockSimulationData.survivor.score}/100</span>
@@ -755,7 +666,7 @@ export default function LandingPage() {
                                 style={{ display: "flex", alignItems: "center", gap: "4px" }}
                               >
                                 {copied ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
-                                <span>{copied ? "Copied" : "Copy survivor"}</span>
+                                <span>{copied ? "Copied" : "Copy post"}</span>
                               </button>
                             </div>
                           </div>
@@ -883,105 +794,30 @@ export default function LandingPage() {
             </div>
           </section>
 
-          {/* Interactive Consensus Audit Playground */}
-          <section className="audit-playground-section scroll-reveal" id="playground">
-            <div className="relative mb-14">
-              <h2 className="catalog-header">
-                {"Audit Playground".split("").map((char, idx) => (
-                  <span key={idx}>{char === " " ? "\u00a0" : char}</span>
-                ))}
-              </h2>
-            </div>
-
-            <div className="playground-grid">
-              {/* Left Column: Input Panel */}
-              <div className="playground-left">
-                <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "16px" }}>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--zinc-500)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                    Console Editor / paste your draft copy
-                  </span>
+          {/* Bottom CTA Section */}
+          <section className="cta-runway-section scroll-reveal" id="cta">
+            <div className="cta-runway-grid">
+              <div className="cta-left">
+                <div className="cta-title-small">
+                  <Zap size={12} className="text-amber-400" />
+                  <span>Ready to Optimize?</span>
                 </div>
-                <textarea
-                  className="playground-textarea"
-                  value={auditText}
-                  onChange={(e) => setAuditText(e.target.value)}
-                  disabled={isAuditing}
-                  placeholder="Paste your copywriting draft here..."
-                />
-
-                {/* Audit Terminal Log Console */}
-                <div className="audit-terminal">
-                  <div className="audit-terminal-row active" style={{ opacity: isAuditing || auditStep > 0 ? 1 : 0.45 }}>
-                    <span>01 / ANALYZING HOOK STRUCTURE SAVINGS</span>
-                    <span>
-                      {auditStep > 1 ? "[OK]" : (auditStep === 1 ? "[RUNNING]" : "[IDLE]")}
-                    </span>
-                  </div>
-                  <div className="audit-terminal-row" style={{ color: auditStep >= 2 ? "var(--foreground)" : "var(--zinc-600)", opacity: auditStep >= 2 ? 1 : 0.45 }}>
-                    <span>02 / CRITIQUING VISUAL LINE DENSITY</span>
-                    <span>
-                      {auditStep > 2 ? "[OK]" : (auditStep === 2 ? "[RUNNING]" : "[WAIT]")}
-                    </span>
-                  </div>
-                  <div className="audit-terminal-row" style={{ color: auditStep >= 3 ? "var(--foreground)" : "var(--zinc-600)", opacity: auditStep >= 3 ? 1 : 0.45 }}>
-                    <span>03 / VIRAL CTR FEED TRIGGER ANALYSIS</span>
-                    <span>
-                      {auditStep > 3 ? "[OK]" : (auditStep === 3 ? "[RUNNING]" : "[WAIT]")}
-                    </span>
-                  </div>
-                </div>
-
-                <button
-                  className="audit-action-btn"
-                  onClick={runConsensusAudit}
-                  disabled={isAuditing}
-                >
-                  {isAuditing ? (
-                    <>
-                      <RefreshCw size={14} className="animate-spin" />
-                      <span>Auditing consensus...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Zap size={14} />
-                      <span>Run Consensus Audit</span>
-                    </>
-                  )}
-                </button>
+                <h2 className="cta-title-large">
+                  Stop Guessing.<br />
+                  <span>Start Winning.</span>
+                </h2>
+                <p className="cta-desc">
+                  Put your drafts through the multi-agent debate arena. Ground your posts in live LinkedIn trends, eliminate clichés, and maximize your organic reach.
+                </p>
               </div>
-
-              {/* Right Column: Dynamic Output Panel */}
-              <div className="playground-right">
-                {/* Score Widget */}
-                <div className="score-card-widget">
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--zinc-500)", letterSpacing: "0.08em" }}>
-                      CONSENSUS DRAFT SCORE
-                    </span>
-                    <span style={{ fontSize: "0.82rem", color: "var(--zinc-400)" }}>
-                      {auditScore >= 80 ? "Settle survivor CTR verified." : "Low response rate risk."}
-                    </span>
-                  </div>
-                  <div className="score-value-large">
-                    {auditScore}
-                    <span style={{ fontSize: "1.2rem", color: "var(--zinc-500)", fontFamily: "var(--font-mono)" }}>%</span>
-                  </div>
-                </div>
-
-                {/* Critique Cards List */}
-                <div className="critique-list">
-                  {getDynamicCritiques().map((crit, idx) => (
-                    <div key={idx} className="critique-card-item">
-                      <div className="critique-card-header">
-                        <span className="critique-card-agent">{crit.agent}</span>
-                        <span className={`critique-card-status ${crit.status === "OK" ? "flag-ok" : "flag-warning"}`}>
-                          {crit.status === "OK" ? "● OK" : "▲ WARNING"}
-                        </span>
-                      </div>
-                      <p className="critique-card-text">{crit.text}</p>
-                    </div>
-                  ))}
-                </div>
+              <div className="cta-right" style={{ display: "flex", flexDirection: "column", gap: "20px", alignItems: "flex-start" }}>
+                <Link href="/workspace" className="hero-cta-button">
+                  <span>Get Started for Free</span>
+                  <ArrowRight size={16} />
+                </Link>
+                <span style={{ fontSize: "0.75rem", fontFamily: "var(--font-mono)", color: "var(--zinc-500)" }}>
+                  No credit card required. Free forever.
+                </span>
               </div>
             </div>
           </section>
